@@ -160,6 +160,7 @@
     border:1px solid var(--border);border-radius:999px;padding:2px 10px;background:var(--surface);transition:.15s;}
   #recentGrid .cat-group.open .fold-tip{color:var(--green-700);border-color:var(--green-300);}
   #recentGrid .fold-body{margin-top:10px;display:flex;flex-direction:column;gap:8px;}
+  #recentGrid .fold-body[hidden]{display:none;} /* 覆盖 display:flex，让 hidden 真正生效 */
 
   /* steps */
   .steps{display:flex;flex-direction:column;gap:12px;}
