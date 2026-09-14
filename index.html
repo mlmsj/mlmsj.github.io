@@ -274,7 +274,7 @@
 
   <!-- 最近更新 -->
   <div class="panel" id="recent">
-    <h2><span class="dot"></span>最近更新 · 9月8日 全量双链接版</h2>
+    <h2><span class="dot"></span>最近更新 · 9月14日 教辅网课双盘更新</h2>
     <div class="panel-sub" id="recentSummary"></div>
     <div class="recent-list" id="recentGrid"></div>
     <div class="hint">说明：9月8日已把教辅、网课老师级资料全部配上「百度 + 夸克」双网盘链接（某一侧网盘没有的除外，比如个别老师只在夸克有课）。下方为本月新增明细，默认只显示大分类，点分类标题展开 / 收起具体条目；点击资料名直接跳转。学科 / 年级 chip、快捷查找、聊天助手均已同步刷新。</div>
@@ -540,7 +540,7 @@
 
     if(sumEl){
       const total = data.length + archived.length;
-      sumEl.innerHTML = `本次更新（2026-09-08 补链日）：全站已上架 <b>${(window.KNOWLEDGE||[]).filter(x=>x.status==='published').length}</b> 条资料，教辅与网课老师级现已全部支持「百度 / 夸克」双网盘转存。下方为本批新增 <b>${data.length}</b> 条（教辅 ${jiaofu.length} 条 + 网课老师级 ${Object.values(teachers).reduce((s,a)=>s+a.length,0)} 条 + 其他 ${other.length} 条），归档 <b>${archived.length}</b> 条 24/25 老资料。点击下方资料名直接跳转对应网盘。`;
+      sumEl.innerHTML = `本次更新（2026-09-14）：全站已上架 <b>${(window.KNOWLEDGE||[]).filter(x=>x.status==='published').length}</b> 条资料。本批新增一轮教辅（百题大过关 / 星火英语 / 一政 / 轻峰教育）、同步教辅星火英语、初中金考卷中考45套、高三数学网课「欧拉imath」与语文文言实词专项；一轮复习教辅网盘文件夹已全部完成署名整理。下方为本批新增 <b>${data.length}</b> 条（教辅 ${jiaofu.length} 条 + 网课老师级 ${Object.values(teachers).reduce((s,a)=>s+a.length,0)} 条 + 其他 ${other.length} 条），归档 <b>${archived.length}</b> 条 24/25 老资料。点击下方资料名直接跳转对应网盘。`;
     }
 
     let html = "";
