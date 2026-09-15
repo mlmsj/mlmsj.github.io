@@ -2404,17 +2404,6 @@ window.KNOWLEDGE = [
     "updatedAt": 1788192000000
   },
   {
-    "id": "K0195",
-    "name": "WPS破解版",
-    "tags": [
-      "大学"
-    ],
-    "quark": "https://pan.quark.cn/s/1417ad41ab33",
-    "status": "published",
-    "createdAt": 1788192000000,
-    "updatedAt": 1788192000000
-  },
-  {
     "id": "K0196",
     "name": "毛概",
     "tags": [
