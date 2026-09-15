@@ -1161,17 +1161,6 @@ window.KNOWLEDGE = [
     "updatedAt": 1788192000000
   },
   {
-    "id": "K0089",
-    "name": "乐乐课堂",
-    "tags": [
-      "高中"
-    ],
-    "status": "broken",
-    "createdAt": 1788192000000,
-    "updatedAt": 1788192000000,
-    "tip": "网盘上已无此资源，链接已失效，待重新上传"
-  },
-  {
     "id": "K0090",
     "name": "全国一",
     "tags": [
@@ -4714,34 +4703,6 @@ window.KNOWLEDGE = [
     "createdAt": 1788192000000,
     "updatedAt": 1788831788546,
     "quark": "https://pan.quark.cn/s/b53ebe3f1cc6"
-  },
-  {
-    "id": "K0380",
-    "name": "哔站网课·金晶生物技巧提升课",
-    "tags": [
-      "网课",
-      "生物",
-      "高中",
-      "高三"
-    ],
-    "status": "broken",
-    "createdAt": 1788192000000,
-    "updatedAt": 1788192000000,
-    "tip": "网盘上已无此资源，链接已失效，待重新上传"
-  },
-  {
-    "id": "K0381",
-    "name": "哔站网课·阿布数学",
-    "tags": [
-      "网课",
-      "数学",
-      "高中",
-      "高三"
-    ],
-    "status": "broken",
-    "createdAt": 1788192000000,
-    "updatedAt": 1788192000000,
-    "tip": "网盘上已无此资源，链接已失效，待重新上传"
   },
   {
     "id": "K0382",
