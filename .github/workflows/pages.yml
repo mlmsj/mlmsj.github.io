@@ -1,0 +1,75 @@
+name: Publish GitHub Pages student site
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_approved:
+        description: "确认已批准本次 student-static-only 发布；false 只执行构建检查"
+        required: true
+        default: false
+        type: boolean
+
+permissions: {}
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - name: Check out the approved source snapshot
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up the pinned Node.js runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.18.0
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Build the static student site
+        run: npm run build
+
+      - name: Verify P1-B fallback behavior
+        run: npm run verify:pages:fallback -- dist
+
+      - name: Verify the Pages artifact and publication safety gates
+        run: npm run verify:pages -- dist --write-metadata
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload the verified Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    if: ${{ inputs.release_approved == true }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy the approved artifact
+        id: deployment
+        uses: actions/deploy-pages@v4

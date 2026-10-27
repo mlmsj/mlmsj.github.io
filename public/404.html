@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>页面未找到</title>
+  </head>
+  <body>
+    <main>
+      <h1>页面未找到</h1>
+      <p>正在恢复昭文馆页面……</p>
+    </main>
+    <script>
+      (() => {
+        const BASE_PATH = "/";
+        const ROUTE_PARAM = "__zhaowenguan_pages_route";
+        // Keep this list aligned with src/App.tsx `paths`; profile children
+        // are checked separately against src/mySections.ts by the build test.
+        const KNOWN_APP_PATHS = new Set([
+          "/",
+          "/resources",
+          "/detail",
+          "/categories",
+          "/tools",
+          "/profile",
+          "/tools/pdf-nup",
+          "/tools/pdf-merge",
+          "/tools/pdf-split",
+          "/tools/images-to-pdf",
+          "/tools/image-compress",
+          "/tools/print-page-adjust",
+          "/tools/image-sheet-layout",
+          "/tools/pdf-page-organizer",
+          "/tools/pdf-to-images",
+          "/tools/pdf-compress",
+          "/tools/ocr",
+          "/tools/page-number",
+          "/tools/watermark",
+          "/tools/image-format-convert",
+          "/tools/image-resize",
+          "/about",
+          "/guide",
+          "/disclaimer",
+          "/contact",
+        ]);
+        const KNOWN_PROFILE_PATHS = new Set([
+          "/profile/overview",
+          "/profile/favorites",
+          "/profile/history",
+          "/profile/downloads",
+          "/profile/tools",
+          "/profile/settings",
+          "/profile/feedback",
+          "/profile/about",
+        ]);
+        const pathname = window.location.pathname;
+        const baseWithoutTrailingSlash = BASE_PATH.slice(0, -1);
+        const isWithinBase = pathname === baseWithoutTrailingSlash || pathname.startsWith(BASE_PATH);
+        const isBaseRequest = pathname === baseWithoutTrailingSlash || pathname === BASE_PATH;
+        const appPathFromLocation = (locationPath) => {
+          if (locationPath === baseWithoutTrailingSlash || locationPath === BASE_PATH) return "/";
+          if (locationPath.startsWith(BASE_PATH)) return `/${locationPath.slice(BASE_PATH.length)}`;
+          return locationPath;
+        };
+        const knownAppPath = (locationPath) => {
+          if (typeof locationPath !== "string" || locationPath.includes("%")) return null;
+          let decodedPathname;
+          try {
+            decodedPathname = decodeURIComponent(locationPath);
+          } catch {
+            return null;
+          }
+          if (
+            !decodedPathname.startsWith("/") ||
+            decodedPathname.includes("\\") ||
+            (decodedPathname !== "/" && decodedPathname.includes("//"))
+          ) return null;
+          const normalizedPath = decodedPathname.length > 1 && decodedPathname.endsWith("/")
+            ? decodedPathname.slice(0, -1)
+            : decodedPathname;
+          if (normalizedPath !== "/" && normalizedPath.endsWith("/")) return null;
+          return KNOWN_APP_PATHS.has(normalizedPath) || KNOWN_PROFILE_PATHS.has(normalizedPath)
+            ? normalizedPath
+            : null;
+        };
+
+        // GitHub Pages serves this document with the original 404 status. Only
+        // an explicitly supported app route may be recovered. Missing assets,
+        // resource directories and unknown pages stay on this plain 404 page.
+        if (!isWithinBase || isBaseRequest || !knownAppPath(appPathFromLocation(pathname))) return;
+
+        const requestedRoute = `${pathname}${window.location.search}${window.location.hash}`;
+        const target = new URL(BASE_PATH, window.location.origin);
+        const params = new URLSearchParams();
+        params.set(ROUTE_PARAM, requestedRoute);
+        target.search = params.toString();
+        window.location.replace(target.href);
+      })();
+    </script>
+  </body>
+</html>
