@@ -1,6 +1,8 @@
 name: Publish GitHub Pages student site
 
 on:
+  pull_request:
+    branches: [main]
   workflow_dispatch:
     inputs:
       release_approved:
@@ -42,6 +44,12 @@ jobs:
       - name: Run lint
         run: npm run lint
 
+      - name: Verify PDF text and cover selection
+        run: npm run verify
+
+      - name: Verify PDF font layout boundaries
+        run: npx --no-install tsx scripts/verify-font-boundaries.ts
+
       - name: Build the static student site
         run: npm run build
 
@@ -52,6 +60,7 @@ jobs:
         run: npm run verify:pages -- dist --write-metadata
 
       - name: Configure GitHub Pages
+        if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.release_approved == true }}
         uses: actions/configure-pages@v5
 
       - name: Upload the verified Pages artifact
@@ -61,7 +70,7 @@ jobs:
 
   deploy:
     needs: build
-    if: ${{ inputs.release_approved == true }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.release_approved == true }}
     runs-on: ubuntu-latest
     permissions:
       pages: write
