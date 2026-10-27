@@ -1,0 +1,23 @@
+# Third-party OCR notices
+
+The files in this directory are redistributed runtime resources. They are not
+covered by a project-level license decision.
+
+## Apache-2.0 components
+
+- `worker/worker.min.js`: matches `tesseract.js` 6.0.1. The package metadata
+  identifies the package as Apache-2.0; upstream repository:
+  https://github.com/naptha/tesseract.js
+- `core/`: matches `tesseract.js-core` 6.1.2. The package metadata identifies
+  the package as Apache-2.0; upstream repository:
+  https://github.com/naptha/tesseract.js-core
+- `lang/chi_sim.traineddata.gz` and `lang/eng.traineddata.gz`: byte-for-byte
+  gzip matches of the fixed `naptha/tessdata` snapshot documented in
+  `README.md`.
+- `lang/chi_tra.traineddata.gz`: decompressed byte-for-byte match of the fixed
+  `tesseract-ocr/tessdata_best` snapshot documented in `README.md`.
+
+The complete Apache License 2.0 text is included in `LICENSE`. The exact
+source revisions and asset hashes are recorded in `README.md`; this NOTICE is
+an attribution record and does not grant a project-level license or resolve
+rights for the site's own artwork.
