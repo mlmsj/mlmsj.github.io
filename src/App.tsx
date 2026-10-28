@@ -377,7 +377,15 @@ function Home({
             <h2>学习助手</h2>
             <p id="learning-assistant-status">学习助手暂未开放，敬请期待。</p>
           </div>
-          <button disabled aria-describedby="learning-assistant-status">学习助手 · 暂未开放</button>
+          <button
+            className="assistant-status"
+            disabled
+            aria-label="学习助手 · 暂未开放"
+            aria-describedby="learning-assistant-status"
+          >
+            <span className="assistant-status-desktop">学习助手 · 暂未开放</span>
+            <span className="assistant-status-mobile">即将开放</span>
+          </button>
           <img className="assistant-cat" src={assistantCat} alt="水彩小白猫" />
         </section>
       </section>
