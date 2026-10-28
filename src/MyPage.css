@@ -1,0 +1,48 @@
+/* UI-M03: mobile-only personal-library flow and sticky-header correction. */
+@media (max-width: 800px) {
+  .my-page .my-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+  }
+
+  .my-page .my-sidebar {
+    position: static;
+    top: auto;
+    width: 100%;
+  }
+
+  .my-page .my-sidebar-head {
+    margin-bottom: 14px;
+  }
+
+  .my-page .my-content {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex-direction: column;
+  }
+
+  .my-page .my-overview-grid {
+    display: contents;
+  }
+
+  .my-page .my-panel-tools {
+    order: 0;
+  }
+
+  .my-page .my-stats {
+    order: 1;
+    margin-top: 22px;
+  }
+
+  .my-page .my-panel-favorites {
+    order: 2;
+    margin-top: 22px;
+  }
+
+  .my-page .my-mobile-functions {
+    order: 3;
+  }
+}
