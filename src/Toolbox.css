@@ -1203,3 +1203,75 @@
     min-height: 44px;
   }
 }
+
+/* UI-M03: keep mobile filters and favorite controls inside their own layout. */
+@media (max-width: 800px) {
+  .toolbox-page {
+    min-width: 0;
+    padding-bottom: calc(28px + var(--mobile-nav-clearance));
+  }
+
+  .toolbox-page .tool-filters {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 0 6px;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .toolbox-page .tool-filters > button {
+    min-height: 44px;
+    padding: 8px 16px;
+    white-space: nowrap;
+  }
+
+  .toolbox-page .tool-card-shell {
+    position: relative;
+    min-width: 0;
+  }
+
+  .toolbox-page .tool-card-shell .tool-favorite-button {
+    top: 8px;
+    right: 8px;
+    width: 44px;
+    height: 44px;
+    margin-top: 0;
+    border-radius: 12px;
+  }
+
+  .toolbox-page .tool-card.compact,
+  .toolbox-page .tool-card:not(.compact) {
+    min-height: 92px;
+    padding: 12px 64px 12px 14px;
+    grid-template-columns: 42px minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    column-gap: 12px;
+    row-gap: 4px;
+  }
+
+  .toolbox-page .tool-card:not(.compact) .tool-icon,
+  .toolbox-page .tool-card.compact .tool-icon {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .toolbox-page .tool-card:not(.compact) .tool-card-copy,
+  .toolbox-page .tool-card.compact .tool-card-copy {
+    min-width: 0;
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .toolbox-page .tool-card:not(.compact) em,
+  .toolbox-page .tool-card.compact em {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: start;
+    align-self: end;
+  }
+}
