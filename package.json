@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build:b2-3-manifest": "tsx scripts/build-b2-3-public-manifest.ts",
-    "build": "npm run build:b2-3-manifest && tsc -b && vite build",
+    "write:b2-3:provenance": "tsx scripts/write-b2-3-provenance.ts",
+    "build": "npm run build:b2-3-manifest && tsc -b && vite build && npm run write:b2-3:provenance",
     "lint": "oxlint",
     "verify": "npm run verify:pdf-text && tsx scripts/verify-skip-cover.ts",
     "preview": "vite preview",

@@ -53,6 +53,9 @@ jobs:
       - name: Build the static student site
         run: npm run build
 
+      - name: Verify B2-3 authorization projection
+        run: npm run verify:b2-3:public -- dist
+
       - name: Verify P1-B fallback behavior
         run: npm run verify:pages:fallback -- dist
 

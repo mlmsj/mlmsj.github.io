@@ -4,8 +4,20 @@ import process from "node:process";
 
 const root = path.resolve(import.meta.dirname, "..");
 const distRoot = path.resolve(process.argv[2] ?? path.join(root, "dist"));
-const sourcePath = path.join(root, "scripts", "input", "manifest.v1.source.json");
+const configuredSourcePath = process.env.B2_SOURCE_MANIFEST_PATH?.trim();
+const sourcePath = path.resolve(
+  root,
+  configuredSourcePath || "scripts/input/manifest.v1.source.fixture.json",
+);
 const manifestPath = path.join(distRoot, "data", "manifest.v1.json");
+const publicRoot = path.resolve(root, "public");
+if (
+  sourcePath.toLowerCase() === publicRoot.toLowerCase() ||
+  sourcePath.toLowerCase().startsWith(`${publicRoot.toLowerCase()}${path.sep}`)
+) {
+  console.error("B2-3 source input must not be read from public/");
+  process.exit(1);
+}
 
 const APPROVED_IDS = new Set([
   "university-quark-math-advanced-001",
