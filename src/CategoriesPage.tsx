@@ -1,22 +1,19 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { getChildCategories, type Category } from "./categories";
 import {
-  getChildCategories,
-  type Category,
-} from "./categories";
-import {
+  CATEGORY_PATH_PARAM,
   CATEGORY_PARAM,
-  SUBJECT_PARAM,
-  categoryBrowseLocation,
+  categoryPathBrowseLocation,
   readCategoryRouteState,
   resourceFilterLocation,
   type CategoryRouteState,
 } from "./categoryRouting";
 
-
 const routeIssueMessages = {
   "invalid-category": "原链接中的一级分类不可用，已为你显示可用分类。",
   "invalid-subject": "原链接中的学科分类不可用，已返回当前一级分类。",
   "subject-parent-mismatch": "原链接中的分类层级不匹配，已返回当前一级分类。",
+  "invalid-category-path": "原链接中的分类路径不可用，已为你显示可用分类。",
 } as const;
 
 const CategoryCard = ({
@@ -32,7 +29,6 @@ const CategoryCard = ({
   href?: string;
   onNavigate?: (location: string) => void;
 }) => {
-
   const content = (
     <>
       <span className="category-card-copy">
@@ -120,29 +116,60 @@ export function CategoriesPage({
   };
 
   const rootCategories = useMemo(() => getChildCategories(null), []);
-  const secondLevel = routeState.category
-    ? getChildCategories(routeState.category.id)
-    : [];
-  const thirdLevel = routeState.subject
-    ? getChildCategories(routeState.subject.id)
-    : [];
   const params = new URLSearchParams(search);
-  const hasCategoryParam = params.has(CATEGORY_PARAM);
-  const hasSubjectParam = params.has(SUBJECT_PARAM);
+  const hasCategoryParam =
+    params.has(CATEGORY_PARAM) || params.has(CATEGORY_PATH_PARAM);
   const issues = [...new Set(routeState.issues)];
 
-  const selectCategory = (category: Category) =>
-    navigate(categoryBrowseLocation(category.id));
-  const selectSubject = (subject: Category) =>
-    navigate(categoryBrowseLocation(routeState.category?.id, subject.id));
-  const backToSubjects = () =>
-    navigate(categoryBrowseLocation(routeState.category?.id));
-  const backToRoots = () => navigate(categoryBrowseLocation());
+  const desktopPath = routeState.path.length
+    ? routeState.path
+    : routeState.category
+      ? [routeState.category]
+      : [];
+  const desktopCurrent = desktopPath[desktopPath.length - 1] ?? null;
+  const desktopItems = desktopCurrent
+    ? getChildCategories(desktopCurrent.id)
+    : rootCategories;
+  const desktopTitle = desktopCurrent && desktopCurrent.level >= 2
+    ? "资料类型"
+    : "学科与方向";
+  const desktopEmpty = desktopCurrent && desktopCurrent.level >= 2
+    ? "暂无资料类型"
+    : "暂无下级分类";
 
-  const desktopItems = routeState.subject ? thirdLevel : secondLevel;
-  const desktopTitle = routeState.subject ? "资料类型" : "学科与方向";
-  const desktopEmpty = routeState.subject ? "暂无资料类型" : "暂无下级分类";
-  const activeResourceCategory = routeState.subject ?? routeState.category;
+  const mobilePath = routeState.path;
+  const mobileCurrent = mobilePath[mobilePath.length - 1] ?? null;
+  const mobileItems = mobileCurrent
+    ? getChildCategories(mobileCurrent.id)
+    : rootCategories;
+  const mobileHasSelection = mobilePath.length > 0;
+
+  const selectPath = (path: readonly Category[]) =>
+    navigate(categoryPathBrowseLocation(path.map((category) => category.id)));
+  const selectRoot = (category: Category) => selectPath([category]);
+  const selectDesktopChild = (category: Category) => {
+    const children = getChildCategories(category.id);
+    if (children.length > 0) {
+      selectPath([...desktopPath, category]);
+    } else {
+      const location = resourceFilterLocation(category.id);
+      if (location) onOpenResources(location);
+    }
+  };
+  const selectMobileChild = (category: Category) => {
+    const children = getChildCategories(category.id);
+    if (children.length > 0) {
+      selectPath([...mobilePath, category]);
+    } else {
+      const location = resourceFilterLocation(category.id);
+      if (location) onOpenResources(location);
+    }
+  };
+  const backToRoots = () => selectPath([]);
+  const backDesktop = () => selectPath(desktopPath.slice(0, -1));
+  const backMobile = () => selectPath(mobilePath.slice(0, -1));
+
+  const activeResourceCategory = desktopCurrent;
   const activeResourceLocation = activeResourceCategory
     ? resourceFilterLocation(activeResourceCategory.id)
     : null;
@@ -151,7 +178,13 @@ export function CategoriesPage({
       className="category-resource-link"
       href={activeResourceLocation}
       onClick={(event) => {
-        if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+        if (
+          event.button === 0 &&
+          !event.metaKey &&
+          !event.ctrlKey &&
+          !event.shiftKey &&
+          !event.altKey
+        ) {
           event.preventDefault();
           onOpenResources(activeResourceLocation);
         }
@@ -161,6 +194,24 @@ export function CategoriesPage({
       <span>{counts[activeResourceCategory.id] ?? 0} 份资料</span>
     </a>
   ) : null;
+
+  const renderDesktopCard = (category: Category) => {
+    const children = getChildCategories(category.id);
+    return (
+      <CategoryCard
+        key={category.id}
+        category={category}
+        count={counts[category.id] ?? 0}
+        onSelect={children.length > 0 ? selectDesktopChild : undefined}
+        href={
+          children.length === 0
+            ? resourceFilterLocation(category.id) ?? undefined
+            : undefined
+        }
+        onNavigate={onOpenResources}
+      />
+    );
+  };
 
   return (
     <section className="categories-page">
@@ -207,11 +258,11 @@ export function CategoriesPage({
               aria-current={
                 routeState.category?.id === category.id ? "true" : undefined
               }
-              onClick={() => selectCategory(category)}
+              onClick={() => selectRoot(category)}
             >
               <span>
                 <strong>{category.name}</strong>
-                <small>{(counts[category.id] ?? 0)} 份资料</small>
+                <small>{counts[category.id] ?? 0} 份资料</small>
               </span>
               <i aria-hidden="true">›</i>
             </button>
@@ -223,34 +274,25 @@ export function CategoriesPage({
             <div>
               <nav aria-label="当前位置">
                 <span>分类</span>
-                {routeState.category && <span>{routeState.category.name}</span>}
-                {routeState.subject && <span>{routeState.subject.name}</span>}
+                {desktopPath.map((category) => (
+                  <span key={category.id}>{category.name}</span>
+                ))}
               </nav>
               <h2>
-                {routeState.subject?.name ?? routeState.category?.name ?? desktopTitle}
+                {desktopCurrent?.name ?? desktopTitle}
                 <small>{desktopTitle}</small>
               </h2>
             </div>
-            {routeState.subject && (
-              <button type="button" onClick={backToSubjects}>← 返回学科</button>
+            {desktopPath.length > 1 && (
+              <button type="button" onClick={backDesktop}>
+                {desktopPath.length === 2 ? "← 返回学科" : "← 返回上一级"}
+              </button>
             )}
           </div>
           {activeResourceLink}
           {desktopItems.length > 0 ? (
             <div className="category-card-grid">
-              {desktopItems.map((category) => (
-                <CategoryCard
-                  key={category.id}
-                  category={category} count={counts[category.id] ?? 0}
-                  onSelect={category.level === 2 ? selectSubject : undefined}
-                  href={
-                    category.level === 3
-                      ? resourceFilterLocation(category.id) ?? undefined
-                      : undefined
-                  }
-                  onNavigate={onOpenResources}
-                />
-              ))}
+              {desktopItems.map(renderDesktopCard)}
             </div>
           ) : (
             <EmptyCategoryState message={desktopEmpty} />
@@ -260,8 +302,8 @@ export function CategoriesPage({
 
       <div className="category-mobile" data-testid="category-mobile">
         <div className="category-mobile-head">
-          {hasSubjectParam ? (
-            <button type="button" onClick={backToSubjects}>← 返回上一级</button>
+          {mobileHasSelection ? (
+            <button type="button" onClick={backMobile}>← 返回上一级</button>
           ) : hasCategoryParam ? (
             <button type="button" onClick={backToRoots}>← 返回上一级</button>
           ) : (
@@ -269,53 +311,50 @@ export function CategoriesPage({
           )}
           <nav aria-label="当前位置">
             <span>分类</span>
-            {hasCategoryParam && routeState.category && (
-              <span>{routeState.category.name}</span>
-            )}
-            {hasSubjectParam && routeState.subject && (
-              <span>{routeState.subject.name}</span>
-            )}
+            {mobilePath.map((category) => (
+              <span key={category.id}>{category.name}</span>
+            ))}
           </nav>
         </div>
 
-        {hasCategoryParam && activeResourceLink}
-        {!hasCategoryParam ? (
+        {mobileHasSelection && activeResourceLink}
+        {!mobileHasSelection ? (
           <div className="category-card-list" aria-label="一级分类">
             {rootCategories.map((category) => (
               <CategoryCard
                 key={category.id}
-                category={category} count={counts[category.id] ?? 0}
-                onSelect={selectCategory}
+                category={category}
+                count={counts[category.id] ?? 0}
+                onSelect={selectRoot}
               />
             ))}
           </div>
-        ) : !hasSubjectParam ? (
-          secondLevel.length > 0 ? (
-            <div className="category-card-list" aria-label="二级分类">
-              {secondLevel.map((category) => (
+        ) : mobileItems.length > 0 ? (
+          <div className="category-card-list" aria-label="下级分类">
+            {mobileItems.map((category) => {
+              const children = getChildCategories(category.id);
+              return (
                 <CategoryCard
                   key={category.id}
-                  category={category} count={counts[category.id] ?? 0}
-                  onSelect={selectSubject}
+                  category={category}
+                  count={counts[category.id] ?? 0}
+                  onSelect={children.length > 0 ? selectMobileChild : undefined}
+                  href={
+                    children.length === 0
+                      ? resourceFilterLocation(category.id) ?? undefined
+                      : undefined
+                  }
+                  onNavigate={onOpenResources}
                 />
-              ))}
-            </div>
-          ) : (
-            <EmptyCategoryState message="暂无下级分类" />
-          )
-        ) : thirdLevel.length > 0 ? (
-          <div className="category-card-list" aria-label="三级分类">
-            {thirdLevel.map((category) => (
-              <CategoryCard
-                key={category.id}
-                category={category} count={counts[category.id] ?? 0}
-                href={resourceFilterLocation(category.id) ?? undefined}
-                onNavigate={onOpenResources}
-              />
-            ))}
+              );
+            })}
           </div>
         ) : (
-          <EmptyCategoryState message="暂无资料类型" />
+          <EmptyCategoryState
+            message={mobileCurrent && mobileCurrent.level >= 2
+              ? "暂无资料类型"
+              : "暂无下级分类"}
+          />
         )}
       </div>
     </section>

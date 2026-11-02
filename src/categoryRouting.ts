@@ -8,16 +8,31 @@ import { locationPathForAppPath } from "./routing";
 
 export const CATEGORY_PARAM = "category";
 export const SUBJECT_PARAM = "subject";
+export const CATEGORY_PATH_PARAM = "categoryPath";
 
 export type CategoryRouteIssue =
   | "invalid-category"
   | "invalid-subject"
-  | "subject-parent-mismatch";
+  | "subject-parent-mismatch"
+  | "invalid-category-path";
 
 export type CategoryRouteState = {
   category: Category | null;
   subject: Category | null;
+  path: readonly Category[];
+  selected: Category | null;
   issues: readonly CategoryRouteIssue[];
+};
+
+const hasExactCategoryPath = (
+  ids: readonly string[],
+  values: readonly Category[],
+) => {
+  if (ids.length === 0) return null;
+  const path = getEnabledCategoryPath(ids[ids.length - 1], values);
+  return path.length === ids.length && path.every((entry, index) => entry.id === ids[index])
+    ? path
+    : null;
 };
 
 export const parseCategoryRouteState = (
@@ -29,6 +44,29 @@ export const parseCategoryRouteState = (
   const firstAvailable = getChildCategories(null, values).find(
     (entry) => getEnabledCategoryPath(entry.id, values).length === 1,
   ) ?? null;
+  const hasCategoryPath = params.has(CATEGORY_PATH_PARAM);
+  if (hasCategoryPath) {
+    const rawPath = params.get(CATEGORY_PATH_PARAM) ?? "";
+    const ids = rawPath.split(",").map((id) => id.trim()).filter(Boolean);
+    const path = hasExactCategoryPath(ids, values);
+    if (!path) {
+      return {
+        category: firstAvailable,
+        subject: null,
+        path: [],
+        selected: null,
+        issues: ["invalid-category-path"],
+      };
+    }
+    return {
+      category: path[0] ?? null,
+      subject: path[1] ?? null,
+      path,
+      selected: path[path.length - 1] ?? null,
+      issues: [],
+    };
+  }
+
   const categoryId = params.get(CATEGORY_PARAM);
   const categoryPath = categoryId ? getEnabledCategoryPath(categoryId, values) : [];
   const requestedCategory = categoryPath[categoryPath.length - 1];
@@ -55,7 +93,20 @@ export const parseCategoryRouteState = (
     }
   }
 
-  return { category, subject, issues };
+  const path = category
+    ? subject
+      ? [category, subject]
+      : categoryId === category.id
+        ? [category]
+        : []
+    : [];
+  return {
+    category,
+    subject,
+    path,
+    selected: path[path.length - 1] ?? null,
+    issues,
+  };
 };
 
 export const readCategoryRouteState = (
@@ -67,17 +118,29 @@ export const categoryBrowseLocation = (
   subjectId?: string,
   values: readonly Category[] = categories,
 ) => {
+  return categoryPathBrowseLocation(
+    [categoryId, subjectId].filter((id): id is string => Boolean(id)),
+    values,
+  );
+};
+
+export const categoryPathBrowseLocation = (
+  categoryIds: readonly string[] = [],
+  values: readonly Category[] = categories,
+) => {
+  const path = hasExactCategoryPath(categoryIds, values);
+  if (!path) return locationPathForAppPath("/categories");
+
   const params = new URLSearchParams();
-  const categoryPath = categoryId ? getEnabledCategoryPath(categoryId, values) : [];
-  const subjectPath = subjectId ? getEnabledCategoryPath(subjectId, values) : [];
-  if (categoryPath.length === 1) {
-    params.set(CATEGORY_PARAM, categoryId!);
-    if (subjectPath.length === 2 && subjectPath[0].id === categoryId) {
-      params.set(SUBJECT_PARAM, subjectId!);
-    }
+  if (path.length === 1) {
+    params.set(CATEGORY_PARAM, path[0].id);
+  } else if (path.length === 2) {
+    params.set(CATEGORY_PARAM, path[0].id);
+    params.set(SUBJECT_PARAM, path[1].id);
+  } else {
+    params.set(CATEGORY_PATH_PARAM, path.map((category) => category.id).join(","));
   }
-  const search = params.toString();
-  return locationPathForAppPath(`/categories${search ? `?${search}` : ""}`);
+  return locationPathForAppPath(`/categories?${params.toString()}`);
 };
 
 export const resourceFilterLocation = (

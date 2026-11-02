@@ -186,6 +186,9 @@ describe("ResourcesPage category filtering", () => {
     render(<ResourcesPage detail={vi.fn()} resourceValues={mixedResources} />);
     const mobile = screen.getByLabelText("移动端资料分类");
     fireEvent.click(within(mobile).getByRole("button", { name: /大学/ }));
+    expect(window.location.search).toBe("");
+    expect(within(mobile).getByRole("button", { name: /专业课/ })).toBeVisible();
+    fireEvent.click(within(mobile).getByRole("button", { name: "查看大学全部资料" }));
     expect(window.location.search).toBe("?category=stage-university");
     fireEvent.click(within(mobile).getByRole("button", { name: /初中/ }));
     expect(within(mobile).getByRole("button", { name: "查看初中全部资料" })).toBeVisible();

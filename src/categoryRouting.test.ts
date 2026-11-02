@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   categoryBrowseLocation,
+  categoryPathBrowseLocation,
   parseCategoryRouteState,
   readCategoryRouteState,
   resourceFilterLocation,
@@ -105,8 +106,16 @@ describe("category URL state", () => {
   it("generates restorable filter and browse routes for a supplied category tree", () => {
     const values: Category[] = [
       { ...categories[0], id: "custom-root" },
-      { ...categories[4], id: "custom-subject", parentId: "custom-root" },
-      { ...categories[5], id: "custom-leaf", parentId: "custom-subject" },
+      {
+        ...categories.find((category) => category.id === "subject-junior-math")!,
+        id: "custom-subject",
+        parentId: "custom-root",
+      },
+      {
+        ...categories.find((category) => category.id === "type-junior-math-notes")!,
+        id: "custom-leaf",
+        parentId: "custom-subject",
+      },
     ];
     for (const category of values) {
       const url = new URL(resourceFilterLocation(category.id, values)!, window.location.origin);
@@ -117,6 +126,42 @@ describe("category URL state", () => {
     expect(state.category?.id).toBe("custom-root");
     expect(state.subject?.id).toBe("custom-subject");
     expect(state.issues).toEqual([]);
+  });
+
+  it("restores arbitrary-depth category paths without changing legacy URLs", () => {
+    const values: Category[] = [
+      { ...categories.find((category) => category.id === "stage-junior")!, id: "root" },
+      { ...categories.find((category) => category.id === "subject-junior-math")!, id: "level-2", parentId: "root" },
+      { ...categories.find((category) => category.id === "type-junior-math-notes")!, id: "level-3", parentId: "level-2" },
+      {
+        id: "level-4",
+        parentId: "level-3",
+        name: "四级",
+        description: "",
+        level: 4,
+        sortOrder: 10,
+        enabled: true,
+      },
+    ];
+    const location = categoryPathBrowseLocation(
+      ["root", "level-2", "level-3", "level-4"],
+      values,
+    );
+    const state = parseCategoryRouteState(
+      new URL(location, window.location.origin).search,
+      values,
+    );
+
+    expect(location).toContain(
+      "categoryPath=root%2Clevel-2%2Clevel-3%2Clevel-4",
+    );
+    expect(state.path.map(({ id }) => id)).toEqual([
+      "root",
+      "level-2",
+      "level-3",
+      "level-4",
+    ]);
+    expect(state.selected?.id).toBe("level-4");
   });
 
   it("denies invalid or disabled ancestor paths in route parsing and generation", () => {

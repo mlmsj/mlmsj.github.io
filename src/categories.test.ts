@@ -27,7 +27,7 @@ describe("category data contract", () => {
     );
   });
 
-  it("rejects duplicate IDs, invalid parents, cycles, and a fourth level", () => {
+  it("rejects duplicate IDs, invalid parents, cycles, and invalid levels", () => {
     const invalid: Category[] = [
       root,
       { ...root },
@@ -36,9 +36,8 @@ describe("category data contract", () => {
       { ...root, id: "cycle-b", level: 3, parentId: "cycle-a" },
       {
         ...root,
-        id: "level-four",
-        level: 4,
-        parentId: "cycle-b",
+        id: "invalid-level",
+        level: 0,
       } as unknown as Category,
     ];
     const codes = validateCategories(invalid).map(({ code }) => code);
@@ -47,6 +46,39 @@ describe("category data contract", () => {
     expect(codes).toContain("invalid-parent");
     expect(codes).toContain("cycle");
     expect(codes).toContain("invalid-level");
+  });
+
+  it("accepts arbitrary parentId depth while keeping contiguous levels", () => {
+    const child: Category = {
+      ...root,
+      id: "child",
+      name: "二级",
+      parentId: root.id,
+      level: 2,
+    };
+    const leaf: Category = {
+      ...root,
+      id: "leaf",
+      name: "三级",
+      parentId: child.id,
+      level: 3,
+    };
+    const deep: Category = {
+      ...root,
+      id: "deep",
+      name: "四级",
+      parentId: leaf.id,
+      level: 4,
+    };
+    const values = [root, child, leaf, deep];
+
+    expect(validateCategories(values)).toEqual([]);
+    expect(getCategoryPath(deep.id, values).map(({ id }) => id)).toEqual([
+      root.id,
+      child.id,
+      leaf.id,
+      deep.id,
+    ]);
   });
 
   it("rejects duplicate names under the same parent", () => {

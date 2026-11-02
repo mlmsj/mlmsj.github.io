@@ -161,7 +161,8 @@ describe("CategoriesPage", () => {
     expect(link).toHaveTextContent("1 份资料");
     fireEvent.click(link);
     expect(openResources).toHaveBeenCalledWith(expect.stringContaining("/resources?category=stage-university"));
-    expect(within(desktop).getByText("暂无下级分类")).toBeVisible();
+    expect(within(desktop).getByText("专业课")).toBeVisible();
+    expect(within(desktop).getByText("复习资料")).toBeVisible();
   });
 
   it("offers the selected second-level scope on desktop and mobile after URL restoration", () => {

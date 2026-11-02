@@ -1,4 +1,4 @@
-export type CategoryLevel = 1 | 2 | 3;
+export type CategoryLevel = number;
 
 export type Category = {
   id: string;
@@ -9,6 +9,31 @@ export type Category = {
   sortOrder: number;
   enabled: boolean;
 };
+
+export const UNIVERSITY_DOMAIN_IDS = [
+  "domain-university-major",
+  "domain-university-politics",
+  "domain-university-english-exam",
+  "domain-university-computer-exam",
+  "domain-university-competition",
+  "domain-university-postgraduate",
+  "domain-university-planning",
+  "domain-university-proof",
+  "domain-university-review",
+] as const;
+
+export type UniversityDomainId = (typeof UNIVERSITY_DOMAIN_IDS)[number];
+
+export const JUNIOR_DOMAIN_IDS = [
+  "domain-junior-textbooks",
+  "domain-junior-workbooks",
+  "domain-junior-exams",
+  "domain-junior-courses",
+  "domain-junior-subjects",
+  "domain-junior-sprint",
+] as const;
+
+export type JuniorDomainId = (typeof JUNIOR_DOMAIN_IDS)[number];
 
 export const categories: readonly Category[] = [
   {
@@ -48,21 +73,156 @@ export const categories: readonly Category[] = [
     enabled: true,
   },
   {
+    id: "domain-junior-textbooks",
+    parentId: "stage-junior",
+    name: "课本教材",
+    description: "初中各学科课本与教材资料",
+    level: 2,
+    sortOrder: 10,
+    enabled: true,
+  },
+  {
+    id: "domain-junior-workbooks",
+    parentId: "stage-junior",
+    name: "教辅与刷题",
+    description: "初中各学科教辅、练习与刷题资料",
+    level: 2,
+    sortOrder: 20,
+    enabled: true,
+  },
+  {
+    id: "domain-junior-exams",
+    parentId: "stage-junior",
+    name: "模拟题与真题",
+    description: "初中各学科模拟题与历年真题资料",
+    level: 2,
+    sortOrder: 30,
+    enabled: true,
+  },
+  {
+    id: "domain-junior-courses",
+    parentId: "stage-junior",
+    name: "网课",
+    description: "初中网课资料，浏览时以年级为主要维度",
+    level: 2,
+    sortOrder: 40,
+    enabled: true,
+  },
+  {
+    id: "domain-junior-subjects",
+    parentId: "stage-junior",
+    name: "学科分类",
+    description: "初中各学科资料分类入口",
+    level: 2,
+    sortOrder: 50,
+    enabled: true,
+  },
+  {
+    id: "domain-junior-sprint",
+    parentId: "stage-junior",
+    name: "考前冲刺",
+    description: "初中考试前冲刺与重点复习资料",
+    level: 2,
+    sortOrder: 60,
+    enabled: true,
+  },
+  {
     id: "subject-junior-math",
     parentId: "stage-junior",
     name: "数学",
-    description: "初中数学示例分类",
+    description: "旧版初中数学兼容入口",
     level: 2,
-    sortOrder: 10,
+    sortOrder: 70,
     enabled: true,
   },
   {
     id: "type-junior-math-notes",
     parentId: "subject-junior-math",
     name: "知识点整理",
-    description: "知识点梳理类资料",
+    description: "旧版数学知识点梳理类资料",
     level: 3,
     sortOrder: 10,
+    enabled: true,
+  },
+  {
+    id: "domain-university-major",
+    parentId: "stage-university",
+    name: "专业课",
+    description: "大学专业课、数学与教材语义",
+    level: 2,
+    sortOrder: 10,
+    enabled: true,
+  },
+  {
+    id: "domain-university-politics",
+    parentId: "stage-university",
+    name: "思政",
+    description: "大学思政课程资料",
+    level: 2,
+    sortOrder: 20,
+    enabled: true,
+  },
+  {
+    id: "domain-university-english-exam",
+    parentId: "stage-university",
+    name: "英语考试",
+    description: "四六级、雅思及相关考试资料",
+    level: 2,
+    sortOrder: 30,
+    enabled: true,
+  },
+  {
+    id: "domain-university-computer-exam",
+    parentId: "stage-university",
+    name: "计算机考试",
+    description: "大学计算机考试资料",
+    level: 2,
+    sortOrder: 40,
+    enabled: true,
+  },
+  {
+    id: "domain-university-competition",
+    parentId: "stage-university",
+    name: "竞赛",
+    description: "大学竞赛资料",
+    level: 2,
+    sortOrder: 50,
+    enabled: true,
+  },
+  {
+    id: "domain-university-postgraduate",
+    parentId: "stage-university",
+    name: "升学",
+    description: "考研及相关升学资料",
+    level: 2,
+    sortOrder: 60,
+    enabled: true,
+  },
+  {
+    id: "domain-university-planning",
+    parentId: "stage-university",
+    name: "规划",
+    description: "职业生涯规划资料",
+    level: 2,
+    sortOrder: 70,
+    enabled: true,
+  },
+  {
+    id: "domain-university-proof",
+    parentId: "stage-university",
+    name: "模板与证明",
+    description: "模板与证明资料，需单独审核",
+    level: 2,
+    sortOrder: 80,
+    enabled: true,
+  },
+  {
+    id: "domain-university-review",
+    parentId: "stage-university",
+    name: "复习资料",
+    description: "独立于专业课的复习资料域",
+    level: 2,
+    sortOrder: 90,
     enabled: true,
   },
 ];
@@ -97,11 +257,11 @@ export const validateCategories = (
   }
 
   for (const category of values) {
-    if (![1, 2, 3].includes(category.level)) {
+    if (!Number.isInteger(category.level) || category.level < 1) {
       issues.push({
         code: "invalid-level",
         categoryId: category.id,
-        message: `分类层级必须为 1、2 或 3：${category.id}`,
+        message: `分类层级必须为正整数：${category.id}`,
       });
       continue;
     }
@@ -214,7 +374,8 @@ export const getCategoryPath = (
     if (
       visited.has(current.id) ||
       duplicateIds.has(current.id) ||
-      ![1, 2, 3].includes(current.level)
+      !Number.isInteger(current.level) ||
+      current.level < 1
     ) return [];
     visited.add(current.id);
     path.unshift(current);

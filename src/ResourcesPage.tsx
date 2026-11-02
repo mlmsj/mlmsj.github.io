@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import {
   categories,
   getChildCategories,
@@ -46,7 +46,7 @@ export function ResourcesPage({
   );
   const [searchTerm, setSearchTerm] = useState(query);
   const [page, setPage] = useState(1);
-  const [mobileCategoryId, setMobileCategoryId] = useState<string | null>(null);
+  const [mobileCategoryPath, setMobileCategoryPath] = useState<string[]>([]);
   const [filterState, setFilterState] = useState(() =>
     parseResourceFilterState(window.location.search, categoryValues),
   );
@@ -57,6 +57,7 @@ export function ResourcesPage({
     setQuery(nextQuery);
     setSearchTerm(nextQuery);
     setPage(1);
+    setMobileCategoryPath([]);
   }, [categoryValues]);
 
   useEffect(() => {
@@ -126,8 +127,8 @@ export function ResourcesPage({
   const rootCategories = getChildCategories(null, categoryValues).filter(
     (category) => getEnabledCategoryPath(category.id, categoryValues).length > 0,
   );
-  const mobileCategory = mobileCategoryId
-    ? getEnabledCategoryPath(mobileCategoryId, categoryValues).at(-1) ?? null
+  const mobileCategory = mobileCategoryPath.length > 0
+    ? getEnabledCategoryPath(mobileCategoryPath[mobileCategoryPath.length - 1], categoryValues).at(-1) ?? null
     : null;
   const mobileChildren = mobileCategory
     ? getChildCategories(mobileCategory.id, categoryValues).filter(
@@ -151,21 +152,46 @@ export function ResourcesPage({
     if (!location) return;
     window.history.pushState({}, "", location);
     syncFromLocation();
-    setMobileCategoryId(null);
+    setMobileCategoryPath([]);
   };
 
   const browseMobileCategory = (category: Category) => {
     const children = getChildCategories(category.id, categoryValues).filter(
       (child) => getEnabledCategoryPath(child.id, categoryValues).length > 0,
     );
-    if (children.length > 0) setMobileCategoryId(category.id);
+    if (children.length > 0) {
+      setMobileCategoryPath([...mobileCategoryPath, category.id]);
+    }
     else selectResourceCategory(category);
   };
 
   const showAllOnMobile = () => {
-    setMobileCategoryId(null);
+    setMobileCategoryPath([]);
     clearFilter();
   };
+
+  function renderResourceDirectory(parentId: string | null): ReactNode {
+    return getChildCategories(parentId, categoryValues)
+      .filter(
+        (category) => getEnabledCategoryPath(category.id, categoryValues).length > 0,
+      )
+      .map((category) => (
+        <div
+          className={parentId === null ? "resource-directory-group" : "resource-directory-level"}
+          key={category.id}
+        >
+          {parentId === null && <strong>{category.name}</strong>}
+          <button
+            type="button"
+            className={filterState.category?.id === category.id ? "active" : ""}
+            onClick={() => selectResourceCategory(category)}
+          >
+            查看{category.name}全部资料
+          </button>
+          {renderResourceDirectory(category.id)}
+        </div>
+      ));
+  }
 
   return (
     <section className="page-section resource-page">
@@ -198,7 +224,10 @@ export function ResourcesPage({
       <div className="resource-mobile-directory" aria-label="移动端资料分类">
         <div className="resource-mobile-head">
           {mobileCategory ? (
-            <button type="button" onClick={() => setMobileCategoryId(mobileCategory.parentId)}>
+            <button
+              type="button"
+              onClick={() => setMobileCategoryPath(mobileCategoryPath.slice(0, -1))}
+            >
               ← 返回上一级
             </button>
           ) : <span>分类</span>}
@@ -238,43 +267,7 @@ export function ResourcesPage({
           >
             全部资料
           </button>
-          {rootCategories.map((root) => (
-            <div className="resource-directory-group" key={root.id}>
-              <strong>{root.name}</strong>
-              <button
-                type="button"
-                className={filterState.category?.id === root.id ? "active" : ""}
-                onClick={() => selectResourceCategory(root)}
-              >
-                查看{root.name}全部资料
-              </button>
-              {getChildCategories(root.id, categoryValues).filter(
-                (child) => getEnabledCategoryPath(child.id, categoryValues).length > 0,
-              ).map((child) => (
-                <div key={child.id}>
-                  <button
-                    type="button"
-                    className={filterState.category?.id === child.id ? "active" : ""}
-                    onClick={() => selectResourceCategory(child)}
-                  >
-                    查看{child.name}全部资料
-                  </button>
-                {getChildCategories(child.id, categoryValues).filter(
-                  (leaf) => getEnabledCategoryPath(leaf.id, categoryValues).length > 0,
-                ).map((leaf) => (
-                  <button
-                    className={filterState.category?.id === leaf.id ? "active" : ""}
-                    type="button"
-                    key={leaf.id}
-                    onClick={() => selectResourceCategory(leaf)}
-                  >
-                    {child.name} / {leaf.name}
-                  </button>
-                ))}
-                </div>
-              ))}
-            </div>
-          ))}
+          {renderResourceDirectory(null)}
         </aside>
 
         <div className="resource-results">
