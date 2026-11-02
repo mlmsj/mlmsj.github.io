@@ -38,4 +38,4 @@
 
 ## 旧服务兼容边界
 
-`src/legacyPublicCatalog.ts` 是保留的本地/服务模式兼容适配器，`vite.config.ts` 中的 `/api/public` 代理只面向本机开发服务 `127.0.0.1:3001`。它们没有被静态 Pages 生产入口导入，也不会随本候选的生产 bundle 成为资料目录数据源。公开静态站点使用本地构建的目录 manifest；旧适配器和开发代理不代表远端公开服务已经存在。
+`src/legacyPublicCatalog.ts` 仅保留类型兼容并 fail-closed；旧公开接口已停用。`vite.config.ts` 中的 `/api/public` 代理只面向本机开发服务 `127.0.0.1:3001`，不会成为静态 Pages 的资料目录数据源。公开静态站点使用构建前经过授权投影的目录 manifest；旧适配器和开发代理不代表远端公开服务已经存在。

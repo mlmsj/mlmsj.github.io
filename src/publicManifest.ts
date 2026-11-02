@@ -1,7 +1,7 @@
 import { categories, getEnabledCategoryPath, type Category } from "./categories";
 
 export const PUBLIC_MANIFEST_SCHEMA_VERSION = 1 as const;
-export const PUBLIC_MANIFEST_URL = `${import.meta.env.BASE_URL}data/manifest.v1.json`;
+export const PUBLIC_MANIFEST_URL = `${import.meta.env?.BASE_URL ?? "/"}data/manifest.v1.json`;
 export const PUBLIC_MANIFEST_FIELDS = ["schemaVersion", "generatedAt", "records"] as const;
 export const PUBLIC_MANIFEST_RECORD_FIELDS = [
   "id",
@@ -35,7 +35,8 @@ export type PublicManifestRecord = {
   title: string;
   categoryId: string;
   provider: PublicManifestProvider;
-  shareUrl: string;
+  /** Null means the metadata is public but the share entry is not. */
+  shareUrl: string | null;
   accessStatus: PublicAccessStatus;
   publishedAt: string;
   description?: string;
@@ -91,6 +92,7 @@ export type PublicManifestIssueCode =
   | "STATUS_FORBIDS_CHECKED_ON"
   | "INVALID_PUBLISHED_AT"
   | "INVALID_PASSCODE"
+  | "PASSCODE_WITHOUT_SHARE_URL"
   | "INVALID_FILE_TYPE"
   | "INVALID_SIZE_BYTES"
   | "PUBLIC_FIELD_LEAK";
@@ -290,7 +292,8 @@ export const validatePublicManifest = (
 
     if (
       !isProvider(provider) ||
-      !isAllowedPublicShareUrl(provider, rawRecord.shareUrl)
+      (rawRecord.shareUrl !== null &&
+        !isAllowedPublicShareUrl(provider, rawRecord.shareUrl))
     ) {
       issue(issues, `${path}.shareUrl`, "INVALID_SHARE_URL");
     }
@@ -336,6 +339,9 @@ export const validatePublicManifest = (
         hasControlCharacters(passcode))
     ) {
       issue(issues, `${path}.passcode`, "INVALID_PASSCODE");
+    }
+    if (hasOwn(rawRecord, "passcode") && rawRecord.shareUrl === null) {
+      issue(issues, `${path}.passcode`, "PASSCODE_WITHOUT_SHARE_URL");
     }
 
     const fileType = rawRecord.fileType;

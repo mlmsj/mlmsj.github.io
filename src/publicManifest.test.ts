@@ -148,6 +148,22 @@ describe("public manifest contract", () => {
     ).toBe(true);
   });
 
+  it("accepts metadata-only records but rejects a passcode without a link", () => {
+    const { passcode: _passcode, ...metadataOnlyRecord } = validRecord;
+    expect(
+      validatePublicManifest({
+        ...validManifest(),
+        records: [{ ...metadataOnlyRecord, shareUrl: null }],
+      }).ok,
+    ).toBe(true);
+    expect(
+      codes({
+        ...validManifest(),
+        records: [{ ...validRecord, shareUrl: null }],
+      }),
+    ).toContain("PASSCODE_WITHOUT_SHARE_URL");
+  });
+
   it("rejects every missing required field and invalid enum value", () => {
     const required = [
       "id",
@@ -238,11 +254,13 @@ describe("public manifest contract", () => {
     expect(parsed.records.every((record) =>
       getEnabledCategoryPath(record.categoryId).length > 0,
     )).toBe(true);
-    const approvedRecords = parsed.records.filter((record) =>
-      record.id === "university-series-001",
+    expect(parsed.records).toHaveLength(13);
+    expect(parsed.records.every((record) => record.shareUrl !== null)).toBe(true);
+    expect(parsed.records.some((record) => record.id === "university-series-001")).toBe(false);
+    expect(parsed.records.some((record) => record.id === "university-quark-english-contest-001")).toBe(false);
+    const approved = parsed.records.find((record) =>
+      record.id === "university-quark-math-advanced-001",
     );
-    expect(approvedRecords.length).toBe(1);
-    const approved = approvedRecords[0];
     expect({
       id: approved?.id,
       title: approved?.title,
@@ -254,8 +272,8 @@ describe("public manifest contract", () => {
       hasValidCheckedOn: typeof approved?.checkedOn === "string" &&
         Number.isFinite(Date.parse(approved.checkedOn)),
     }).toEqual({
-      id: "university-series-001",
-      title: "大学系列",
+      id: "university-quark-math-advanced-001",
+      title: "同济高等数学（第七版）",
       categoryId: "stage-university",
       provider: "quark",
       accessStatus: "verified",

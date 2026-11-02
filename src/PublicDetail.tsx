@@ -29,7 +29,9 @@ export function PublicDeliveryPanel({ resource }: { resource: Resource }) {
   }
 
   const accessLabel = getResourceAccessLabel(resource);
-  const accessMessage = getResourceAccessMessage(resource);
+  const accessMessage = delivery.shareUrl === null
+    ? "资料信息已公开，但当前分享入口未授权公开。"
+    : getResourceAccessMessage(resource);
   const canOpen = canOpenPublicShare(resource);
   const copyPasscode = async () => {
     if (!delivery.passcode) return;

@@ -207,6 +207,24 @@ describe("static public manifest catalog", () => {
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
   });
 
+  it("keeps authorized metadata visible while withholding an unauthorized link and passcode", () => {
+    const recordWithoutLink = Object.fromEntries(
+      Object.entries(syntheticRecord).filter(([key]) => key !== "passcode"),
+    ) as unknown as PublicManifestRecord;
+    const resource = mapManifestRecordToResource({
+      ...recordWithoutLink,
+      shareUrl: null,
+    });
+
+    expect(resource.delivery?.shareUrl).toBeNull();
+    expect(resource.delivery?.passcode).toBeUndefined();
+    expect(canOpenPublicShare(resource)).toBe(false);
+    render(<PublicDeliveryPanel resource={resource} />);
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "复制提取码" })).not.toBeInTheDocument();
+    expect(screen.getByText("资料信息已公开，但当前分享入口未授权公开。")).toBeVisible();
+  });
+
   it("searches and filters only verified resources in the browser", () => {
     const resource = mapManifestRecordToResource(syntheticRecord);
     const unchecked = mapManifestRecordToResource({

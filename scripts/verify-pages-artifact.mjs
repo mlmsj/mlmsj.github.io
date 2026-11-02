@@ -140,10 +140,16 @@ if (manifest) {
       } else if (!RELEASEABLE_ACCESS_STATUSES.has(record.accessStatus)) {
         errors.push(`manifest record ${index + 1} is not releaseable: accessStatus=${String(record.accessStatus)}`);
       } else {
-        for (const field of ["id", "title", "categoryId", "provider", "shareUrl", "publishedAt"]) {
+        for (const field of ["id", "title", "categoryId", "provider", "publishedAt"]) {
           if (typeof record[field] !== "string" || record[field].trim() === "") {
             errors.push(`manifest record ${index + 1} is missing a valid ${field}`);
           }
+        }
+        if (record.shareUrl !== null && (typeof record.shareUrl !== "string" || record.shareUrl.trim() === "")) {
+          errors.push(`manifest record ${index + 1} has an invalid shareUrl`);
+        }
+        if (record.shareUrl === null && Object.prototype.hasOwnProperty.call(record, "passcode")) {
+          errors.push(`manifest record ${index + 1} exposes a passcode without a shareUrl`);
         }
         if (!new Set(["quark", "baidu"]).has(record.provider)) {
           errors.push(`manifest record ${index + 1} has an unsupported provider`);

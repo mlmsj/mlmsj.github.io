@@ -17,7 +17,11 @@ export const isPublishedPublicResource = (
   }
 
   const delivery = resource.delivery;
-  if (!delivery || !isAllowedPublicShareUrl(delivery.provider, delivery.shareUrl)) {
+  if (
+    !delivery ||
+    (delivery.shareUrl !== null &&
+      !isAllowedPublicShareUrl(delivery.provider, delivery.shareUrl))
+  ) {
     return false;
   }
 

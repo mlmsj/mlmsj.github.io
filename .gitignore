@@ -44,3 +44,6 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+# B2-3 local source input contains access-bearing historical share URLs.
+scripts/input/manifest.v1.source.json
