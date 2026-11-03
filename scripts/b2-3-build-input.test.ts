@@ -9,14 +9,15 @@ import {
 const root = resolve(import.meta.dirname, "..");
 
 describe("B2-3 controlled source input", () => {
-  it("uses the committed fixture by default and preserves 26 IDs without hold links", () => {
+  it("uses the committed fixture and preserves the 26-record baseline plus five approved high-school records", () => {
     expect(resolveB2SourceManifestPath(root)).toBe(
       resolve(root, B2_DEFAULT_SOURCE_MANIFEST),
     );
     const { manifest } = readB2SourceManifest(root);
-    expect(manifest.records).toHaveLength(26);
+    expect(manifest.records).toHaveLength(31);
     expect(manifest.records.filter((record) => record.shareUrl === null)).toHaveLength(13);
-    expect(manifest.records.filter((record) => record.shareUrl !== null)).toHaveLength(13);
+    expect(manifest.records.filter((record) => record.shareUrl !== null)).toHaveLength(18);
+    expect(manifest.records.filter((record) => record.categoryId === "exam-senior-gaokao")).toHaveLength(5);
   });
 
   it("rejects public manifest paths instead of falling back to them", () => {

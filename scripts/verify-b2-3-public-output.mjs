@@ -33,6 +33,11 @@ const APPROVED_IDS = new Set([
   "university-quark-career-ppt-001",
   "university-quark-resume-templates-001",
   "university-quark-biochemistry-001",
+  "hs-gaokao-2024-new-standard-1-001",
+  "hs-gaokao-2024-new-standard-2-002",
+  "hs-gaokao-2024-national-jia-003",
+  "hs-gaokao-2025-national-1-004",
+  "hs-gaokao-2025-national-2-005",
 ]);
 
 const readJson = async (filePath) => JSON.parse(await readFile(filePath, "utf8"));

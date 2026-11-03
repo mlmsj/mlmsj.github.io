@@ -27,6 +27,20 @@ describe("category data contract", () => {
     );
   });
 
+  it("exposes the approved senior exam path to category navigation", () => {
+    expect(getChildCategories("stage-senior").map(({ id }) => id)).toEqual([
+      "domain-senior-exams",
+    ]);
+    expect(getChildCategories("domain-senior-exams").map(({ id }) => id)).toEqual([
+      "exam-senior-gaokao",
+    ]);
+    expect(getEnabledCategoryPath("exam-senior-gaokao").map(({ id }) => id)).toEqual([
+      "stage-senior",
+      "domain-senior-exams",
+      "exam-senior-gaokao",
+    ]);
+  });
+
   it("rejects duplicate IDs, invalid parents, cycles, and invalid levels", () => {
     const invalid: Category[] = [
       root,

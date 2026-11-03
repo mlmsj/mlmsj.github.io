@@ -89,6 +89,8 @@ describe("static public manifest catalog", () => {
       "domain-junior-subjects": 0,
       "domain-junior-sprint": 0,
       "stage-senior": 0,
+      "domain-senior-exams": 0,
+      "exam-senior-gaokao": 0,
       "stage-university": 1,
       "domain-university-major": 0,
       "domain-university-politics": 0,

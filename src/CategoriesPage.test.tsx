@@ -31,7 +31,11 @@ describe("CategoriesPage", () => {
 
     fireEvent.click(within(sidebar).getByRole("button", { name: /高中/ }));
     expect(window.location.search).toBe("?category=stage-senior");
-    expect(within(desktop).getByText("暂无下级分类")).toBeVisible();
+    fireEvent.click(within(desktop).getByRole("button", { name: /考试资料/ }));
+    expect(window.location.search).toBe(
+      "?category=stage-senior&subject=domain-senior-exams",
+    );
+    expect(within(desktop).getByRole("link", { name: /高考真题/ })).toBeVisible();
 
     fireEvent.click(within(sidebar).getByRole("button", { name: /初中/ }));
     fireEvent.click(within(desktop).getByRole("button", { name: /数学/ }));
@@ -79,13 +83,16 @@ describe("CategoriesPage", () => {
     );
     renderPage();
     const desktop = screen.getByTestId("category-desktop");
+    const sidebar = within(desktop).getByRole("complementary", {
+      name: "一级分类",
+    });
     expect(within(desktop).getByText("知识点整理")).toBeVisible();
 
     window.history.pushState({}, "", "/categories?category=stage-senior");
     fireEvent.popState(window);
 
-    expect(within(desktop).getByText("暂无下级分类")).toBeVisible();
-    expect(within(desktop).getByRole("button", { name: /高中/ })).toHaveAttribute(
+    expect(within(desktop).getByRole("button", { name: /考试资料/ })).toBeVisible();
+    expect(within(sidebar).getByRole("button", { name: /高中/ })).toHaveAttribute(
       "aria-current",
       "true",
     );

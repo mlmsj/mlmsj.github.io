@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-29T04:15:45.540Z",
+  "generatedAt": "2026-11-03T15:53:50+08:00",
   "records": [
     {
       "id": "university-series-001",
@@ -313,6 +313,71 @@
       "fileType": "application/pdf",
       "sizeBytes": 70054065,
       "shareUrl": null
+    },
+    {
+      "id": "hs-gaokao-2024-new-standard-1-001",
+      "title": "2024高考真题｜新课标Ⅰ卷",
+      "description": "2024 年新课标Ⅰ卷高考真题资料。",
+      "categoryId": "exam-senior-gaokao",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/00f7d59d8647",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-03",
+      "publishedAt": "2026-11-03T15:53:50+08:00",
+      "fileType": "PDF/Word",
+      "sizeBytes": 19681512
+    },
+    {
+      "id": "hs-gaokao-2024-new-standard-2-002",
+      "title": "2024高考真题｜新课标Ⅱ卷",
+      "description": "2024 年新课标Ⅱ卷高考真题资料。",
+      "categoryId": "exam-senior-gaokao",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/e30745eef684",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-03",
+      "publishedAt": "2026-11-03T15:53:50+08:00",
+      "fileType": "PDF/Word",
+      "sizeBytes": 2398717
+    },
+    {
+      "id": "hs-gaokao-2024-national-jia-003",
+      "title": "2024高考真题｜全国甲卷",
+      "description": "2024 年全国甲卷高考真题资料。",
+      "categoryId": "exam-senior-gaokao",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/f079cabcc07f",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-03",
+      "publishedAt": "2026-11-03T15:53:50+08:00",
+      "fileType": "Word",
+      "sizeBytes": 2860622
+    },
+    {
+      "id": "hs-gaokao-2025-national-1-004",
+      "title": "2025高考真题｜全国一卷",
+      "description": "2025 年全国一卷高考真题资料。",
+      "categoryId": "exam-senior-gaokao",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/daf0d8710fbf",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-03",
+      "publishedAt": "2026-11-03T15:53:50+08:00",
+      "fileType": "PDF",
+      "sizeBytes": 4772969
+    },
+    {
+      "id": "hs-gaokao-2025-national-2-005",
+      "title": "2025高考真题｜全国二卷",
+      "description": "2025 年全国二卷高考真题资料。",
+      "categoryId": "exam-senior-gaokao",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/8721309bb7d3",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-03",
+      "publishedAt": "2026-11-03T15:53:50+08:00",
+      "fileType": "PDF",
+      "sizeBytes": 3704453
     }
   ]
 }

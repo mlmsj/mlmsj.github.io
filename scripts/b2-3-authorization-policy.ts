@@ -7,8 +7,10 @@ import type { PublicProjectionPolicy } from "../src/publicProjection";
 
 /**
  * The owner authorization record explicitly covers these 13 independent
- * candidates. UFB-016 is intentionally absent: its rights authorization is
- * recorded, but its inclusion in the strict-v2 source scope remains on hold.
+ * university candidates. UFB-016 is intentionally absent: its rights
+ * authorization is recorded, but its inclusion in the strict-v2 source scope
+ * remains on hold. The five high-school candidates are registered separately
+ * below with their exact Delivery identities from the private release gate.
  */
 export const B2_3_APPROVED_RESOURCE_IDS = [
   "university-quark-math-advanced-001",
@@ -41,6 +43,37 @@ export const B2_3_RESOURCE_TO_UFB = new Map<string, string>([
   ["university-quark-resume-templates-001", "UFB-013"],
   ["university-quark-biochemistry-001", "UFB-015"],
   ["university-quark-english-contest-001", "UFB-016"],
+]);
+
+export const HS_FIRST_BATCH_5_APPROVED_RESOURCE_IDS = [
+  "hs-gaokao-2024-new-standard-1-001",
+  "hs-gaokao-2024-new-standard-2-002",
+  "hs-gaokao-2024-national-jia-003",
+  "hs-gaokao-2025-national-1-004",
+  "hs-gaokao-2025-national-2-005",
+] as const;
+
+export const HS_FIRST_BATCH_5_DELIVERY_IDS = new Map<string, string>([
+  [
+    "hs-gaokao-2024-new-standard-1-001",
+    "dlv-hs-gaokao-2024-new-standard-1-001-quark-01",
+  ],
+  [
+    "hs-gaokao-2024-new-standard-2-002",
+    "dlv-hs-gaokao-2024-new-standard-2-002-quark-01",
+  ],
+  [
+    "hs-gaokao-2024-national-jia-003",
+    "dlv-hs-gaokao-2024-national-jia-003-quark-01",
+  ],
+  [
+    "hs-gaokao-2025-national-1-004",
+    "dlv-hs-gaokao-2025-national-1-004-quark-01",
+  ],
+  [
+    "hs-gaokao-2025-national-2-005",
+    "dlv-hs-gaokao-2025-national-2-005-quark-01",
+  ],
 ]);
 
 export const B2_3_CONTEXT: AuthorizationContext = {
@@ -87,14 +120,52 @@ const evidenceFor = (resourceId: string): readonly AuthorizationEvidence[] => {
 };
 
 export const B2_3_POLICIES = new Map<string, PublicProjectionPolicy>(
-  B2_3_APPROVED_RESOURCE_IDS.map((resourceId) => [
-    resourceId,
-    {
-      deliveryId: deliveryIdFor(resourceId),
-      browseState: "observed",
-      evidence: evidenceFor(resourceId),
-    },
-  ]),
+  [
+    ...B2_3_APPROVED_RESOURCE_IDS.map((resourceId) => [
+      resourceId,
+      {
+        deliveryId: deliveryIdFor(resourceId),
+        browseState: "observed",
+        evidence: evidenceFor(resourceId),
+      },
+    ] as const),
+    ...HS_FIRST_BATCH_5_APPROVED_RESOURCE_IDS.map((resourceId) => {
+      const deliveryId = HS_FIRST_BATCH_5_DELIVERY_IDS.get(resourceId);
+      if (!deliveryId) throw new Error(`Missing high-school Delivery ID: ${resourceId}`);
+      return [
+        resourceId,
+        {
+          deliveryId,
+          browseState: "observed",
+          evidence: [
+            {
+              evidenceId: `auth-${resourceId}-resource-01`,
+              subjectType: "resource",
+              resourceId,
+              actionScope: ["display_metadata", "expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: "HS-FIRST-BATCH-5-SHARE-E2E-2",
+              reviewedAt: "2026-11-03T15:53:50+08:00",
+            },
+            {
+              evidenceId: `auth-${resourceId}-delivery-01`,
+              subjectType: "delivery",
+              resourceId,
+              deliveryId,
+              actionScope: ["expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: "HS-FIRST-BATCH-5-SHARE-E2E-2",
+              reviewedAt: "2026-11-03T15:53:50+08:00",
+            },
+          ],
+        },
+      ] as const;
+    }),
+  ],
 );
 
 export const B2_3_HOLD_REASONS = new Map<string, string>([

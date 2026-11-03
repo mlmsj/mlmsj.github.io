@@ -16,6 +16,7 @@
     "verify:pages": "node scripts/verify-pages-artifact.mjs",
     "verify:pages:fallback": "node scripts/verify-pages-fallback.mjs",
     "verify:b2-3:public": "node scripts/verify-b2-3-public-output.mjs",
+    "verify:hs-first-batch": "node scripts/verify-hs-first-batch-integration.mjs",
     "verify:pdf-text": "tsx scripts/verify-pdf-text.ts",
     "verify:a33a": "tsx scripts/verify-async-guard.ts"
   },
