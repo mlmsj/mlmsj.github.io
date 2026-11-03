@@ -6,7 +6,7 @@
 
 - 源 manifest：`scripts/input/manifest.v1.source.json`，只作为本地构建输入；不进入 `dist/`。
 - 授权依据：`docs/OWNER-AUTHORIZATION-20261101.md`、`docs/UNIVERSITY-FIRST-BATCH-AUTHORIZATION.md`、`docs/UNIVERSITY-FIRST-BATCH-CANDIDATES.md`。
-- 既有候选身份/访问交叉证据：`D:\Zhaowenguan-Imports\UNIVERSITY-BULK-PUBLISH-1-20261029\CANDIDATE-REPORT.md`；本轮不重新访问网盘。
+- 既有候选身份/访问交叉证据：已在隔离审计材料中记录；本轮不重新访问网盘。
 - v1 manifest 没有原始 `deliveryId`。本地为 13 条获批准独立记录建立 `v1-primary:<resourceId>` 兼容身份；它不是 URL、FID、提取码或原始网盘标识。
 - 访问 `verified`、历史 `published` 和分享可达性均未被当作授权依据。
 

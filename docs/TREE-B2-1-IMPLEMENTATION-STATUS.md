@@ -1,7 +1,7 @@
 # 昭文馆 V2｜TREE-B2-1 大学首批上架准备状态
 
 状态：`OWNER_AUTHORIZED_RELEASE_CANDIDATE`
-工作区：`D:\Zhaowenguan-Imports\TREE-B2-1-IMPLEMENTATION-20261101`
+工作区：隔离发布工作区（不进入公开产物）
 基线：detached `a5ba28ce`（已发布大学批次的只读源码基线）
 
 ## 1. 本轮已完成
