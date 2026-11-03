@@ -8,9 +8,9 @@
 
 | 项目 | 结果 |
 |---|---|
-| 最新 B2-3 发布候选基线 | `D:\Zhaowenguan-Imports\TREE-B2-2-IMPLEMENTATION-20261101`，HEAD `64bac49`；生产公开 manifest 13 条 |
-| 隔离高中预览 | `D:\Zhaowenguan-Imports\HS-FIRST-BATCH-5-E2E-PREVIEW-20261103`；预览 manifest 5 条 |
-| 本次候选 | `D:\Zhaowenguan-Imports\HS-FIRST-BATCH-5-RELEASE-INTEGRATION-20261103` |
+| 最新 B2-3 发布候选基线 | 隔离候选工作区，HEAD `64bac49`；生产公开 manifest 13 条 |
+| 隔离高中预览 | 隔离预览工作区；预览 manifest 5 条 |
+| 本次候选 | 隔离整合工作区 |
 | 网盘扫描 | 未执行；只读取既有 Registry/manifest，并对 5 个已给 Delivery 入口做逐条可达性检查 |
 | 生产 manifest | 未覆盖；基线工作树和主工作区均未被本任务写入 |
 
