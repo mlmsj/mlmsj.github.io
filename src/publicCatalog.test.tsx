@@ -82,8 +82,25 @@ describe("static public manifest catalog", () => {
     await screen.findByText("ready");
     expect(JSON.parse(screen.getByTestId("catalog-counts").textContent ?? "{}")).toEqual({
       "stage-junior": 3,
+      "domain-junior-textbooks": 0,
+      "domain-junior-workbooks": 0,
+      "domain-junior-exams": 0,
+      "domain-junior-courses": 0,
+      "domain-junior-subjects": 0,
+      "domain-junior-sprint": 0,
       "stage-senior": 0,
+      "domain-senior-exams": 0,
+      "exam-senior-gaokao": 0,
       "stage-university": 1,
+      "domain-university-major": 0,
+      "domain-university-politics": 0,
+      "domain-university-english-exam": 0,
+      "domain-university-computer-exam": 0,
+      "domain-university-competition": 0,
+      "domain-university-postgraduate": 0,
+      "domain-university-planning": 0,
+      "domain-university-proof": 0,
+      "domain-university-review": 0,
       "purpose-certification": 0,
       "subject-junior-math": 2,
       "type-junior-math-notes": 1,
@@ -190,6 +207,24 @@ describe("static public manifest catalog", () => {
     expect(canOpenPublicShare(resource)).toBe(false);
     render(<PublicDeliveryPanel resource={resource} />);
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  });
+
+  it("keeps authorized metadata visible while withholding an unauthorized link and passcode", () => {
+    const recordWithoutLink = Object.fromEntries(
+      Object.entries(syntheticRecord).filter(([key]) => key !== "passcode"),
+    ) as unknown as PublicManifestRecord;
+    const resource = mapManifestRecordToResource({
+      ...recordWithoutLink,
+      shareUrl: null,
+    });
+
+    expect(resource.delivery?.shareUrl).toBeNull();
+    expect(resource.delivery?.passcode).toBeUndefined();
+    expect(canOpenPublicShare(resource)).toBe(false);
+    render(<PublicDeliveryPanel resource={resource} />);
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "复制提取码" })).not.toBeInTheDocument();
+    expect(screen.getByText("资料信息已公开，但当前分享入口未授权公开。")).toBeVisible();
   });
 
   it("searches and filters only verified resources in the browser", () => {

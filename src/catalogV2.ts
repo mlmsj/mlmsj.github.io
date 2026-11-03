@@ -1,4 +1,9 @@
-import type { Category, CategoryLevel } from "./categories";
+import {
+  categories,
+  UNIVERSITY_DOMAIN_IDS,
+  type Category,
+  type CategoryLevel,
+} from "./categories";
 import {
   isAllowedPublicShareUrl,
   type PublicAccessStatus,
@@ -25,116 +30,31 @@ export type CategoryV2 = {
   legacyLevel?: CategoryLevel;
 };
 
-export const UNIVERSITY_DOMAIN_IDS = [
-  "domain-university-major",
-  "domain-university-politics",
-  "domain-university-english-exam",
-  "domain-university-computer-exam",
-  "domain-university-competition",
-  "domain-university-postgraduate",
-  "domain-university-planning",
-  "domain-university-proof",
-  "domain-university-review",
-] as const;
-
-export type UniversityDomainId = (typeof UNIVERSITY_DOMAIN_IDS)[number];
+export { UNIVERSITY_DOMAIN_IDS };
+export type { UniversityDomainId } from "./categories";
 
 /**
- * The approved university domain layer is an internal v2 design projection.
- * It is intentionally not added to the v1 categories array or manifest.
+ * The approved university domain layer is exposed here as the existing v2
+ * projection, while the canonical data now lives in the formal v1 category
+ * table. This projection does not alter the v1 manifest or activate the v2
+ * authorization gate.
  */
-export const UNIVERSITY_DOMAIN_CATEGORIES: readonly CategoryV2[] = [
-  {
-    id: "stage-university",
-    parentId: null,
-    name: "大学",
-    description: "大学课程与考试资料",
-    sortOrder: 30,
-    lifecycleStatus: "active",
-    legacyLevel: 1,
-  },
-  {
-    id: "domain-university-major",
-    parentId: "stage-university",
-    name: "专业课",
-    description: "大学专业课、数学与教材语义",
-    sortOrder: 10,
-    lifecycleStatus: "active",
-    legacyLevel: 2,
-  },
-  {
-    id: "domain-university-politics",
-    parentId: "stage-university",
-    name: "思政",
-    description: "大学思政课程资料",
-    sortOrder: 20,
-    lifecycleStatus: "active",
-    legacyLevel: 2,
-  },
-  {
-    id: "domain-university-english-exam",
-    parentId: "stage-university",
-    name: "英语考试",
-    description: "四六级、雅思及相关考试资料",
-    sortOrder: 30,
-    lifecycleStatus: "active",
-    legacyLevel: 2,
-  },
-  {
-    id: "domain-university-computer-exam",
-    parentId: "stage-university",
-    name: "计算机考试",
-    description: "大学计算机考试资料",
-    sortOrder: 40,
-    lifecycleStatus: "active",
-    legacyLevel: 2,
-  },
-  {
-    id: "domain-university-competition",
-    parentId: "stage-university",
-    name: "竞赛",
-    description: "大学竞赛资料",
-    sortOrder: 50,
-    lifecycleStatus: "active",
-    legacyLevel: 2,
-  },
-  {
-    id: "domain-university-postgraduate",
-    parentId: "stage-university",
-    name: "升学",
-    description: "考研及相关升学资料",
-    sortOrder: 60,
-    lifecycleStatus: "active",
-    legacyLevel: 2,
-  },
-  {
-    id: "domain-university-planning",
-    parentId: "stage-university",
-    name: "规划",
-    description: "职业生涯规划资料",
-    sortOrder: 70,
-    lifecycleStatus: "active",
-    legacyLevel: 2,
-  },
-  {
-    id: "domain-university-proof",
-    parentId: "stage-university",
-    name: "模板与证明",
-    description: "模板与证明资料，需单独审核",
-    sortOrder: 80,
-    lifecycleStatus: "active",
-    legacyLevel: 2,
-  },
-  {
-    id: "domain-university-review",
-    parentId: "stage-university",
-    name: "复习资料",
-    description: "独立于专业课的复习资料域",
-    sortOrder: 90,
-    lifecycleStatus: "active",
-    legacyLevel: 2,
-  },
-];
+const UNIVERSITY_DOMAIN_CATEGORY_IDS = new Set<string>([
+  "stage-university",
+  ...UNIVERSITY_DOMAIN_IDS,
+]);
+
+export const UNIVERSITY_DOMAIN_CATEGORIES: readonly CategoryV2[] = categories
+  .filter((category) => UNIVERSITY_DOMAIN_CATEGORY_IDS.has(category.id))
+  .map((category) => ({
+    id: category.id,
+    parentId: category.parentId,
+    name: category.name,
+    description: category.description,
+    sortOrder: category.sortOrder,
+    lifecycleStatus: category.enabled ? "active" : "disabled",
+    legacyLevel: category.level,
+  }));
 
 export type CategoryGraphIssue = {
   code:

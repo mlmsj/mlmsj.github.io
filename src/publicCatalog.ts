@@ -71,7 +71,9 @@ export const mapManifestRecordToResource = (
     delivery: {
       provider: record.provider,
       shareUrl,
-      ...(record.passcode === undefined ? {} : { passcode: record.passcode }),
+      ...(record.shareUrl !== null && record.passcode !== undefined
+        ? { passcode: record.passcode }
+        : {}),
       accessStatus: record.accessStatus,
       checkedOn: record.checkedOn ?? null,
     },
@@ -113,7 +115,13 @@ export const getResourceAccessMessage = (resource: Resource) => {
 };
 
 export const canOpenPublicShare = (resource: Resource) => {
-  return isPublishedPublicResource(resource);
+  if (!isPublishedPublicResource(resource)) return false;
+  const delivery = resource.delivery;
+  return Boolean(
+    delivery &&
+      delivery.accessStatus === "verified" &&
+      isAllowedPublicShareUrl(delivery.provider, delivery.shareUrl),
+  );
 };
 
 const buildCategoryCounts = (

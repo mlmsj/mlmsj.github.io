@@ -6,6 +6,15 @@ import path from "node:path";
 const BASE_PATH = "/";
 const RELEASE_SCOPE = "student-static-only";
 const RELEASEABLE_ACCESS_STATUSES = new Set(["verified", "withdrawn"]);
+const PROVENANCE_FIELDS = new Set([
+  "schemaVersion",
+  "kind",
+  "sourceRecordCount",
+  "publicRecordCount",
+  "omittedRecordCount",
+  "publicManifestSha256",
+  "generatedAt",
+]);
 const FORBIDDEN_MANIFEST_FIELD = /(?:fid|passcode|token|cookie|password|secret|credential|audit|source[_-]?path|raw[_-]?path|admin|server)/i;
 const args = process.argv.slice(2);
 const distArgument = args.find((argument) => !argument.startsWith("--")) ?? "dist";
@@ -85,10 +94,11 @@ if (!(await fileExists(distRoot))) {
 const indexPath = path.join(distRoot, "index.html");
 const fallbackPath = path.join(distRoot, "404.html");
 const manifestPath = path.join(distRoot, "data", "manifest.v1.json");
+const provenancePath = path.join(distRoot, "b2-3-provenance.json");
 const indexHtml = await fileExists(indexPath) ? await readFile(indexPath, "utf8") : "";
 const fallbackHtml = await fileExists(fallbackPath) ? await readFile(fallbackPath, "utf8") : "";
 
-for (const requiredPath of [indexPath, fallbackPath, manifestPath]) {
+for (const requiredPath of [indexPath, fallbackPath, manifestPath, provenancePath]) {
   if (!(await fileExists(requiredPath))) {
     errors.push(`missing required artifact file: ${relativePath(requiredPath)}`);
   }
@@ -127,6 +137,7 @@ if (fallbackHtml) {
 }
 
 const manifest = await readJson(manifestPath, "data/manifest.v1.json");
+const provenance = await readJson(provenancePath, "b2-3-provenance.json");
 if (manifest) {
   if (manifest.schemaVersion !== 1) {
     errors.push("manifest schemaVersion must be 1");
@@ -140,10 +151,16 @@ if (manifest) {
       } else if (!RELEASEABLE_ACCESS_STATUSES.has(record.accessStatus)) {
         errors.push(`manifest record ${index + 1} is not releaseable: accessStatus=${String(record.accessStatus)}`);
       } else {
-        for (const field of ["id", "title", "categoryId", "provider", "shareUrl", "publishedAt"]) {
+        for (const field of ["id", "title", "categoryId", "provider", "publishedAt"]) {
           if (typeof record[field] !== "string" || record[field].trim() === "") {
             errors.push(`manifest record ${index + 1} is missing a valid ${field}`);
           }
+        }
+        if (record.shareUrl !== null && (typeof record.shareUrl !== "string" || record.shareUrl.trim() === "")) {
+          errors.push(`manifest record ${index + 1} has an invalid shareUrl`);
+        }
+        if (record.shareUrl === null && Object.prototype.hasOwnProperty.call(record, "passcode")) {
+          errors.push(`manifest record ${index + 1} exposes a passcode without a shareUrl`);
         }
         if (!new Set(["quark", "baidu"]).has(record.provider)) {
           errors.push(`manifest record ${index + 1} has an unsupported provider`);
@@ -163,6 +180,48 @@ if (manifest) {
       }
     });
     inspectManifestKeys(manifest);
+  }
+}
+
+if (provenance) {
+  for (const key of Object.keys(provenance)) {
+    if (!PROVENANCE_FIELDS.has(key)) {
+      errors.push(`provenance contains an unexpected field: ${key}`);
+    }
+  }
+  if (provenance.schemaVersion !== 1) {
+    errors.push("provenance schemaVersion must be 1");
+  }
+  if (provenance.kind !== "b2-3-public-projection") {
+    errors.push("provenance kind must be b2-3-public-projection");
+  }
+  if (
+    !Number.isInteger(provenance.sourceRecordCount) ||
+    !Number.isInteger(provenance.publicRecordCount) ||
+    !Number.isInteger(provenance.omittedRecordCount) ||
+    provenance.sourceRecordCount < provenance.publicRecordCount ||
+    provenance.omittedRecordCount !==
+      provenance.sourceRecordCount - provenance.publicRecordCount
+  ) {
+    errors.push("provenance record counts are invalid");
+  }
+  if (
+    typeof provenance.publicManifestSha256 !== "string" ||
+    !/^[0-9a-f]{64}$/i.test(provenance.publicManifestSha256)
+  ) {
+    errors.push("provenance publicManifestSha256 is invalid");
+  } else if (await fileExists(manifestPath)) {
+    const manifestBytesForProvenance = await readFile(manifestPath);
+    if (sha256(manifestBytesForProvenance) !== provenance.publicManifestSha256) {
+      errors.push("provenance does not match data/manifest.v1.json");
+    }
+  }
+  if (
+    manifest &&
+    Array.isArray(manifest.records) &&
+    provenance.publicRecordCount !== manifest.records.length
+  ) {
+    errors.push("provenance publicRecordCount does not match manifest");
   }
 }
 

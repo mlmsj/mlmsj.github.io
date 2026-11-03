@@ -2,9 +2,9 @@ import { getCategoryPath } from "./categories";
 import type { Resource } from "./resources";
 
 /**
- * Legacy server response adapter. It is intentionally isolated from the
- * student-facing static catalog so the old API cannot become a second public
- * data source or be bundled into the static page entry.
+ * Legacy server response adapter. It remains isolated from the student-facing
+ * static catalog and is fail-closed so an old API cannot become a second
+ * public data source or bypass the authorization projection.
  */
 export type PublicRecord = {
   id: string;
@@ -17,7 +17,7 @@ export type PublicRecord = {
   sourceLabel: string | null;
 };
 
-/** @deprecated Keep only for local/server-mode compatibility. */
+/** @deprecated Legacy records have no authorization evidence; keep them private. */
 export const toResource = (record: PublicRecord): Resource => ({
   id: record.id,
   title: record.title,
@@ -26,40 +26,21 @@ export const toResource = (record: PublicRecord): Resource => ({
   meta: record.publishedAt.slice(0, 10),
   tag: getCategoryPath(record.categoryId).map((category) => category.name).join(" / "),
   classificationStatus: "classified",
-  publicationStatus: "published",
-  isPubliclyAccessible: true,
+  publicationStatus: "draft",
+  isPubliclyAccessible: false,
   publishedAt: record.publishedAt,
   ...(record.fileType ? { fileType: record.fileType } : {}),
   ...(record.sizeBytes === null ? {} : { sizeBytes: record.sizeBytes }),
 });
 
-/** @deprecated Keep only for local/server-mode compatibility. */
+/** @deprecated The legacy public endpoint is disabled; use the gated static manifest. */
 export async function readPublic(
   path: string,
   signal?: AbortSignal,
   timeoutMs = 15_000,
 ) {
-  let response: Response;
-  try {
-    response = await fetch(`/api/public/resources${path}`, {
-      cache: "no-store",
-      credentials: "omit",
-      signal: AbortSignal.any([
-        ...(signal ? [signal] : []),
-        AbortSignal.timeout(timeoutMs),
-      ]),
-    });
-  } catch {
-    throw new Error("公开资料服务暂不可用，请重试。");
-  }
-  if (!response.ok) {
-    throw new Error(
-      response.status === 404
-        ? "资料不存在、未发布或已撤回。"
-        : "公开资料服务暂不可用，请重试。",
-    );
-  }
-  return response.json().catch(() => {
-    throw new Error("公开资料服务暂不可用，请重试。");
-  });
+  void path;
+  void signal;
+  void timeoutMs;
+  throw new Error("旧公开接口已停用，请使用经过授权投影的静态资料清单。");
 }

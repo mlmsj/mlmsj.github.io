@@ -72,6 +72,15 @@ describe("public resources and recursive category counts", () => {
     }
   });
 
+  it("keeps metadata-only resources visible without exposing a link", () => {
+    const metadataOnly = resource("metadata-only", leaf.id);
+    metadataOnly.delivery = { ...verifiedDelivery, shareUrl: null };
+    expect(isPublishedPublicResource(metadataOnly, values)).toBe(true);
+    expect(
+      getPublishedResourcesForCategory(leaf.id, values, [metadataOnly]),
+    ).toEqual([metadataOnly]);
+  });
+
   it("denies unknown, disabled, incomplete, wrong-level, cyclic, and ambiguous paths", () => {
     const cases: readonly Category[][] = [
       values.map((category) => category.id === root.id ? { ...category, enabled: false } : category),

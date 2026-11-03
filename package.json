@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build:b2-3-manifest": "tsx scripts/build-b2-3-public-manifest.ts",
+    "write:b2-3:provenance": "tsx scripts/write-b2-3-provenance.ts",
+    "build": "npm run build:b2-3-manifest && tsc -b && vite build && npm run write:b2-3:provenance",
     "lint": "oxlint",
     "verify": "npm run verify:pdf-text && tsx scripts/verify-skip-cover.ts",
     "preview": "vite preview",
@@ -13,6 +15,8 @@
     "test:watch": "vitest",
     "verify:pages": "node scripts/verify-pages-artifact.mjs",
     "verify:pages:fallback": "node scripts/verify-pages-fallback.mjs",
+    "verify:b2-3:public": "node scripts/verify-b2-3-public-output.mjs",
+    "verify:hs-first-batch": "node scripts/verify-hs-first-batch-integration.mjs",
     "verify:pdf-text": "tsx scripts/verify-pdf-text.ts",
     "verify:a33a": "tsx scripts/verify-async-guard.ts"
   },

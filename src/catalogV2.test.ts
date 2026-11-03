@@ -174,12 +174,14 @@ describe("v2 category graph", () => {
   });
 
   it("projects legacy IDs without changing their v1 meaning", () => {
-    const legacy = fromLegacyCategory(categories[5]);
+    const legacy = fromLegacyCategory(
+      categories.find((category) => category.id === "type-junior-math-notes")!,
+    );
     expect(legacy.id).toBe("type-junior-math-notes");
     expect(legacy.legacyLevel).toBe(3);
     expect(projectCategoryToV1(legacy.id, [
-      fromLegacyCategory(categories[0]),
-      fromLegacyCategory(categories[4]),
+      fromLegacyCategory(categories.find((category) => category.id === "stage-junior")!),
+      fromLegacyCategory(categories.find((category) => category.id === "subject-junior-math")!),
       legacy,
     ])).toMatchObject({ ok: true });
   });

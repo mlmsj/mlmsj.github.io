@@ -42,6 +42,19 @@ const codes = (value: unknown) => {
 const responseFor = (body: unknown, ok = true) =>
   ({ ok, json: async () => body }) as Response;
 
+const FIRST_BATCH_PREVIEW_IDS = [
+  "hs-gaokao-2024-new-standard-1-001",
+  "hs-gaokao-2024-new-standard-2-002",
+  "hs-gaokao-2024-national-jia-003",
+  "hs-gaokao-2025-national-1-004",
+  "hs-gaokao-2025-national-2-005",
+] as const;
+
+const PRODUCTION_ANCHOR_IDS = [
+  "university-quark-math-advanced-001",
+  "university-quark-linear-algebra-001",
+] as const;
+
 describe("public manifest contract", () => {
   it("accepts the V1 contract and preserves a leading-zero passcode as text", () => {
     const result = validatePublicManifest(validManifest());
@@ -148,6 +161,22 @@ describe("public manifest contract", () => {
     ).toBe(true);
   });
 
+  it("accepts metadata-only records but rejects a passcode without a link", () => {
+    const { passcode: _passcode, ...metadataOnlyRecord } = validRecord;
+    expect(
+      validatePublicManifest({
+        ...validManifest(),
+        records: [{ ...metadataOnlyRecord, shareUrl: null }],
+      }).ok,
+    ).toBe(true);
+    expect(
+      codes({
+        ...validManifest(),
+        records: [{ ...validRecord, shareUrl: null }],
+      }),
+    ).toContain("PASSCODE_WITHOUT_SHARE_URL");
+  });
+
   it("rejects every missing required field and invalid enum value", () => {
     const required = [
       "id",
@@ -214,8 +243,11 @@ describe("public manifest contract", () => {
     }
   });
 
-  it("validates the checked-in manifest and approved record without exposing private values", async () => {
-    const file = resolve(process.cwd(), "public/data/manifest.v1.json");
+  it("validates production or isolated preview manifest without mixing their baselines", async () => {
+    const file = resolve(
+      process.cwd(),
+      process.env.PUBLIC_MANIFEST_PATH ?? "public/data/manifest.v1.json",
+    );
     let value: unknown;
     try {
       value = JSON.parse(readFileSync(file, "utf8")) as unknown;
@@ -238,30 +270,71 @@ describe("public manifest contract", () => {
     expect(parsed.records.every((record) =>
       getEnabledCategoryPath(record.categoryId).length > 0,
     )).toBe(true);
-    const approvedRecords = parsed.records.filter((record) =>
-      record.id === "university-series-001",
-    );
-    expect(approvedRecords.length).toBe(1);
-    const approved = approvedRecords[0];
-    expect({
-      id: approved?.id,
-      title: approved?.title,
-      categoryId: approved?.categoryId,
-      provider: approved?.provider,
-      accessStatus: approved?.accessStatus,
-      hasValidPublishedAt: typeof approved?.publishedAt === "string" &&
-        Number.isFinite(Date.parse(approved.publishedAt)),
-      hasValidCheckedOn: typeof approved?.checkedOn === "string" &&
-        Number.isFinite(Date.parse(approved.checkedOn)),
-    }).toEqual({
-      id: "university-series-001",
-      title: "大学系列",
-      categoryId: "stage-university",
-      provider: "quark",
-      accessStatus: "verified",
-      hasValidPublishedAt: true,
-      hasValidCheckedOn: true,
-    });
+    expect(parsed.records.every((record) => record.shareUrl !== null)).toBe(true);
+    expect(parsed.records.some((record) => record.id === "university-series-001")).toBe(false);
+    expect(parsed.records.some((record) => record.id === "university-quark-english-contest-001")).toBe(false);
+    const firstBatchPreviewIds = new Set<string>(FIRST_BATCH_PREVIEW_IDS);
+    const isFirstBatchPreview =
+      ids.length === FIRST_BATCH_PREVIEW_IDS.length &&
+      ids.every((id) => firstBatchPreviewIds.has(id));
+    const isIntegratedCandidate =
+      ids.length === 18 &&
+      FIRST_BATCH_PREVIEW_IDS.every((id) => ids.includes(id)) &&
+      PRODUCTION_ANCHOR_IDS.every((id) => ids.includes(id));
+
+    if (isFirstBatchPreview) {
+      expect([...ids].sort()).toEqual([...FIRST_BATCH_PREVIEW_IDS].sort());
+      expect(parsed.records.every((record) =>
+        record.categoryId === "exam-senior-gaokao" &&
+        record.provider === "quark" &&
+        record.accessStatus === "verified" &&
+        record.shareUrl !== null,
+      )).toBe(true);
+    } else if (isIntegratedCandidate) {
+      const highSchoolRecords = parsed.records.filter((record) =>
+        firstBatchPreviewIds.has(record.id),
+      );
+      expect(highSchoolRecords).toHaveLength(FIRST_BATCH_PREVIEW_IDS.length);
+      expect(highSchoolRecords.map((record) => record.id).sort()).toEqual(
+        [...FIRST_BATCH_PREVIEW_IDS].sort(),
+      );
+      expect(highSchoolRecords.every((record) =>
+        record.categoryId === "exam-senior-gaokao" &&
+        record.provider === "quark" &&
+        record.accessStatus === "verified" &&
+        record.shareUrl !== null,
+      )).toBe(true);
+      expect(parsed.records.filter((record) => !firstBatchPreviewIds.has(record.id))).toHaveLength(13);
+    } else {
+      // The production manifest must retain existing records; it is not the
+      // five-record first-batch preview artifact.
+      expect(parsed.records.length).toBeGreaterThan(FIRST_BATCH_PREVIEW_IDS.length);
+      expect(PRODUCTION_ANCHOR_IDS.every((id) => ids.includes(id))).toBe(true);
+      expect(ids.some((id) => firstBatchPreviewIds.has(id))).toBe(false);
+
+      const approved = parsed.records.find((record) =>
+        record.id === "university-quark-math-advanced-001",
+      );
+      expect({
+        id: approved?.id,
+        title: approved?.title,
+        categoryId: approved?.categoryId,
+        provider: approved?.provider,
+        accessStatus: approved?.accessStatus,
+        hasValidPublishedAt: typeof approved?.publishedAt === "string" &&
+          Number.isFinite(Date.parse(approved.publishedAt)),
+        hasValidCheckedOn: typeof approved?.checkedOn === "string" &&
+          Number.isFinite(Date.parse(approved.checkedOn)),
+      }).toEqual({
+        id: "university-quark-math-advanced-001",
+        title: "同济高等数学（第七版）",
+        categoryId: "stage-university",
+        provider: "quark",
+        accessStatus: "verified",
+        hasValidPublishedAt: true,
+        hasValidCheckedOn: true,
+      });
+    }
     const loaded = await loadPublicManifest(async () => responseFor(value));
     expect(loaded.records.length).toBe(parsed.records.length);
     expect(loaded.records.map((record) => record.id)).toEqual(ids);
