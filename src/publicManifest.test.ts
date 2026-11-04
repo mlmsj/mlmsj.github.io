@@ -55,6 +55,15 @@ const PRODUCTION_ANCHOR_IDS = [
   "university-quark-linear-algebra-001",
 ] as const;
 
+const JUNIOR_RELEASE_IDS = [
+  "jh-topic-textbooks-001",
+  "jh-topic-workbooks-001",
+  "jh-topic-exams-001",
+  "jh-topic-courses-001",
+  "jh-topic-subjects-001",
+  "jh-topic-sprint-001",
+] as const;
+
 describe("public manifest contract", () => {
   it("accepts the V1 contract and preserves a leading-zero passcode as text", () => {
     const result = validatePublicManifest(validManifest());
@@ -278,7 +287,7 @@ describe("public manifest contract", () => {
       ids.length === FIRST_BATCH_PREVIEW_IDS.length &&
       ids.every((id) => firstBatchPreviewIds.has(id));
     const isIntegratedCandidate =
-      ids.length === 18 &&
+      (ids.length === 18 || ids.length === 24) &&
       FIRST_BATCH_PREVIEW_IDS.every((id) => ids.includes(id)) &&
       PRODUCTION_ANCHOR_IDS.every((id) => ids.includes(id));
 
@@ -304,7 +313,19 @@ describe("public manifest contract", () => {
         record.accessStatus === "verified" &&
         record.shareUrl !== null,
       )).toBe(true);
-      expect(parsed.records.filter((record) => !firstBatchPreviewIds.has(record.id))).toHaveLength(13);
+      const nonHighSchoolRecords = parsed.records.filter((record) => !firstBatchPreviewIds.has(record.id));
+      const juniorReleaseIds = new Set<string>(JUNIOR_RELEASE_IDS);
+      const juniorRecords = parsed.records.filter((record) => juniorReleaseIds.has(record.id));
+      expect(nonHighSchoolRecords).toHaveLength(ids.length === 24 ? 19 : 13);
+      if (ids.length === 24) {
+        expect(juniorRecords).toHaveLength(JUNIOR_RELEASE_IDS.length);
+        expect(juniorRecords.every((record) =>
+          record.categoryId.startsWith("domain-junior-") &&
+          record.provider === "quark" &&
+          record.accessStatus === "verified" &&
+          record.shareUrl !== null,
+        )).toBe(true);
+      }
     } else {
       // The production manifest must retain existing records; it is not the
       // five-record first-batch preview artifact.
