@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-03T15:53:50+08:00",
+  "generatedAt": "2026-11-04T15:14:41+08:00",
   "records": [
     {
       "id": "university-quark-math-advanced-001",
@@ -223,6 +223,78 @@
       "publishedAt": "2026-11-03T15:53:50+08:00",
       "fileType": "PDF",
       "sizeBytes": 3704453
+    },
+    {
+      "id": "jh-topic-textbooks-001",
+      "title": "初中课本教材",
+      "description": "初中阶段课本教材资料。",
+      "categoryId": "domain-junior-textbooks",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/526991344987",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-04",
+      "publishedAt": "2026-11-04T15:14:41+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "jh-topic-workbooks-001",
+      "title": "初中教辅与刷题",
+      "description": "初中阶段教辅与刷题资料。",
+      "categoryId": "domain-junior-workbooks",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/8fa5f4f5036d",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-04",
+      "publishedAt": "2026-11-04T15:14:41+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "jh-topic-exams-001",
+      "title": "初中模拟题与真题",
+      "description": "初中阶段模拟题与真题资料。",
+      "categoryId": "domain-junior-exams",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/029d353ad217",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-04",
+      "publishedAt": "2026-11-04T15:14:41+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "jh-topic-courses-001",
+      "title": "初中网课",
+      "description": "初中阶段网课资料。",
+      "categoryId": "domain-junior-courses",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/92d77a81dd09",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-04",
+      "publishedAt": "2026-11-04T15:14:41+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "jh-topic-subjects-001",
+      "title": "初中学科分类",
+      "description": "初中阶段按学科整理的资料。",
+      "categoryId": "domain-junior-subjects",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/edcaf8aa2700",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-04",
+      "publishedAt": "2026-11-04T15:14:41+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "jh-topic-sprint-001",
+      "title": "初中考前冲刺",
+      "description": "初中阶段考前冲刺资料。",
+      "categoryId": "domain-junior-sprint",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/3f55de0688d7",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-04",
+      "publishedAt": "2026-11-04T15:14:41+08:00",
+      "fileType": "folder"
     }
   ]
 }

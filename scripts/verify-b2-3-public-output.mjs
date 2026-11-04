@@ -38,6 +38,12 @@ const APPROVED_IDS = new Set([
   "hs-gaokao-2024-national-jia-003",
   "hs-gaokao-2025-national-1-004",
   "hs-gaokao-2025-national-2-005",
+  "jh-topic-textbooks-001",
+  "jh-topic-workbooks-001",
+  "jh-topic-exams-001",
+  "jh-topic-courses-001",
+  "jh-topic-subjects-001",
+  "jh-topic-sprint-001",
 ]);
 
 const readJson = async (filePath) => JSON.parse(await readFile(filePath, "utf8"));

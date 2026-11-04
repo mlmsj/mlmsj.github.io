@@ -76,6 +76,24 @@ export const HS_FIRST_BATCH_5_DELIVERY_IDS = new Map<string, string>([
   ],
 ]);
 
+export const JUNIOR_RELEASE_6_APPROVED_RESOURCE_IDS = [
+  "jh-topic-textbooks-001",
+  "jh-topic-workbooks-001",
+  "jh-topic-exams-001",
+  "jh-topic-courses-001",
+  "jh-topic-subjects-001",
+  "jh-topic-sprint-001",
+] as const;
+
+export const JUNIOR_RELEASE_6_DELIVERY_IDS = new Map<string, string>([
+  ["jh-topic-textbooks-001", "dlv-jh-topic-textbooks-quark-01"],
+  ["jh-topic-workbooks-001", "dlv-jh-topic-workbooks-quark-01"],
+  ["jh-topic-exams-001", "dlv-jh-topic-exams-quark-01"],
+  ["jh-topic-courses-001", "dlv-jh-topic-courses-quark-01"],
+  ["jh-topic-subjects-001", "dlv-jh-topic-subjects-quark-01"],
+  ["jh-topic-sprint-001", "dlv-jh-topic-sprint-quark-01"],
+]);
+
 export const B2_3_CONTEXT: AuthorizationContext = {
   audience: "public",
   platform: "website",
@@ -160,6 +178,42 @@ export const B2_3_POLICIES = new Map<string, PublicProjectionPolicy>(
               status: "approved",
               evidenceRef: "HS-FIRST-BATCH-5-SHARE-E2E-2",
               reviewedAt: "2026-11-03T15:53:50+08:00",
+            },
+          ],
+        },
+      ] as const;
+    }),
+    ...JUNIOR_RELEASE_6_APPROVED_RESOURCE_IDS.map((resourceId) => {
+      const deliveryId = JUNIOR_RELEASE_6_DELIVERY_IDS.get(resourceId);
+      if (!deliveryId) throw new Error(`Missing junior Delivery ID: ${resourceId}`);
+      return [
+        resourceId,
+        {
+          deliveryId,
+          browseState: "observed",
+          evidence: [
+            {
+              evidenceId: `auth-${resourceId}-resource-01`,
+              subjectType: "resource",
+              resourceId,
+              actionScope: ["display_metadata", "expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: `RESOURCE-BATCH-04-PROJECT-OWNER-APPROVAL-20261104#${resourceId}`,
+              reviewedAt: "2026-11-04T11:16:33+08:00",
+            },
+            {
+              evidenceId: `auth-${resourceId}-delivery-01`,
+              subjectType: "delivery",
+              resourceId,
+              deliveryId,
+              actionScope: ["expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: `RESOURCE-BATCH-04-PROJECT-OWNER-APPROVAL-20261104#${resourceId}`,
+              reviewedAt: "2026-11-04T11:16:33+08:00",
             },
           ],
         },
