@@ -91,7 +91,7 @@ describe('editor, categories, similarity and pagination', () => {
     fireEvent.change(screen.getByLabelText('名称（必填）'), { target: { value: 'new' } }); fireEvent.change(screen.getByLabelText('文件类型'), { target: { value: 'pdf' } });
     fireEvent.change(screen.getByLabelText('大小（字节）'), { target: { value: '20' } }); fireEvent.change(screen.getByLabelText('分类'), { target: { value: 'type-junior-math-notes' } });
     fireEvent.change(screen.getByLabelText('来源'), { target: { value: '手动' } }); fireEvent.change(screen.getByLabelText('备注'), { target: { value: '说明' } });
-    fireEvent.click(screen.getByRole('button', { name: '应用编辑并校验' })); exportStart(); confirmExport();
+    fireEvent.click(screen.getByRole('button', { name: '应用编辑并校验' })); vi.useFakeTimers(); exportStart(); confirmExport(); act(() => vi.advanceTimersByTime(1000));
     expect(JSON.parse(await blobs[0].text())[0]).toEqual({ name: 'new', fileType: 'pdf', sizeBytes: 20, categoryId: 'type-junior-math-notes', sourceLabel: '手动', note: '说明' });
   });
   it('category change revalidates data and invalidates open export confirmation', async () => {
@@ -174,9 +174,9 @@ describe('confirmed JSON download and accessibility', () => {
     const leave = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(leave); expect(leave.defaultPrevented).toBe(true);
   });
   it('retains preview on download failure, revokes failed URL and permits retry', async () => {
-    render(<ImportWorkspace />); await load([{ name: 'a' }]); vi.mocked(HTMLAnchorElement.prototype.click).mockImplementationOnce(() => { throw new Error('SECRET_CANARY'); });
+    render(<ImportWorkspace />); await load([{ name: 'a' }]); vi.mocked(HTMLAnchorElement.prototype.click).mockImplementationOnce(() => { throw new Error('SECRET_CANARY'); }); vi.useFakeTimers();
     exportStart(); confirmExport(); expect(screen.getByRole('status')).toHaveTextContent('DOWNLOAD_FAILED'); expect(screen.getByRole('status')).not.toHaveTextContent('CANARY'); expect(stat('记录总数')).toBe('1'); expect(revokeUrl).toHaveBeenCalled();
-    exportStart(); confirmExport(); expect(screen.getByRole('status')).toHaveTextContent('已发起');
+    exportStart(); confirmExport(); expect(screen.getByRole('status')).toHaveTextContent('已发起'); act(() => vi.advanceTimersByTime(1000));
   });
   it('starts modal focus on cancel, traps tab, supports Esc and restores focus', async () => {
     render(<ImportWorkspace />); await load([{ name: 'a' }]); const trigger = screen.getByRole('button', { name: '导出 JSON' }); trigger.focus(); exportStart();
@@ -186,7 +186,7 @@ describe('confirmed JSON download and accessibility', () => {
   });
   it('makes no network, storage or URL data writes during import/edit/export', async () => {
     const network = vi.spyOn(globalThis, 'fetch').mockRejectedValue(new Error('forbidden')); const storage = vi.spyOn(Storage.prototype, 'setItem'); const history = vi.spyOn(window.history, 'pushState'); const log = vi.spyOn(console, 'log');
-    render(<ImportWorkspace />); await load([{ name: 'a' }]); clickRow(1, '编辑'); fireEvent.change(screen.getByLabelText('备注'), { target: { value: 'PRIVATE_CANARY' } }); fireEvent.click(screen.getByRole('button', { name: '应用编辑并校验' })); exportStart(); confirmExport();
+    render(<ImportWorkspace />); await load([{ name: 'a' }]); clickRow(1, '编辑'); fireEvent.change(screen.getByLabelText('备注'), { target: { value: 'PRIVATE_CANARY' } }); fireEvent.click(screen.getByRole('button', { name: '应用编辑并校验' })); vi.useFakeTimers(); exportStart(); confirmExport(); act(() => vi.advanceTimersByTime(1000));
     expect(network).not.toHaveBeenCalled(); expect(storage).not.toHaveBeenCalled(); expect(history).not.toHaveBeenCalled(); expect(log).not.toHaveBeenCalled();
     const source = readFileSync(resolve('src/offlineCatalog/manualImport/ImportWorkspace.tsx'), 'utf8'); expect(source).not.toMatch(/fetch\(|localStorage|sessionStorage|indexedDB|document\.cookie|console\.|dangerouslySetInnerHTML/);
   });
