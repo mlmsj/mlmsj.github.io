@@ -44,6 +44,12 @@ const APPROVED_IDS = new Set([
   "jh-topic-courses-001",
   "jh-topic-subjects-001",
   "jh-topic-sprint-001",
+  "hs-topic-textbooks-001",
+  "hs-topic-workbooks-001",
+  "hs-topic-courses-001",
+  "hs-topic-mock-001",
+  "hs-topic-sprint-001",
+  "hs-topic-subjects-001",
 ]);
 
 const readJson = async (filePath) => JSON.parse(await readFile(filePath, "utf8"));
@@ -129,3 +135,4 @@ if (errors.length > 0) {
       `metadataOnly=${metadataOnly} hiddenHistoricalRecords=${hiddenRecords.length}`,
   );
 }
+

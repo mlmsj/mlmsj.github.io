@@ -64,6 +64,15 @@ const JUNIOR_RELEASE_IDS = [
   "jh-topic-sprint-001",
 ] as const;
 
+const SENIOR_THEME_IDS = [
+  "hs-topic-textbooks-001",
+  "hs-topic-workbooks-001",
+  "hs-topic-courses-001",
+  "hs-topic-mock-001",
+  "hs-topic-sprint-001",
+  "hs-topic-subjects-001",
+] as const;
+
 describe("public manifest contract", () => {
   it("accepts the V1 contract and preserves a leading-zero passcode as text", () => {
     const result = validatePublicManifest(validManifest());
@@ -287,7 +296,7 @@ describe("public manifest contract", () => {
       ids.length === FIRST_BATCH_PREVIEW_IDS.length &&
       ids.every((id) => firstBatchPreviewIds.has(id));
     const isIntegratedCandidate =
-      (ids.length === 18 || ids.length === 24) &&
+      (ids.length === 18 || ids.length === 24 || ids.length === 30) &&
       FIRST_BATCH_PREVIEW_IDS.every((id) => ids.includes(id)) &&
       PRODUCTION_ANCHOR_IDS.every((id) => ids.includes(id));
 
@@ -316,11 +325,23 @@ describe("public manifest contract", () => {
       const nonHighSchoolRecords = parsed.records.filter((record) => !firstBatchPreviewIds.has(record.id));
       const juniorReleaseIds = new Set<string>(JUNIOR_RELEASE_IDS);
       const juniorRecords = parsed.records.filter((record) => juniorReleaseIds.has(record.id));
-      expect(nonHighSchoolRecords).toHaveLength(ids.length === 24 ? 19 : 13);
-      if (ids.length === 24) {
+      expect(nonHighSchoolRecords).toHaveLength(ids.length === 24 ? 19 : ids.length === 30 ? 25 : 13);
+      if (ids.length === 24 || ids.length === 30) {
         expect(juniorRecords).toHaveLength(JUNIOR_RELEASE_IDS.length);
         expect(juniorRecords.every((record) =>
           record.categoryId.startsWith("domain-junior-") &&
+          record.provider === "quark" &&
+          record.accessStatus === "verified" &&
+          record.shareUrl !== null,
+        )).toBe(true);
+      }
+      if (ids.length === 30) {
+        const seniorThemeIds = new Set<string>(SENIOR_THEME_IDS);
+        const seniorThemeRecords = parsed.records.filter((record) => seniorThemeIds.has(record.id));
+        expect(seniorThemeRecords).toHaveLength(SENIOR_THEME_IDS.length);
+        expect(seniorThemeRecords.every((record) =>
+          record.categoryId.startsWith("domain-senior-") &&
+          record.categoryId !== "domain-senior-exams" &&
           record.provider === "quark" &&
           record.accessStatus === "verified" &&
           record.shareUrl !== null,
@@ -384,3 +405,4 @@ describe("public manifest contract", () => {
     ).resolves.toMatchObject({ schemaVersion: 1 });
   });
 });
+

@@ -91,6 +91,12 @@ describe("static public manifest catalog", () => {
       "stage-senior": 0,
       "domain-senior-exams": 0,
       "exam-senior-gaokao": 0,
+      "domain-senior-textbooks": 0,
+      "domain-senior-workbooks": 0,
+      "domain-senior-mocks": 0,
+      "domain-senior-courses": 0,
+      "domain-senior-sprint": 0,
+      "domain-senior-subjects": 0,
       "stage-university": 1,
       "domain-university-major": 0,
       "domain-university-politics": 0,
@@ -439,3 +445,4 @@ describe("static public manifest catalog", () => {
     expect(screen.queryByText("首页已撤回资料")).not.toBeInTheDocument();
   });
 });
+

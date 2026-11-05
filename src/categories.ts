@@ -35,6 +35,17 @@ export const JUNIOR_DOMAIN_IDS = [
 
 export type JuniorDomainId = (typeof JUNIOR_DOMAIN_IDS)[number];
 
+export const SENIOR_DOMAIN_IDS = [
+  "domain-senior-textbooks",
+  "domain-senior-workbooks",
+  "domain-senior-mocks",
+  "domain-senior-courses",
+  "domain-senior-sprint",
+  "domain-senior-subjects",
+] as const;
+
+export type SeniorDomainId = (typeof SENIOR_DOMAIN_IDS)[number];
+
 export const categories: readonly Category[] = [
   {
     id: "stage-junior",
@@ -70,6 +81,60 @@ export const categories: readonly Category[] = [
     description: "高考历年真题资料",
     level: 3,
     sortOrder: 10,
+    enabled: true,
+  },
+  {
+    id: "domain-senior-textbooks",
+    parentId: "stage-senior",
+    name: "课本教材",
+    description: "高中各学科电子课本与教材资料",
+    level: 2,
+    sortOrder: 20,
+    enabled: true,
+  },
+  {
+    id: "domain-senior-workbooks",
+    parentId: "stage-senior",
+    name: "教辅与刷题",
+    description: "高中各学科教辅、复习与刷题资料",
+    level: 2,
+    sortOrder: 30,
+    enabled: true,
+  },
+  {
+    id: "domain-senior-mocks",
+    parentId: "stage-senior",
+    name: "模拟题与真题",
+    description: "高中阶段模拟题与考试资料；高考真题另设独立入口",
+    level: 2,
+    sortOrder: 40,
+    enabled: true,
+  },
+  {
+    id: "domain-senior-courses",
+    parentId: "stage-senior",
+    name: "网课",
+    description: "高中网课资料，浏览时以年级为主要维度",
+    level: 2,
+    sortOrder: 50,
+    enabled: true,
+  },
+  {
+    id: "domain-senior-sprint",
+    parentId: "stage-senior",
+    name: "考前冲刺",
+    description: "高中考前冲刺、押题与答题规范资料",
+    level: 2,
+    sortOrder: 60,
+    enabled: true,
+  },
+  {
+    id: "domain-senior-subjects",
+    parentId: "stage-senior",
+    name: "学科分类",
+    description: "高中各学科资料分类入口",
+    level: 2,
+    sortOrder: 70,
     enabled: true,
   },
   {
@@ -421,3 +486,4 @@ export const getEnabledCategoryPath = (
 if (!isCategoryDataValid(categories)) {
   throw new Error("内置分类数据无效");
 }
+

@@ -30,6 +30,12 @@ describe("category data contract", () => {
   it("exposes the approved senior exam path to category navigation", () => {
     expect(getChildCategories("stage-senior").map(({ id }) => id)).toEqual([
       "domain-senior-exams",
+      "domain-senior-textbooks",
+      "domain-senior-workbooks",
+      "domain-senior-mocks",
+      "domain-senior-courses",
+      "domain-senior-sprint",
+      "domain-senior-subjects",
     ]);
     expect(getChildCategories("domain-senior-exams").map(({ id }) => id)).toEqual([
       "exam-senior-gaokao",
@@ -201,3 +207,4 @@ describe("category data contract", () => {
     expect(getEnabledCategoryPath("type-junior-math-notes", values)).toHaveLength(3);
   });
 });
+

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-04T15:14:41+08:00",
+  "generatedAt": "2026-11-05T09:30:00+08:00",
   "records": [
     {
       "id": "university-series-001",
@@ -450,6 +450,79 @@
       "checkedOn": "2026-11-04",
       "publishedAt": "2026-11-04T15:14:41+08:00",
       "fileType": "folder"
+    },
+    {
+      "id": "hs-topic-textbooks-001",
+      "title": "高中课本教材",
+      "description": "高中各学科电子课本与教材资料。",
+      "categoryId": "domain-senior-textbooks",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/cead60d414bf",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-05",
+      "publishedAt": "2026-11-05T09:30:00+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "hs-topic-workbooks-001",
+      "title": "高中教辅与刷题",
+      "description": "高中阶段教辅、复习与刷题资料。",
+      "categoryId": "domain-senior-workbooks",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/798763014495",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-05",
+      "publishedAt": "2026-11-05T09:30:00+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "hs-topic-courses-001",
+      "title": "高中网课",
+      "description": "高中网课及讲义资料。",
+      "categoryId": "domain-senior-courses",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/3ac884ef49eb",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-05",
+      "publishedAt": "2026-11-05T09:30:00+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "hs-topic-mock-001",
+      "title": "高中模拟题",
+      "description": "高中模拟题资料；高考真题候选另行保留。",
+      "categoryId": "domain-senior-mocks",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/b302f3a7bb29",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-05",
+      "publishedAt": "2026-11-05T09:30:00+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "hs-topic-sprint-001",
+      "title": "高中考前冲刺",
+      "description": "高中考前冲刺、押题与答题规范资料。",
+      "categoryId": "domain-senior-sprint",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/be61588b6291",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-05",
+      "publishedAt": "2026-11-05T09:30:00+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "hs-topic-subjects-001",
+      "title": "高中学科分类",
+      "description": "高中按学科整理的资料入口。",
+      "categoryId": "domain-senior-subjects",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/a36ff76debf5",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-05",
+      "publishedAt": "2026-11-05T09:30:00+08:00",
+      "fileType": "folder"
     }
   ]
 }
+

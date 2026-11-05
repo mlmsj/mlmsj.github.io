@@ -94,10 +94,28 @@ export const JUNIOR_RELEASE_6_DELIVERY_IDS = new Map<string, string>([
   ["jh-topic-sprint-001", "dlv-jh-topic-sprint-quark-01"],
 ]);
 
+export const HS_THEME_6_APPROVED_RESOURCE_IDS = [
+  "hs-topic-textbooks-001",
+  "hs-topic-workbooks-001",
+  "hs-topic-courses-001",
+  "hs-topic-mock-001",
+  "hs-topic-sprint-001",
+  "hs-topic-subjects-001",
+] as const;
+
+export const HS_THEME_6_DELIVERY_IDS = new Map<string, string>([
+  ["hs-topic-textbooks-001", "dlv-hs-topic-textbooks-quark-01"],
+  ["hs-topic-workbooks-001", "dlv-hs-topic-workbooks-quark-01"],
+  ["hs-topic-courses-001", "dlv-hs-topic-courses-quark-01"],
+  ["hs-topic-mock-001", "dlv-hs-topic-mock-quark-01"],
+  ["hs-topic-sprint-001", "dlv-hs-topic-sprint-quark-01"],
+  ["hs-topic-subjects-001", "dlv-hs-topic-subjects-quark-01"],
+]);
+
 export const B2_3_CONTEXT: AuthorizationContext = {
   audience: "public",
   platform: "website",
-  now: "2026-11-02T00:00:00+08:00",
+  now: "2026-11-05T09:30:00+08:00",
 };
 
 /**
@@ -219,6 +237,42 @@ export const B2_3_POLICIES = new Map<string, PublicProjectionPolicy>(
         },
       ] as const;
     }),
+    ...HS_THEME_6_APPROVED_RESOURCE_IDS.map((resourceId) => {
+      const deliveryId = HS_THEME_6_DELIVERY_IDS.get(resourceId);
+      if (!deliveryId) throw new Error(`Missing high-school theme Delivery ID: ${resourceId}`);
+      return [
+        resourceId,
+        {
+          deliveryId,
+          browseState: "observed",
+          evidence: [
+            {
+              evidenceId: `auth-${resourceId}-resource-01`,
+              subjectType: "resource",
+              resourceId,
+              actionScope: ["display_metadata", "expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: `HS-THEME-INTAKE-OWNER-AUTHORIZATION-20261105#${resourceId}`,
+              reviewedAt: "2026-11-05T09:30:00+08:00",
+            },
+            {
+              evidenceId: `auth-${resourceId}-delivery-01`,
+              subjectType: "delivery",
+              resourceId,
+              deliveryId,
+              actionScope: ["expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: `HS-THEME-INTAKE-OWNER-AUTHORIZATION-20261105#${resourceId}`,
+              reviewedAt: "2026-11-05T09:30:00+08:00",
+            },
+          ],
+        },
+      ] as const;
+    }),
   ],
 );
 
@@ -276,3 +330,4 @@ export const B2_3_HOLD_REASONS = new Map<string, string>([
     "UFB-016 权利授权已记录，但 strict-v2 来源范围仍为 HOLD_OWNER_SCOPE",
   ],
 ]);
+
