@@ -157,7 +157,7 @@ describe('replacement, async race and leave protection', () => {
   it('beforeunload is best-effort while data or edits remain, clears after full export', async () => {
     render(<ImportWorkspace />); const clean = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(clean); expect(clean.defaultPrevented).toBe(false);
     await load([{ name: 'a' }]); const dirty = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(dirty); expect(dirty.defaultPrevented).toBe(true);
-    exportStart(); confirmExport(); const exported = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(exported); expect(exported.defaultPrevented).toBe(false);
+    vi.useFakeTimers(); exportStart(); confirmExport(); act(() => vi.advanceTimersByTime(1000)); const exported = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(exported); expect(exported.defaultPrevented).toBe(false);
     clickRow(1, '编辑'); const draft = new Event('beforeunload', { cancelable: true }); window.dispatchEvent(draft); expect(draft.defaultPrevented).toBe(true);
   });
 });
@@ -191,3 +191,4 @@ describe('confirmed JSON download and accessibility', () => {
     const source = readFileSync(resolve('src/offlineCatalog/manualImport/ImportWorkspace.tsx'), 'utf8'); expect(source).not.toMatch(/fetch\(|localStorage|sessionStorage|indexedDB|document\.cookie|console\.|dangerouslySetInnerHTML/);
   });
 });
+
