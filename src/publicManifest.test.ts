@@ -42,17 +42,29 @@ const codes = (value: unknown) => {
 const responseFor = (body: unknown, ok = true) =>
   ({ ok, json: async () => body }) as Response;
 
-const FIRST_BATCH_PREVIEW_IDS = [
-  "hs-gaokao-2024-new-standard-1-001",
-  "hs-gaokao-2024-new-standard-2-002",
-  "hs-gaokao-2024-national-jia-003",
-  "hs-gaokao-2025-national-1-004",
-  "hs-gaokao-2025-national-2-005",
-] as const;
-
 const PRODUCTION_ANCHOR_IDS = [
   "university-quark-math-advanced-001",
   "university-quark-linear-algebra-001",
+] as const;
+
+const UNIVERSITY_AGGREGATE_IDS = [
+  "university-topic-math-001",
+  "university-topic-professional-courses-001",
+  "university-topic-textbooks-001",
+  "university-topic-ideology-001",
+  "university-topic-competition-001",
+  "university-topic-cet-001",
+  "university-topic-ielts-001",
+  "university-topic-proof-001",
+  "university-topic-computer-001",
+  "university-topic-postgrad-001",
+  "university-topic-career-001",
+  "university-quark-career-ppt-001",
+  "university-quark-resume-templates-001",
+  "certification-topic-university-001",
+  "certification-topic-foreign-language-001",
+  "certification-topic-upgrade-001",
+  "certification-topic-civil-service-001",
 ] as const;
 
 const JUNIOR_RELEASE_IDS = [
@@ -71,6 +83,10 @@ const SENIOR_THEME_IDS = [
   "hs-topic-mock-001",
   "hs-topic-sprint-001",
   "hs-topic-subjects-001",
+  "hs-topic-one-series-001",
+  "hs-topic-competition-001",
+  "hs-topic-volunteer-001",
+  "hs-topic-policies-001",
 ] as const;
 
 describe("public manifest contract", () => {
@@ -291,68 +307,54 @@ describe("public manifest contract", () => {
     expect(parsed.records.every((record) => record.shareUrl !== null)).toBe(true);
     expect(parsed.records.some((record) => record.id === "university-series-001")).toBe(false);
     expect(parsed.records.some((record) => record.id === "university-quark-english-contest-001")).toBe(false);
-    const firstBatchPreviewIds = new Set<string>(FIRST_BATCH_PREVIEW_IDS);
-    const isFirstBatchPreview =
-      ids.length === FIRST_BATCH_PREVIEW_IDS.length &&
-      ids.every((id) => firstBatchPreviewIds.has(id));
-    const isIntegratedCandidate =
-      (ids.length === 18 || ids.length === 24 || ids.length === 30) &&
-      FIRST_BATCH_PREVIEW_IDS.every((id) => ids.includes(id)) &&
-      PRODUCTION_ANCHOR_IDS.every((id) => ids.includes(id));
+    const isUniversityAggregateCandidate =
+      ids.length === 33 &&
+      UNIVERSITY_AGGREGATE_IDS.every((id) => ids.includes(id)) &&
+      JUNIOR_RELEASE_IDS.every((id) => ids.includes(id)) &&
+      SENIOR_THEME_IDS.every((id) => ids.includes(id));
 
-    if (isFirstBatchPreview) {
-      expect([...ids].sort()).toEqual([...FIRST_BATCH_PREVIEW_IDS].sort());
-      expect(parsed.records.every((record) =>
-        record.categoryId === "exam-senior-gaokao" &&
+    if (isUniversityAggregateCandidate) {
+      const aggregateIds = new Set<string>(UNIVERSITY_AGGREGATE_IDS);
+      const aggregateRecords = parsed.records.filter((record) => aggregateIds.has(record.id));
+      expect(aggregateRecords).toHaveLength(UNIVERSITY_AGGREGATE_IDS.length);
+      expect(aggregateRecords.every((record) =>
+        (record.categoryId.startsWith("domain-university-") ||
+          record.categoryId.startsWith("purpose-certification-")) &&
         record.provider === "quark" &&
         record.accessStatus === "verified" &&
         record.shareUrl !== null,
       )).toBe(true);
-    } else if (isIntegratedCandidate) {
-      const highSchoolRecords = parsed.records.filter((record) =>
-        firstBatchPreviewIds.has(record.id),
+      const juniorRecords = parsed.records.filter((record) =>
+        JUNIOR_RELEASE_IDS.includes(record.id as (typeof JUNIOR_RELEASE_IDS)[number]),
       );
-      expect(highSchoolRecords).toHaveLength(FIRST_BATCH_PREVIEW_IDS.length);
-      expect(highSchoolRecords.map((record) => record.id).sort()).toEqual(
-        [...FIRST_BATCH_PREVIEW_IDS].sort(),
-      );
-      expect(highSchoolRecords.every((record) =>
-        record.categoryId === "exam-senior-gaokao" &&
+      expect(juniorRecords).toHaveLength(JUNIOR_RELEASE_IDS.length);
+      expect(juniorRecords.every((record) => record.shareUrl !== null)).toBe(true);
+      const seniorThemeIds = new Set<string>(SENIOR_THEME_IDS);
+      const seniorThemeRecords = parsed.records.filter((record) => seniorThemeIds.has(record.id));
+      expect(seniorThemeRecords).toHaveLength(SENIOR_THEME_IDS.length);
+      expect(seniorThemeRecords.every((record) =>
+        record.categoryId.startsWith("domain-senior-") &&
         record.provider === "quark" &&
         record.accessStatus === "verified" &&
         record.shareUrl !== null,
       )).toBe(true);
-      const nonHighSchoolRecords = parsed.records.filter((record) => !firstBatchPreviewIds.has(record.id));
-      const juniorReleaseIds = new Set<string>(JUNIOR_RELEASE_IDS);
-      const juniorRecords = parsed.records.filter((record) => juniorReleaseIds.has(record.id));
-      expect(nonHighSchoolRecords).toHaveLength(ids.length === 24 ? 19 : ids.length === 30 ? 25 : 13);
-      if (ids.length === 24 || ids.length === 30) {
-        expect(juniorRecords).toHaveLength(JUNIOR_RELEASE_IDS.length);
-        expect(juniorRecords.every((record) =>
-          record.categoryId.startsWith("domain-junior-") &&
-          record.provider === "quark" &&
-          record.accessStatus === "verified" &&
-          record.shareUrl !== null,
-        )).toBe(true);
-      }
-      if (ids.length === 30) {
-        const seniorThemeIds = new Set<string>(SENIOR_THEME_IDS);
-        const seniorThemeRecords = parsed.records.filter((record) => seniorThemeIds.has(record.id));
-        expect(seniorThemeRecords).toHaveLength(SENIOR_THEME_IDS.length);
-        expect(seniorThemeRecords.every((record) =>
-          record.categoryId.startsWith("domain-senior-") &&
-          record.categoryId !== "domain-senior-exams" &&
-          record.provider === "quark" &&
-          record.accessStatus === "verified" &&
-          record.shareUrl !== null,
-        )).toBe(true);
-      }
+      expect(parsed.records.some((record) =>
+        record.id === "university-quark-math-advanced-001" ||
+        record.id === "university-quark-linear-algebra-001" ||
+        record.id === "university-quark-probability-textbook-001" ||
+        record.id === "university-quark-probability-review-001" ||
+        record.id === "university-quark-mathematical-analysis-001" ||
+        record.id === "university-quark-calculus-001" ||
+        record.id === "university-quark-ideology-marxism-001" ||
+        record.id === "university-quark-biochemistry-001" ||
+        record.id === "university-quark-cet4-001" ||
+        record.id === "university-quark-ielts-001" ||
+        record.id === "university-quark-postgrad-001",
+      )).toBe(false);
     } else {
-      // The production manifest must retain existing records; it is not the
-      // five-record first-batch preview artifact.
-      expect(parsed.records.length).toBeGreaterThan(FIRST_BATCH_PREVIEW_IDS.length);
+      // A production manifest must retain its existing records.
+      expect(parsed.records.length).toBeGreaterThan(0);
       expect(PRODUCTION_ANCHOR_IDS.every((id) => ids.includes(id))).toBe(true);
-      expect(ids.some((id) => firstBatchPreviewIds.has(id))).toBe(false);
 
       const approved = parsed.records.find((record) =>
         record.id === "university-quark-math-advanced-001",
@@ -405,4 +407,3 @@ describe("public manifest contract", () => {
     ).resolves.toMatchObject({ schemaVersion: 1 });
   });
 });
-

@@ -191,4 +191,3 @@ describe('confirmed JSON download and accessibility', () => {
     const source = readFileSync(resolve('src/offlineCatalog/manualImport/ImportWorkspace.tsx'), 'utf8'); expect(source).not.toMatch(/fetch\(|localStorage|sessionStorage|indexedDB|document\.cookie|console\.|dangerouslySetInnerHTML/);
   });
 });
-

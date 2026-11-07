@@ -20,36 +20,39 @@ if (
 }
 
 const APPROVED_IDS = new Set([
-  "university-quark-math-advanced-001",
-  "university-quark-linear-algebra-001",
-  "university-quark-probability-textbook-001",
-  "university-quark-probability-review-001",
-  "university-quark-mathematical-analysis-001",
-  "university-quark-calculus-001",
-  "university-quark-ideology-marxism-001",
-  "university-quark-cet4-001",
-  "university-quark-ielts-001",
-  "university-quark-postgrad-001",
+  "university-topic-math-001",
+  "university-topic-professional-courses-001",
+  "university-topic-textbooks-001",
+  "university-topic-ideology-001",
+  "university-topic-competition-001",
+  "university-topic-cet-001",
+  "university-topic-ielts-001",
+  "university-topic-proof-001",
+  "university-topic-computer-001",
+  "university-topic-postgrad-001",
+  "university-topic-career-001",
   "university-quark-career-ppt-001",
   "university-quark-resume-templates-001",
-  "university-quark-biochemistry-001",
-  "hs-gaokao-2024-new-standard-1-001",
-  "hs-gaokao-2024-new-standard-2-002",
-  "hs-gaokao-2024-national-jia-003",
-  "hs-gaokao-2025-national-1-004",
-  "hs-gaokao-2025-national-2-005",
+  "certification-topic-university-001",
+  "certification-topic-foreign-language-001",
+  "certification-topic-upgrade-001",
+  "certification-topic-civil-service-001",
   "jh-topic-textbooks-001",
   "jh-topic-workbooks-001",
   "jh-topic-exams-001",
   "jh-topic-courses-001",
   "jh-topic-subjects-001",
   "jh-topic-sprint-001",
-  "hs-topic-textbooks-001",
   "hs-topic-workbooks-001",
+  "hs-topic-textbooks-001",
   "hs-topic-courses-001",
   "hs-topic-mock-001",
   "hs-topic-sprint-001",
   "hs-topic-subjects-001",
+  "hs-topic-one-series-001",
+  "hs-topic-competition-001",
+  "hs-topic-volunteer-001",
+  "hs-topic-policies-001",
 ]);
 
 const readJson = async (filePath) => JSON.parse(await readFile(filePath, "utf8"));
@@ -76,7 +79,6 @@ if (manifest.schemaVersion !== 1) errors.push("schemaVersion");
 if (manifest.records.length !== APPROVED_IDS.size) errors.push("unexpected public record count");
 for (const id of outputIds) if (!APPROVED_IDS.has(id)) errors.push(`unexpected public id: ${id}`);
 for (const id of APPROVED_IDS) if (!outputIds.has(id)) errors.push(`missing approved id: ${id}`);
-
 for (const record of manifest.records) {
   const sourceRecord = sourceById.get(record.id);
   if (!sourceRecord) {
@@ -135,4 +137,3 @@ if (errors.length > 0) {
       `metadataOnly=${metadataOnly} hiddenHistoricalRecords=${hiddenRecords.length}`,
   );
 }
-

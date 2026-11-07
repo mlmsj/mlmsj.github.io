@@ -34,7 +34,7 @@ export { UNIVERSITY_DOMAIN_IDS };
 export type { UniversityDomainId } from "./categories";
 
 /**
- * The approved university domain layer is exposed here as the existing v2
+ * The current university category tree is exposed here as the existing v2
  * projection, while the canonical data now lives in the formal v1 category
  * table. This projection does not alter the v1 manifest or activate the v2
  * authorization gate.

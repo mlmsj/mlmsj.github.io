@@ -60,11 +60,65 @@ export function getResourceMetadataLabel(
 ): string | null {
   const fileType =
     typeof resource.fileType === "string" ? resource.fileType.trim() : "";
+  const fileTypeLabel = getResourceFileTypeLabel(fileType);
   const size = formatResourceSize(resource.sizeBytes);
-  const labels = [fileType, size].filter(
+  const labels = [fileTypeLabel, size].filter(
     (label): label is string => Boolean(label),
   );
   return labels.length > 0 ? labels.join(" · ") : null;
+}
+
+export function getResourceFileTypeLabel(fileType: string): string {
+  const normalized = fileType.trim().toLowerCase();
+  if (!normalized) return "";
+  if (normalized === "folder" || normalized === "directory") return "文件夹";
+  if (normalized === "application/pdf" || normalized === "pdf") return "PDF";
+  if (normalized === "application/zip" || normalized === "zip") return "ZIP";
+  if (normalized === "application/epub+zip" || normalized === "epub") return "EPUB";
+  if (normalized === "application/msword" || normalized === "doc") return "DOC";
+  if (
+    normalized ===
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    normalized === "docx"
+  ) {
+    return "DOCX";
+  }
+  return fileType.trim();
+}
+
+export function getResourceUpdatedTimestamp(
+  resource: Pick<Resource, "meta" | "publishedAt">,
+): number {
+  const timestamp = Date.parse(resource.publishedAt ?? resource.meta);
+  return Number.isNaN(timestamp) ? 0 : timestamp;
+}
+
+export function sortResourcesByUpdatedAt(values: readonly Resource[]): Resource[] {
+  return values
+    .map((resource, index) => ({ resource, index }))
+    .sort((left, right) => {
+      const timestampDifference =
+        getResourceUpdatedTimestamp(right.resource) -
+        getResourceUpdatedTimestamp(left.resource);
+      if (timestampDifference !== 0) return timestampDifference;
+      const titleDifference = left.resource.title.localeCompare(
+        right.resource.title,
+        "zh-CN",
+      );
+      if (titleDifference !== 0) return titleDifference;
+      const idDifference = left.resource.id.localeCompare(right.resource.id);
+      return idDifference !== 0 ? idDifference : left.index - right.index;
+    })
+    .map(({ resource }) => resource);
+}
+
+export function matchesResourceQuery(resource: Resource, query: string): boolean {
+  const normalized = query.trim().toLocaleLowerCase("zh-CN");
+  if (!normalized) return true;
+  return [resource.title, resource.description, resource.tag]
+    .join(" ")
+    .toLocaleLowerCase("zh-CN")
+    .includes(normalized);
 }
 
 export const resources: readonly Resource[] = [

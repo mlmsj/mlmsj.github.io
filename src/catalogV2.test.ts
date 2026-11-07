@@ -118,15 +118,15 @@ const legacyRecord: PublicManifestRecord = {
 };
 
 describe("approved university domain projection", () => {
-  it("keeps exactly the nine approved domains and no tenth domain", () => {
-    expect(UNIVERSITY_DOMAIN_IDS).toHaveLength(9);
-    expect(new Set(UNIVERSITY_DOMAIN_IDS).size).toBe(9);
-    expect(UNIVERSITY_DOMAIN_CATEGORIES).toHaveLength(10);
+  it("keeps the current university tree and no duplicate domain IDs", () => {
+    expect(UNIVERSITY_DOMAIN_IDS).toHaveLength(18);
+    expect(new Set(UNIVERSITY_DOMAIN_IDS).size).toBe(18);
+    expect(UNIVERSITY_DOMAIN_CATEGORIES).toHaveLength(19);
     expect(
       UNIVERSITY_DOMAIN_CATEGORIES.filter((category) =>
         UNIVERSITY_DOMAIN_IDS.includes(category.id as (typeof UNIVERSITY_DOMAIN_IDS)[number]),
       ),
-    ).toHaveLength(9);
+    ).toHaveLength(18);
     expect(validateCategoryGraph(UNIVERSITY_DOMAIN_CATEGORIES)).toEqual([]);
   });
 });

@@ -27,35 +27,15 @@ describe("CategoriesPage", () => {
     const junior = within(sidebar).getByRole("button", { name: /初中/ });
 
     expect(junior).toHaveAttribute("aria-current", "true");
-    expect(within(desktop).getByRole("button", { name: /数学/ })).toBeVisible();
+    expect(within(desktop).queryByRole("button", { name: /数学/ })).not.toBeInTheDocument();
 
     fireEvent.click(within(sidebar).getByRole("button", { name: /高中/ }));
     expect(window.location.search).toBe("?category=stage-senior");
-    fireEvent.click(within(desktop).getByRole("button", { name: /考试资料/ }));
-    expect(window.location.search).toBe(
-      "?category=stage-senior&subject=domain-senior-exams",
-    );
-    expect(within(desktop).getByRole("link", { name: /高考真题/ })).toBeVisible();
+    expect(within(desktop).queryByText("考试资料")).not.toBeInTheDocument();
+    expect(within(desktop).getByText("课本教材")).toBeVisible();
 
     fireEvent.click(within(sidebar).getByRole("button", { name: /初中/ }));
-    fireEvent.click(within(desktop).getByRole("button", { name: /数学/ }));
-    expect(window.location.search).toBe(
-      "?category=stage-junior&subject=subject-junior-math",
-    );
-    expect(within(desktop).getByText("资料类型")).toBeVisible();
-    expect(within(desktop).getByText("知识点整理")).toBeVisible();
-
-    fireEvent.click(
-      within(desktop).getByRole("link", { name: /知识点整理/ }),
-    );
-    expect(openResources).toHaveBeenCalledWith(
-      expect.stringContaining(
-        "/resources?category=type-junior-math-notes",
-      ),
-    );
-
-    fireEvent.click(within(desktop).getByRole("button", { name: "← 返回学科" }));
-    expect(window.location.search).toBe("?category=stage-junior");
+    expect(within(desktop).queryByRole("button", { name: /数学/ })).not.toBeInTheDocument();
   });
 
   it("supports the mobile progressive flow and back controls", () => {
@@ -65,12 +45,7 @@ describe("CategoriesPage", () => {
     expect(within(mobile).getByText("选择学习阶段或用途")).toBeVisible();
     fireEvent.click(within(mobile).getByRole("button", { name: /初中/ }));
     expect(window.location.search).toBe("?category=stage-junior");
-    expect(within(mobile).getByRole("button", { name: /数学/ })).toBeVisible();
-
-    fireEvent.click(within(mobile).getByRole("button", { name: /数学/ }));
-    expect(within(mobile).getByText("知识点整理")).toBeVisible();
-    fireEvent.click(within(mobile).getByRole("button", { name: "← 返回上一级" }));
-    expect(window.location.search).toBe("?category=stage-junior");
+    expect(within(mobile).queryByRole("button", { name: /数学/ })).not.toBeInTheDocument();
     fireEvent.click(within(mobile).getByRole("button", { name: "← 返回上一级" }));
     expect(window.location.search).toBe("");
   });
@@ -86,12 +61,13 @@ describe("CategoriesPage", () => {
     const sidebar = within(desktop).getByRole("complementary", {
       name: "一级分类",
     });
-    expect(within(desktop).getByText("知识点整理")).toBeVisible();
+    expect(within(desktop).getByRole("link", { name: /查看数学全部资料/ })).toBeVisible();
+    expect(within(desktop).queryByText("知识点整理")).not.toBeInTheDocument();
 
     window.history.pushState({}, "", "/categories?category=stage-senior");
     fireEvent.popState(window);
 
-    expect(within(desktop).getByRole("button", { name: /考试资料/ })).toBeVisible();
+    expect(within(desktop).getByText("竞赛")).toBeVisible();
     expect(within(sidebar).getByRole("button", { name: /高中/ })).toHaveAttribute(
       "aria-current",
       "true",
@@ -168,8 +144,9 @@ describe("CategoriesPage", () => {
     expect(link).toHaveTextContent("1 份资料");
     fireEvent.click(link);
     expect(openResources).toHaveBeenCalledWith(expect.stringContaining("/resources?category=stage-university"));
-    expect(within(desktop).getByText("专业课")).toBeVisible();
-    expect(within(desktop).getByText("复习资料")).toBeVisible();
+    expect(within(desktop).getByText("大学专业")).toBeVisible();
+    expect(within(desktop).getByText("大学证明")).toBeVisible();
+    expect(within(desktop).queryByText("复习资料")).not.toBeInTheDocument();
   });
 
   it("offers the selected second-level scope on desktop and mobile after URL restoration", () => {
