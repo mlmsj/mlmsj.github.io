@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getChildCategories, type Category } from "./categories";
+import { shouldShowCategoryInNavigation } from "./categoryNavigation";
 import {
   CATEGORY_PATH_PARAM,
   CATEGORY_PARAM,
@@ -127,8 +128,12 @@ export function CategoriesPage({
       ? [routeState.category]
       : [];
   const desktopCurrent = desktopPath[desktopPath.length - 1] ?? null;
+  const visibleCategoryItems = (items: readonly Category[]) =>
+    items.filter((category) =>
+      shouldShowCategoryInNavigation(category.id, counts[category.id] ?? 0),
+    );
   const desktopItems = desktopCurrent
-    ? getChildCategories(desktopCurrent.id)
+    ? visibleCategoryItems(getChildCategories(desktopCurrent.id))
     : rootCategories;
   const desktopTitle = desktopCurrent && desktopCurrent.level >= 2
     ? "资料类型"
@@ -140,7 +145,7 @@ export function CategoriesPage({
   const mobilePath = routeState.path;
   const mobileCurrent = mobilePath[mobilePath.length - 1] ?? null;
   const mobileItems = mobileCurrent
-    ? getChildCategories(mobileCurrent.id)
+    ? visibleCategoryItems(getChildCategories(mobileCurrent.id))
     : rootCategories;
   const mobileHasSelection = mobilePath.length > 0;
 

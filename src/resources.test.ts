@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resources } from "./resources";
+import { resources, sortResourcesByUpdatedAt } from "./resources";
 
 describe("resource migration contract", () => {
   it("preserves all ten resource IDs and leaves them explicitly unclassified", () => {
@@ -43,6 +43,22 @@ describe("resource migration contract", () => {
       { id: "08", title: "大学专业课笔记（计算机类）", meta: "2024-12-02", tag: "大学", description: "计算机专业课程笔记整理。" },
       { id: "09", title: "高中化学实验题专项训练", meta: "2024-12-01", tag: "高中", description: "高中化学实验题专项练习。" },
       { id: "10", title: "中考英语真题汇总（近五年）", meta: "2024-11-30", tag: "初中", description: "近五年中考英语真题汇总。" },
+    ]);
+  });
+
+  it("sorts effective published timestamps newest first with stable tie-breakers", () => {
+    const values = [
+      { ...resources[0], id: "older", title: "旧资料", meta: "2026-10-01", publishedAt: "2026-10-01T00:00:00Z" },
+      { ...resources[0], id: "newer", title: "新资料", meta: "2026-11-02", publishedAt: "2026-11-02T00:00:00Z" },
+      { ...resources[0], id: "same-b", title: "乙资料", meta: "2026-11-01", publishedAt: "2026-11-01T00:00:00Z" },
+      { ...resources[0], id: "same-a", title: "甲资料", meta: "2026-11-01", publishedAt: "2026-11-01T00:00:00Z" },
+    ];
+
+    expect(sortResourcesByUpdatedAt(values).map(({ id }) => id)).toEqual([
+      "newer",
+      "same-a",
+      "same-b",
+      "older",
     ]);
   });
 });

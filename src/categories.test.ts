@@ -27,23 +27,58 @@ describe("category data contract", () => {
     );
   });
 
-  it("exposes the approved senior exam path to category navigation", () => {
+  it("removes the withdrawn senior exam branch and sorts the current themes by name length", () => {
     expect(getChildCategories("stage-senior").map(({ id }) => id)).toEqual([
-      "domain-senior-exams",
+      "domain-senior-courses",
+      "domain-senior-competition",
+      "domain-senior-one-series",
+      "domain-senior-subjects",
+      "domain-senior-sprint",
       "domain-senior-textbooks",
+      "domain-senior-volunteer",
       "domain-senior-workbooks",
       "domain-senior-mocks",
-      "domain-senior-courses",
-      "domain-senior-sprint",
-      "domain-senior-subjects",
+      "domain-senior-policies",
     ]);
-    expect(getChildCategories("domain-senior-exams").map(({ id }) => id)).toEqual([
-      "exam-senior-gaokao",
+    expect(getCategoryPath("missing-senior-exam")).toEqual([]);
+  });
+
+  it("exposes the certification root with the confirmed second-level order", () => {
+    expect(getChildCategories("purpose-certification").map(({ id }) => id)).toEqual([
+      "purpose-certification-ielts",
+      "purpose-certification-computer",
+      "purpose-certification-cet",
+      "purpose-certification-university",
+      "purpose-certification-foreign-language",
+      "purpose-certification-civil-service",
+      "purpose-certification-upgrade",
     ]);
-    expect(getEnabledCategoryPath("exam-senior-gaokao").map(({ id }) => id)).toEqual([
-      "stage-senior",
-      "domain-senior-exams",
-      "exam-senior-gaokao",
+    expect(getEnabledCategoryPath("purpose-certification-upgrade").map(({ id }) => id)).toEqual([
+      "purpose-certification",
+      "purpose-certification-upgrade",
+    ]);
+  });
+
+  it("exposes the current university tree and keeps proof as a leaf", () => {
+    expect(getChildCategories("stage-university").slice(0, 6).map(({ id }) => id)).toEqual([
+      "domain-university-major",
+      "domain-university-competition",
+      "domain-university-proof",
+      "domain-university-certification",
+      "domain-university-postgraduate",
+      "domain-university-planning",
+    ]);
+    expect(getChildCategories("domain-university-major").map(({ id }) => id)).toEqual([
+      "domain-university-major-courses",
+      "domain-university-major-politics",
+      "domain-university-major-textbooks",
+      "domain-university-major-math",
+    ]);
+    expect(getChildCategories("domain-university-proof")).toEqual([]);
+    expect(getEnabledCategoryPath("domain-university-planning-resume").map(({ id }) => id)).toEqual([
+      "stage-university",
+      "domain-university-planning",
+      "domain-university-planning-resume",
     ]);
   });
 
@@ -207,4 +242,3 @@ describe("category data contract", () => {
     expect(getEnabledCategoryPath("type-junior-math-notes", values)).toHaveLength(3);
   });
 });
-

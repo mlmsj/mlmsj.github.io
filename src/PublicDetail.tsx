@@ -98,6 +98,7 @@ export function PublicDetail({
   categoryValues = categories,
   catalogPhase,
   catalogStatus,
+  onBack,
   render,
 }: {
   id: string | null;
@@ -105,10 +106,11 @@ export function PublicDetail({
   categoryValues?: readonly Category[];
   catalogPhase: PublicCatalogPhase;
   catalogStatus: string;
+  onBack?: () => void;
   render: (resource: Resource) => ReactNode;
 }) {
   if (!id) {
-    return <section className="page-section" role="status">资料不存在、未发布或已撤回。</section>;
+    return <DetailRecovery onBack={onBack} message="资料不存在、未发布或已撤回。" />;
   }
   if (catalogPhase === "loading") {
     return <section className="page-section" role="status">正在加载公开资料清单…</section>;
@@ -126,10 +128,30 @@ export function PublicDetail({
     resource?.delivery?.accessStatus === "withdrawn";
   if (!resource || !isPublishedPublicResource(resource, categoryValues)) {
     return (
-      <section className="page-section" role="status">
-        {isWithdrawn ? "该资料已撤回，不再提供公开访问入口。" : "资料不存在、未发布或已撤回。"}
-      </section>
+      <DetailRecovery
+        onBack={onBack}
+        message={isWithdrawn ? "该资料已撤回，不再提供公开访问入口。" : "资料不存在、未发布或已撤回。"}
+      />
     );
   }
   return render(resource);
+}
+
+function DetailRecovery({
+  message,
+  onBack,
+}: {
+  message: string;
+  onBack?: () => void;
+}) {
+  return (
+    <section className="page-section detail-error-page" role="status">
+      <p>{message}</p>
+      {onBack && (
+        <button className="back-button" type="button" onClick={onBack}>
+          ← 返回资料列表
+        </button>
+      )}
+    </section>
+  );
 }

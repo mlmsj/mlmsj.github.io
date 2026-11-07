@@ -6,7 +6,7 @@ import assistantCat from "./assets/zhaowenguan-assistant-cat.png";
 import { InfoPage, type InfoPageKey } from "./InfoPages";
 import { Toolbox, ToolDetail, type ToolKey } from "./Toolbox";
 import { appPathFromLocation, locationPathForAppPath } from "./routing";
-import type { Resource } from "./resources";
+import { matchesResourceQuery, sortResourcesByUpdatedAt, type Resource } from "./resources";
 import { usePublicCatalog } from "./publicCatalog";
 import { isPublishedPublicResource } from "./categoryCounts";
 import { PublicDeliveryPanel, PublicDetail } from "./PublicDetail";
@@ -80,7 +80,9 @@ function App() {
   const [page, setPage] = useState<Page>(pageFromPath);
   const catalog = usePublicCatalog();
   const resources = catalog.items;
-  const publicResources = resources.filter((resource) => isPublishedPublicResource(resource));
+  const publicResources = sortResourcesByUpdatedAt(
+    resources.filter((resource) => isPublishedPublicResource(resource)),
+  );
   const [mobileOpen, setMobileOpen] = useState(false);
   const [selected, setSelected] = useState(resourceFromLocation);
   const [myData, setMyData] = useState<MyData>(loadMyData);
@@ -152,7 +154,7 @@ function App() {
         toggleTheme={() => updateMyData(data => ({ ...data, theme: data.theme === "light" ? "dark" : "light" }))}
       />
       <main id="main-content">
-        {catalog.status && ["home","categories","profile"].includes(page) && <p role="status">{catalog.status}</p>}
+        {catalog.status && ["home","categories","profile"].includes(page) && <p className="catalog-status-global" role="status">{catalog.status}</p>}
         {page === "home" && (
           <Home
             go={go}
@@ -171,7 +173,7 @@ function App() {
             onOpenResources={(location) => openLocation("resources", location)}
           />
         )}
-        {page === "detail" && <PublicDetail id={selected} resourceValues={resources} catalogPhase={catalog.phase} catalogStatus={catalog.status} render={resource => <Detail resource={resource} go={go} favorite={myData.favorites.some(item => item.id === resource.id)} onToggleFavorite={() => toggleFavorite(resource.id)} />} />}
+        {page === "detail" && <PublicDetail id={selected} resourceValues={resources} catalogPhase={catalog.phase} catalogStatus={catalog.status} onBack={() => go("resources")} render={resource => <Detail resource={resource} go={go} favorite={myData.favorites.some(item => item.id === resource.id)} onToggleFavorite={() => toggleFavorite(resource.id)} />} />}
         {page === "tools" && (
           <Toolbox openTool={(tool) => go(tool ?? "tools")} favoriteToolIds={myData.favoriteTools.map(item => item.id)} onToggleFavorite={toggleTool} />
         )}
@@ -294,6 +296,13 @@ function Home({
   resources: readonly Resource[];
 }) {
   const [query, setQuery] = useState("");
+  const hotSearches = [
+    "中考真题",
+    "大学",
+    "四级",
+    "计算机二级",
+    "考研",
+  ].filter((candidate) => resources.some((resource) => matchesResourceQuery(resource, candidate)));
   const search = (q = query) => { window.history.pushState({}, "", locationPathForAppPath(`/resources?q=${encodeURIComponent(q)}`)); window.dispatchEvent(new PopStateEvent("popstate")); };
   return (
     <>
@@ -313,14 +322,7 @@ function Home({
           </div>
           <div className="hot-search">
             <b>热门搜索：</b>
-            {[
-              "中考真题",
-              "高考真题",
-              "大学课程",
-              "四级真题",
-              "计算机二级",
-              "考研资料",
-            ].map((s) => (
+            {hotSearches.map((s) => (
               <button key={s} onClick={()=>search(s)}>{s}</button>
             ))}
           </div>

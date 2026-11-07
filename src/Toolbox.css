@@ -1174,6 +1174,92 @@
   }
 }
 
+/* ZWG-POSTRELEASE-FIX-01: dark-mode toolbox contrast. */
+[data-theme="dark"] .toolbox-hero {
+  background: linear-gradient(115deg, #243a2a, #202a22 62%, #2b4230);
+  border-color: #4d6852;
+}
+[data-theme="dark"] .toolbox-hero h1,
+[data-theme="dark"] .section-heading h2,
+[data-theme="dark"] .tool-card strong,
+[data-theme="dark"] .tool-detail-header h1,
+[data-theme="dark"] .tool-panel h2,
+[data-theme="dark"] .ocr-result-heading {
+  color: #edf5ec;
+}
+[data-theme="dark"] .toolbox-eyebrow,
+[data-theme="dark"] .toolbox-hero > p:not(.toolbox-eyebrow),
+[data-theme="dark"] .section-heading p,
+[data-theme="dark"] .tool-card small,
+[data-theme="dark"] .tool-detail-header p,
+[data-theme="dark"] .tool-status,
+[data-theme="dark"] .tool-empty,
+[data-theme="dark"] .tool-settings label,
+[data-theme="dark"] .phase3-tool .file-drop small,
+[data-theme="dark"] .preview-controls {
+  color: #c0d6c2;
+}
+[data-theme="dark"] .privacy-chips span {
+  background: #2b4030;
+  border-color: #55705a;
+  color: #d1e6d3;
+}
+[data-theme="dark"] .tool-search,
+[data-theme="dark"] .tool-card,
+[data-theme="dark"] .tool-panel,
+[data-theme="dark"] .tool-empty {
+  background: #202a22;
+  border-color: #4d6352;
+}
+[data-theme="dark"] .tool-search {
+  box-shadow: 0 8px 22px rgba(0, 0, 0, .22);
+}
+[data-theme="dark"] .tool-filters button,
+[data-theme="dark"] .preview-controls button,
+[data-theme="dark"] .ocr-file-list button,
+[data-theme="dark"] .ocr-page-nav button,
+[data-theme="dark"] .tool-settings input,
+[data-theme="dark"] .tool-settings select,
+[data-theme="dark"] .ocr-results textarea,
+[data-theme="dark"] .phase3-tool .file-drop {
+  background: #182219;
+  border-color: #55715b;
+  color: #d5e7d6;
+}
+[data-theme="dark"] .tool-filters button {
+  color: #c9ddcb;
+}
+[data-theme="dark"] .tool-filters button.active,
+[data-theme="dark"] .ocr-file-list button.active,
+[data-theme="dark"] .ocr-page-nav button.active {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: #102016;
+}
+[data-theme="dark"] .tool-card em,
+[data-theme="dark"] .tool-detail-header > button,
+[data-theme="dark"] .drop-zone,
+[data-theme="dark"] .tool-card .tool-icon {
+  color: #bfe3c3;
+}
+[data-theme="dark"] .tool-card .tool-icon {
+  background: #2b4831;
+}
+[data-theme="dark"] .tool-card.disabled,
+[data-theme="dark"] .tool-card.disabled .tool-icon {
+  background: #263129;
+}
+[data-theme="dark"] .tool-card.disabled em {
+  color: #9eb2a0;
+}
+[data-theme="dark"] .tool-panel,
+[data-theme="dark"] .drop-zone,
+[data-theme="dark"] .file-row,
+[data-theme="dark"] .ocr-preview {
+  background: #202a22;
+  border-color: #4d6352;
+}
+
 @media (min-width: 801px) {
   .tool-card.compact {
     padding-top: 12px;

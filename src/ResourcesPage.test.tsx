@@ -70,7 +70,7 @@ describe("ResourcesPage category filtering", () => {
 
     await waitFor(()=>expect(screen.getByText("暂无正式发布资料")).toBeVisible());
     expect(screen.queryByText("2026高考数学真题及答案（全国卷）")).not.toBeInTheDocument();
-    expect(screen.getByText("全部公开资料")).toBeVisible();
+    expect(screen.queryByText("全部公开资料")).not.toBeInTheDocument();
   });
 
   it("shows only published, public resources matching the stable level-three ID", () => {
@@ -144,7 +144,7 @@ describe("ResourcesPage category filtering", () => {
     const mobile = screen.getByLabelText("移动端资料分类");
     fireEvent.click(within(mobile).getByRole("button", { name: /初中/ }));
     fireEvent.click(within(mobile).getByRole("button", { name: /数学/ }));
-    expect(within(mobile).getByText("知识点整理")).toBeVisible();
+    expect(within(mobile).getByRole("button", { name: /知识点整理.*1/ })).toBeVisible();
     fireEvent.click(within(mobile).getByRole("button", { name: "← 返回上一级" }));
     expect(within(mobile).getByRole("button", { name: /数学/ })).toBeVisible();
   });
@@ -171,13 +171,15 @@ describe("ResourcesPage category filtering", () => {
   it("filters direct root and subject resources together with their descendants", () => {
     render(<ResourcesPage detail={vi.fn()} resourceValues={mixedResources} />);
     const directory = screen.getByRole("complementary", { name: "资料分类目录" });
-    fireEvent.click(within(directory).getByRole("button", { name: "查看大学全部资料" }));
+    expect(within(directory).queryByRole("button", { name: "大学（1）" })).not.toBeInTheDocument();
+    window.history.pushState({}, "", "/resources?category=stage-university");
+    fireEvent.popState(window);
     expect(window.location.search).toBe("?category=stage-university");
     expect(screen.getByText("合成大学一级资料")).toBeVisible();
     expect(screen.queryByText("合成数学二级资料")).not.toBeInTheDocument();
-    fireEvent.click(within(directory).getByRole("button", { name: "查看初中全部资料" }));
+    fireEvent.click(within(directory).getByRole("button", { name: /^初中/ }));
     expect(screen.getByText("共 3 条")).toBeVisible();
-    fireEvent.click(within(directory).getByRole("button", { name: "查看数学全部资料" }));
+    fireEvent.click(within(directory).getByRole("button", { name: /^数学/ }));
     expect(screen.getByText("共 2 条")).toBeVisible();
     expect(screen.queryByText("合成初中一级资料")).not.toBeInTheDocument();
   });
@@ -187,13 +189,13 @@ describe("ResourcesPage category filtering", () => {
     const mobile = screen.getByLabelText("移动端资料分类");
     fireEvent.click(within(mobile).getByRole("button", { name: /大学/ }));
     expect(window.location.search).toBe("");
-    expect(within(mobile).getByRole("button", { name: /专业课/ })).toBeVisible();
-    fireEvent.click(within(mobile).getByRole("button", { name: "查看大学全部资料" }));
+    expect(within(mobile).getByRole("button", { name: /大学专业/ })).toBeVisible();
+    fireEvent.click(within(mobile).getByRole("button", { name: "大学（1）" }));
     expect(window.location.search).toBe("?category=stage-university");
     fireEvent.click(within(mobile).getByRole("button", { name: /初中/ }));
-    expect(within(mobile).getByRole("button", { name: "查看初中全部资料" })).toBeVisible();
+    expect(within(mobile).getByRole("button", { name: /^初中/ })).toBeVisible();
     fireEvent.click(within(mobile).getByRole("button", { name: /数学/ }));
-    fireEvent.click(within(mobile).getByRole("button", { name: "查看数学全部资料" }));
+    fireEvent.click(within(mobile).getByRole("button", { name: /^数学/ }));
     expect(window.location.search).toBe("?category=subject-junior-math");
     expect(screen.getByText("共 2 条")).toBeVisible();
   });
@@ -229,7 +231,54 @@ describe("ResourcesPage category filtering", () => {
   });
 });
 
+describe("resource result state", () => {
+  beforeEach(() => {
+    window.history.replaceState({}, "", "/resources");
+  });
+
+  it("shows the committed search term and result count for matches and misses", () => {
+    const resource = {
+      ...visibleResource,
+      title: "高考真题公开资料",
+      description: "高考真题与答案整理",
+    };
+    render(<ResourcesPage detail={vi.fn()} resourceValues={[resource]} />);
+
+    fireEvent.change(screen.getByRole("textbox", { name: "关键词" }), {
+      target: { value: "高考真题" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "搜索" }));
+    expect(screen.getByRole("heading", { name: "搜索结果：高考真题（1）" })).toBeVisible();
+
+    fireEvent.change(screen.getByRole("textbox", { name: "关键词" }), {
+      target: { value: "不存在的关键词" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "搜索" }));
+    expect(screen.getByRole("heading", { name: "搜索结果：不存在的关键词（0）" })).toBeVisible();
+  });
+
+  it("shows the leaf category name and count in a category result heading", () => {
+    const resource = {
+      ...visibleResource,
+      categoryId: "domain-junior-textbooks",
+      title: "初中课本教材",
+    };
+    window.history.replaceState({}, "", "/resources?category=domain-junior-textbooks");
+    render(<ResourcesPage detail={vi.fn()} resourceValues={[resource]} />);
+
+    expect(screen.getByRole("heading", { name: "课本教材（1）" })).toBeVisible();
+    expect(
+      within(screen.getByRole("complementary", { name: "资料分类目录" }))
+        .getByRole("button", { name: /课本教材.*1/ }),
+    ).toBeVisible();
+  });
+});
+
 describe("resource card metadata and layout contracts", () => {
+  beforeEach(() => {
+    window.history.replaceState({}, "", "/resources");
+  });
+
   it.each([
     [0, "0 B"],
     [1023, "1023 B"],
@@ -303,6 +352,10 @@ describe("resource card metadata and layout contracts", () => {
     expect(favorite).toHaveClass("resource-favorite-button");
     fireEvent.click(favorite);
     expect(onToggleFavorite).toHaveBeenCalledWith("full-metadata");
+  });
+
+  it("translates folder metadata without changing the underlying file type", () => {
+    expect(getResourceMetadataLabel({ fileType: "folder", sizeBytes: undefined })).toBe("文件夹");
   });
 
   it("does not create a metadata label when both fields are absent or invalid", () => {

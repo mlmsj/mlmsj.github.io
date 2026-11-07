@@ -6,7 +6,9 @@ import {
   getCategoryPath,
   type Category,
 } from "./categories";
+import { shouldShowCategoryInNavigation } from "./categoryNavigation";
 import {
+  getPublishedResourceCount,
   getPublishedResourcesForCategory,
   isPublishedPublicResource,
 } from "./categoryCounts";
@@ -18,6 +20,8 @@ import { parseResourceFilterState } from "./resourceFiltering";
 import { resourceFilterLocation } from "./categoryRouting";
 import {
   getResourceMetadataLabel,
+  matchesResourceQuery,
+  sortResourcesByUpdatedAt,
   type Resource,
 } from "./resources";
 import { locationPathForAppPath } from "./routing";
@@ -85,9 +89,9 @@ export function ResourcesPage({
   };
 
   const publicValues = useMemo(
-    () => resourceValues.filter((resource) =>
+    () => sortResourcesByUpdatedAt(resourceValues.filter((resource) =>
       isPublishedPublicResource(resource, categoryValues),
-    ),
+    )),
     [categoryValues, resourceValues],
   );
 
@@ -106,13 +110,8 @@ export function ResourcesPage({
   );
 
   const filteredResources = useMemo(() => {
-    const normalized = searchTerm.trim().toLocaleLowerCase("zh-CN");
-    if (!normalized) return categoryValuesForSearch;
     return categoryValuesForSearch.filter((resource) =>
-      [resource.title, resource.description, resource.tag]
-        .join(" ")
-        .toLocaleLowerCase("zh-CN")
-        .includes(normalized),
+      matchesResourceQuery(resource, searchTerm),
     );
   }, [categoryValuesForSearch, searchTerm]);
 
@@ -133,6 +132,11 @@ export function ResourcesPage({
   const mobileChildren = mobileCategory
     ? getChildCategories(mobileCategory.id, categoryValues).filter(
         (category) => getEnabledCategoryPath(category.id, categoryValues).length > 0,
+      ).filter((category) =>
+        shouldShowCategoryInNavigation(
+          category.id,
+          getPublishedResourceCount(category.id, categoryValues, publicValues),
+        ),
       )
     : rootCategories;
   const showCatalogStatus = catalogPhase !== "ready";
@@ -158,6 +162,11 @@ export function ResourcesPage({
   const browseMobileCategory = (category: Category) => {
     const children = getChildCategories(category.id, categoryValues).filter(
       (child) => getEnabledCategoryPath(child.id, categoryValues).length > 0,
+    ).filter((child) =>
+      shouldShowCategoryInNavigation(
+        child.id,
+        getPublishedResourceCount(child.id, categoryValues, publicValues),
+      ),
     );
     if (children.length > 0) {
       setMobileCategoryPath([...mobileCategoryPath, category.id]);
@@ -175,22 +184,47 @@ export function ResourcesPage({
       .filter(
         (category) => getEnabledCategoryPath(category.id, categoryValues).length > 0,
       )
-      .map((category) => (
-        <div
-          className={parentId === null ? "resource-directory-group" : "resource-directory-level"}
-          key={category.id}
-        >
-          {parentId === null && <strong>{category.name}</strong>}
-          <button
-            type="button"
-            className={filterState.category?.id === category.id ? "active" : ""}
-            onClick={() => selectResourceCategory(category)}
+      .filter((category) =>
+        shouldShowCategoryInNavigation(
+          category.id,
+          getPublishedResourceCount(category.id, categoryValues, publicValues),
+        ),
+      )
+      .map((category) => {
+        const count = getPublishedResourceCount(
+          category.id,
+          categoryValues,
+          publicValues,
+        );
+        const isStage = parentId === null;
+        const isStaticStage = isStage && category.id === "stage-university";
+        return (
+          <div
+            className={isStage ? "resource-directory-group" : "resource-directory-level"}
+            key={category.id}
           >
-            查看{category.name}全部资料
-          </button>
-          {renderResourceDirectory(category.id)}
-        </div>
-      ));
+            {isStaticStage ? (
+              <div className="resource-directory-stage-heading">
+                <strong>{category.name}</strong>
+                <small>（{count}）</small>
+              </div>
+            ) : (
+              <button
+                type="button"
+                aria-label={`${category.name}（${count}）`}
+                className={`resource-directory-node ${isStage ? "resource-directory-stage" : "resource-directory-category"} ${filterState.category?.id === category.id ? "active" : ""}`}
+                onClick={() => selectResourceCategory(category)}
+              >
+                <span>{category.name}</span>
+                <small>（{count}）</small>
+              </button>
+            )}
+            <div className="resource-directory-children">
+              {renderResourceDirectory(category.id)}
+            </div>
+          </div>
+        );
+      });
   }
 
   return (
@@ -233,59 +267,81 @@ export function ResourcesPage({
           ) : <span>分类</span>}
           <span>{mobileCategory ? `${mobileCategory.name} · 选择下一级` : "选择学习阶段或用途"}</span>
         </div>
+        <p className="resource-mobile-section-title">公开资料</p>
         <button
           type="button"
+            aria-label={`全部资料（${publicValues.length}）`}
           className={!filterState.category && !filterState.hasCategoryParameter ? "active" : ""}
           onClick={showAllOnMobile}
         >
-          全部资料
+          <span>全部资料</span>
+          <small>（{publicValues.length}）</small>
         </button>
         {mobileCategory && (
-          <button type="button" onClick={() => selectResourceCategory(mobileCategory)}>
-            查看{mobileCategory.name}全部资料
+          <button
+            type="button"
+            aria-label={`${mobileCategory.name}（${getPublishedResourceCount(mobileCategory.id, categoryValues, publicValues)}）`}
+            onClick={() => selectResourceCategory(mobileCategory)}
+          >
+            <span>{mobileCategory.name}</span>
+            <small>（{getPublishedResourceCount(mobileCategory.id, categoryValues, publicValues)}）</small>
           </button>
         )}
         {mobileChildren.map((category) => (
           <button
             type="button"
             key={category.id}
+            aria-label={`${category.name}（${getPublishedResourceCount(category.id, categoryValues, publicValues)}）`}
             className={filterState.category?.id === category.id ? "active" : ""}
             onClick={() => browseMobileCategory(category)}
           >
-            <span>{category.name}</span><i aria-hidden="true">›</i>
+            <span>
+              <b>{category.name}</b>
+              <small>（{getPublishedResourceCount(category.id, categoryValues, publicValues)}）</small>
+            </span>
+            <i aria-hidden="true">›</i>
           </button>
         ))}
       </div>
 
       <div className="resource-browser">
         <aside className="resource-directory" aria-label="资料分类目录">
-          <p>分类目录</p>
-          <button
-            className={!filterState.category && !filterState.hasCategoryParameter ? "active" : ""}
-            type="button"
-            onClick={clearFilter}
-          >
-            全部资料
-          </button>
-          {renderResourceDirectory(null)}
+          <p className="resource-directory-eyebrow">分类目录</p>
+          <div className="resource-directory-section">
+            <h3>公开资料</h3>
+            <button
+              aria-label={`全部资料（${publicValues.length}）`}
+              className={`resource-directory-node resource-directory-all ${!filterState.category && !filterState.hasCategoryParameter ? "active" : ""}`}
+              type="button"
+              onClick={clearFilter}
+            >
+              <span>全部资料</span>
+              <small>（{publicValues.length}）</small>
+            </button>
+            <div className="resource-directory-tree">
+              {renderResourceDirectory(null)}
+            </div>
+          </div>
         </aside>
 
         <div className="resource-results">
-          <div className="filter-row resource-filter-summary">
-            {filterState.category ? (
-              <>
-                <span>当前分类：{categoryPath.map(({ name }) => name).join(" / ")}</span>
-                <button type="button" onClick={clearFilter}>清除分类筛选</button>
-              </>
-            ) : !filterState.hasCategoryParameter ? (
-              <span className="active">全部公开资料</span>
-            ) : null}
-          </div>
+          {filterState.category ? (
+            <div className="filter-row resource-filter-summary">
+              <span>当前分类：{categoryPath.map(({ name }) => name).join(" / ")}</span>
+              <button type="button" onClick={clearFilter}>清除分类筛选</button>
+            </div>
+          ) : null}
 
           <div className="resource-results-head">
             <div>
-              <p className="kicker">{filterState.category ? "SEARCH RESULTS" : "COLLECTION"}</p>
-              <h2>{filterState.category ? `“${query || "当前分类"}”` : "全部资料"}</h2>
+              <p className="kicker">{searchTerm.trim() || filterState.category ? "SEARCH RESULTS" : "COLLECTION"}</p>
+              <h2>
+                {searchTerm.trim()
+                  ? `搜索结果：${searchTerm.trim()}（${total}）`
+                  : filterState.category
+                    ? `${categoryPath.at(-1)?.name ?? "当前分类"}（${total}）`
+                    : "全部资料"}
+              </h2>
             </div>
             <span>{catalogPhase === "ready" && total ? `共 ${total} 条` : ""}</span>
           </div>
@@ -305,9 +361,11 @@ export function ResourcesPage({
                   <article className="resource-item-shell" key={resource.id}>
                     <button className="resource-item" onClick={() => detail(resource)}>
                       <b>{String((page - 1) * PAGE_SIZE + index + 1).padStart(2, "0")}</b>
-                      <span>
-                        <small>{resource.tag}</small>
-                        {accessLabel && <small className={`resource-access-status resource-access-status-${resource.delivery?.accessStatus}`}>{accessLabel}</small>}
+                      <span className="resource-item-copy">
+                        <span className="resource-item-labels">
+                          <small>{resource.tag}</small>
+                          {accessLabel && <small className={`resource-access-status resource-access-status-${resource.delivery?.accessStatus}`}>{accessLabel}</small>}
+                        </span>
                         <span className="resource-item-title-row">
                           <strong>{resource.title}</strong>
                           {metadataLabel && (
