@@ -89,19 +89,47 @@ describe("static public manifest catalog", () => {
       "domain-junior-subjects": 0,
       "domain-junior-sprint": 0,
       "stage-senior": 0,
-      "domain-senior-exams": 0,
-      "exam-senior-gaokao": 0,
+      "domain-senior-textbooks": 0,
+      "domain-senior-workbooks": 0,
+      "domain-senior-mocks": 0,
+      "domain-senior-courses": 0,
+      "domain-senior-sprint": 0,
+      "domain-senior-subjects": 0,
+      "domain-senior-competition": 0,
+      "domain-senior-one-series": 0,
+      "domain-senior-volunteer": 0,
+      "domain-senior-policies": 0,
       "stage-university": 1,
       "domain-university-major": 0,
+      "domain-university-major-courses": 0,
+      "domain-university-major-politics": 0,
+      "domain-university-major-textbooks": 0,
+      "domain-university-major-math": 0,
+      "domain-university-competition": 0,
+      "domain-university-competition-english": 0,
+      "domain-university-proof": 0,
+      "domain-university-certification": 0,
+      "domain-university-certification-ielts": 0,
+      "domain-university-certification-computer": 0,
+      "domain-university-certification-cet": 0,
+      "domain-university-postgraduate": 0,
+      "domain-university-postgraduate-kaoyan": 0,
+      "domain-university-planning": 0,
+      "domain-university-planning-materials": 0,
+      "domain-university-planning-ppt": 0,
+      "domain-university-planning-resume": 0,
       "domain-university-politics": 0,
       "domain-university-english-exam": 0,
       "domain-university-computer-exam": 0,
-      "domain-university-competition": 0,
-      "domain-university-postgraduate": 0,
-      "domain-university-planning": 0,
-      "domain-university-proof": 0,
       "domain-university-review": 0,
       "purpose-certification": 0,
+      "purpose-certification-ielts": 0,
+      "purpose-certification-computer": 0,
+      "purpose-certification-cet": 0,
+      "purpose-certification-university": 0,
+      "purpose-certification-foreign-language": 0,
+      "purpose-certification-civil-service": 0,
+      "purpose-certification-upgrade": 0,
       "subject-junior-math": 2,
       "type-junior-math-notes": 1,
     });
@@ -334,6 +362,25 @@ describe("static public manifest catalog", () => {
     );
     expect(screen.getByText("该资料已撤回，不再提供公开访问入口。")).toBeVisible();
     expect(screen.queryByText("不应显示")).not.toBeInTheDocument();
+  });
+
+  it("offers a return-to-list action for an invalid detail ID", () => {
+    const onBack = vi.fn();
+    render(
+      <PublicDetail
+        id="does-not-exist-123"
+        resourceValues={[]}
+        catalogPhase="ready"
+        catalogStatus=""
+        onBack={onBack}
+        render={() => <h1>不应显示</h1>}
+      />,
+    );
+
+    const button = screen.getByRole("button", { name: "← 返回资料列表" });
+    expect(button).toBeVisible();
+    fireEvent.click(button);
+    expect(onBack).toHaveBeenCalledOnce();
   });
 
   it.each([

@@ -42,15 +42,15 @@ describe('R15-3B capability copy', () => {
     }
   });
 
-  it('states the catalog service condition and the unavailable file retrieval step', () => {
+  it('states the catalog service condition and the approved third-party retrieval path', () => {
     const go = vi.fn();
     render(<InfoPage page="guide" go={go} />);
     expect(screen.getByText('欢迎通过项目联系邮箱与我们联系。')).toBeVisible();
     fireEvent.click(screen.getByRole('button', { name: /联系我们/ }));
     expect(go).toHaveBeenCalledWith('contact');
-    expect(screen.getByText(/学习资料目录已可浏览/)).toHaveTextContent('需公开资料服务可用');
-    expect(screen.getByRole('heading', { name: '查看获取状态' })).toBeVisible();
-    expect(screen.getByText('当前未开放资料文件获取，请以详情页提示为准。')).toBeVisible();
+    expect(screen.getByText(/学习资料目录已可浏览/)).toHaveTextContent('打开详情页中的夸克网盘分享入口');
+    expect(screen.getByRole('heading', { name: '打开分享' })).toBeVisible();
+    expect(screen.getAllByText(/外链由第三方提供/).length).toBe(2);
     fireEvent.click(screen.getByRole('tab', { name: '学生工具箱' }));
     expect(screen.getByText(/已开放 15 个浏览器本地处理工具/)).toBeVisible();
     expect(screen.getByText(/PDF 水印仅支持文字/)).toHaveTextContent('以 JPEG 重新编码，可能降低清晰度');
@@ -102,7 +102,7 @@ describe('R15-3B capability copy', () => {
 
   it('describes the current catalog in the disclaimer and qualifies compression quality', () => {
     const view = render(<InfoPage page="disclaimer" go={() => undefined} />);
-    expect(screen.getByText(/本站提供学习资源目录的整理/)).toHaveTextContent('当前未开放资料文件获取');
+    expect(screen.getByText(/本站提供学习资源目录的整理/)).toHaveTextContent('本站不提供站内下载');
     expect(screen.getByText(/请通过「联系我们」页面所列邮箱提交具体链接/)).toBeVisible();
     expect(screen.getByText(/权利归各自合法权利人所有/)).toBeVisible();
     view.unmount();
