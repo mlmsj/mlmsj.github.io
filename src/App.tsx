@@ -6,14 +6,15 @@ import assistantCat from "./assets/zhaowenguan-assistant-cat.png";
 import { InfoPage, type InfoPageKey } from "./InfoPages";
 import { Toolbox, ToolDetail, type ToolKey } from "./Toolbox";
 import { appPathFromLocation, locationPathForAppPath } from "./routing";
-import { matchesResourceQuery, sortResourcesByUpdatedAt, type Resource } from "./resources";
+import { sortResourcesByUpdatedAt, type Resource } from "./resources";
 import { usePublicCatalog } from "./publicCatalog";
 import { isPublishedPublicResource } from "./categoryCounts";
 import { PublicDeliveryPanel, PublicDetail } from "./PublicDetail";
-import { getChildCategories } from "./categories";
+import { getChildCategories, SKILL_GROWTH_ROOT_IDS } from "./categories";
 import { CategoriesPage } from "./CategoriesPage";
-import { categoryBrowseLocation } from "./categoryRouting";
+import { categoryBrowseLocation, categoryPathBrowseLocation } from "./categoryRouting";
 import { ResourcesPage } from "./ResourcesPage";
+import { SkillGrowthPage } from "./SkillGrowthPage";
 import { MyPage } from "./MyPage";
 import { mySections, type MySection } from "./mySections";
 import { loadMyData, recordRecent, saveMyData, toggleTimed, type MyData } from "./myData";
@@ -23,6 +24,7 @@ type Page =
   | "resources"
   | "detail"
   | "categories"
+  | "skill-growth"
   | "tools"
   | "profile"
   | ToolKey
@@ -31,15 +33,19 @@ const nav = [
   { key: "home", label: "首页", art: "books" },
   { key: "resources", label: "找资料", art: "open-book" },
   { key: "categories", label: "分类", art: "graduate" },
+  { key: "skill-growth", label: "技能成长", art: "sparkles" },
   { key: "tools", label: "学习工具", art: "scroll" },
   { key: "profile", label: "我的", art: "cat" },
 ] as const;
-const topLevelCategories = getChildCategories(null);
+const topLevelCategories = getChildCategories(null).filter(
+  (category) => !SKILL_GROWTH_ROOT_IDS.includes(category.id as (typeof SKILL_GROWTH_ROOT_IDS)[number]),
+);
 const paths: Record<Page, string> = {
   home: "/",
   resources: "/resources",
   detail: "/detail",
   categories: "/categories",
+  "skill-growth": "/skill-growth",
   tools: "/tools",
   profile: "/profile",
   nup: "/tools/pdf-nup",
@@ -154,7 +160,7 @@ function App() {
         toggleTheme={() => updateMyData(data => ({ ...data, theme: data.theme === "light" ? "dark" : "light" }))}
       />
       <main id="main-content">
-        {catalog.status && ["home","categories","profile"].includes(page) && <p className="catalog-status-global" role="status">{catalog.status}</p>}
+        {catalog.status && ["home","categories","skill-growth","profile"].includes(page) && <p className="catalog-status-global" role="status">{catalog.status}</p>}
         {page === "home" && (
           <Home
             go={go}
@@ -163,6 +169,9 @@ function App() {
             openCategory={(categoryId) =>
               openLocation("categories", categoryBrowseLocation(categoryId))
             }
+            openCategoryPath={(categoryIds) =>
+              openLocation("categories", categoryPathBrowseLocation(categoryIds))
+            }
           />
         )}
         {page === "resources" && <ResourcesPage resourceValues={resources} catalogPhase={catalog.phase} catalogStatus={catalog.status} detail={detail} favoriteIds={myData.favorites.map(item => item.id)} onToggleFavorite={toggleFavorite} />}
@@ -170,6 +179,14 @@ function App() {
           <CategoriesPage
             counts={catalog.counts}
             onHome={() => go("home")}
+            onOpenResources={(location) => openLocation("resources", location)}
+          />
+        )}
+        {page === "skill-growth" && (
+          <SkillGrowthPage
+            counts={catalog.counts}
+            onHome={() => go("home")}
+            onOpenCategories={(location) => openLocation("categories", location)}
             onOpenResources={(location) => openLocation("resources", location)}
           />
         )}
@@ -187,6 +204,7 @@ function App() {
           page !== "home" &&
           page !== "resources" &&
           page !== "categories" &&
+          page !== "skill-growth" &&
           page !== "detail" &&
           page !== "tools" &&
           page !== "profile" && <Placeholder page={page} />}
@@ -288,21 +306,28 @@ function Home({
   go,
   detail,
   openCategory,
+  openCategoryPath,
   resources,
 }: {
   go: (p: Page) => void;
   detail: (r: Resource) => void;
   openCategory: (categoryId: string) => void;
+  openCategoryPath: (categoryIds: readonly string[]) => void;
   resources: readonly Resource[];
 }) {
   const [query, setQuery] = useState("");
-  const hotSearches = [
-    "中考真题",
-    "大学",
-    "四级",
-    "计算机二级",
-    "考研",
-  ].filter((candidate) => resources.some((resource) => matchesResourceQuery(resource, candidate)));
+  const hotSearches: readonly {
+    label: string;
+    categoryPath?: readonly string[];
+    featured?: boolean;
+  }[] = [
+    { label: "初中", categoryPath: ["stage-junior"] },
+    { label: "高中", categoryPath: ["stage-senior"] },
+    { label: "大学", categoryPath: ["stage-university"] },
+    { label: "四级", categoryPath: ["purpose-certification", "purpose-certification-cet"] },
+    { label: "考研", categoryPath: ["stage-university", "domain-university-postgraduate", "domain-university-postgraduate-kaoyan"] },
+    { label: "AI", featured: true },
+  ];
   const search = (q = query) => { window.history.pushState({}, "", locationPathForAppPath(`/resources?q=${encodeURIComponent(q)}`)); window.dispatchEvent(new PopStateEvent("popstate")); };
   return (
     <>
@@ -322,8 +347,18 @@ function Home({
           </div>
           <div className="hot-search">
             <b>热门搜索：</b>
-            {hotSearches.map((s) => (
-              <button key={s} onClick={()=>search(s)}>{s}</button>
+            {hotSearches.map((entry) => (
+              <button
+                className={entry.featured ? "hot-search-entry hot-search-entry-featured" : "hot-search-entry"}
+                key={entry.label}
+                type="button"
+                onClick={() => {
+                  if (entry.featured) go("skill-growth");
+                  else if (entry.categoryPath) openCategoryPath(entry.categoryPath);
+                }}
+              >
+                {entry.label}
+              </button>
             ))}
           </div>
         </div>
@@ -350,6 +385,17 @@ function Home({
             </button>
           ))}
         </div>
+        <section className="home-skill-growth-entry" aria-labelledby="home-skill-growth-title">
+          <div className="home-skill-growth-copy">
+            <span className="home-skill-growth-icon" aria-hidden="true">✦</span>
+            <div>
+              <p className="kicker">SKILL GROWTH</p>
+              <h2 id="home-skill-growth-title">技能成长</h2>
+              <p>从 AI、数字创作到生活兴趣，按自己的目标继续学习。</p>
+            </div>
+          </div>
+          <button type="button" onClick={() => go("skill-growth")}>浏览技能成长 <span aria-hidden="true">→</span></button>
+        </section>
         <section className="updates-panel">
           <div className="panel-title">
             <h2>
@@ -375,19 +421,36 @@ function Home({
         </section>
         <section className="assistant-card">
           <div className="assistant-icon" aria-hidden="true" />
-          <div>
+          <div className="assistant-card-copy">
             <h2>学习助手</h2>
-            <p id="learning-assistant-status">学习助手暂未开放，敬请期待。</p>
+            <p id="learning-assistant-status">从当前任务出发，快速找到下一步。</p>
           </div>
-          <button
-            className="assistant-status"
-            disabled
-            aria-label="学习助手 · 暂未开放"
-            aria-describedby="learning-assistant-status"
-          >
-            <span className="assistant-status-desktop">学习助手 · 暂未开放</span>
-            <span className="assistant-status-mobile">即将开放</span>
-          </button>
+          <div className="assistant-task-grid" role="group" aria-label="学习助手任务入口">
+            <button type="button" className="assistant-task" onClick={() => go("resources")}>
+              <span className="assistant-task-index">01</span>
+              <span className="assistant-task-copy">
+                <strong>资料不会找？</strong>
+                <small>去找资料</small>
+              </span>
+              <i aria-hidden="true">→</i>
+            </button>
+            <button type="button" className="assistant-task" onClick={() => go("tools")}>
+              <span className="assistant-task-index">02</span>
+              <span className="assistant-task-copy">
+                <strong>想制作自己的讲义？</strong>
+                <small>打开学生工具箱</small>
+              </span>
+              <i aria-hidden="true">→</i>
+            </button>
+            <button type="button" className="assistant-task" onClick={() => go("guide")}>
+              <span className="assistant-task-index">03</span>
+              <span className="assistant-task-copy">
+                <strong>不知道工具怎么用？</strong>
+                <small>查看使用说明</small>
+              </span>
+              <i aria-hidden="true">→</i>
+            </button>
+          </div>
           <img className="assistant-cat" src={assistantCat} alt="水彩小白猫" />
         </section>
       </section>
@@ -470,7 +533,7 @@ function MobileBottomNav({ page, go }: { page: Page; go: (p: Page) => void }) {
     : page;
   return (
     <nav className="mobile-bottom-nav" aria-label="移动底部导航">
-      {nav.map((item) => (
+      {nav.filter((item) => item.key !== "skill-growth").map((item) => (
         <button
           key={item.key}
           className={activePage === item.key ? "active" : ""}

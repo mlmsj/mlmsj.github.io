@@ -89,6 +89,53 @@ const SENIOR_THEME_IDS = [
   "hs-topic-policies-001",
 ] as const;
 
+const SKILL_GROWTH_AI_IDS = [
+  "ai-learning-cognition-001",
+  "ai-chatgpt-001",
+  "ai-chatgpt-002",
+  "ai-deepseek-001",
+  "ai-deepseek-002",
+] as const;
+
+const SKILL_GROWTH_NON_AI_IDS = [
+  "skill-coding-scratch-001",
+  "skill-coding-python-001",
+  "skill-coding-cpp-001",
+  "skill-coding-robotics-001",
+  "skill-coding-extension-001",
+  "skill-ps-video-001",
+  "skill-ps-online-001",
+  "skill-jianying-001",
+  "skill-premiere-001",
+  "skill-video-assets-001",
+  "skill-music-sfx-001",
+  "skill-social-short-video-001",
+  "skill-social-wechat-001",
+  "skill-social-xiaohongshu-001",
+  "skill-driving-subject-1-001",
+  "skill-driving-subject-2-001",
+  "skill-driving-subject-3-001",
+  "skill-driving-subject-4-001",
+  "skill-driving-question-bank-001",
+  "skill-calligraphy-online-001",
+  "skill-calligraphy-rubbings-001",
+  "skill-travel-ticketing-001",
+  "skill-clip-tutorial-01",
+  "skill-clip-tutorial-02",
+  "skill-clip-tutorial-05",
+  "skill-clip-tutorial-08",
+  "skill-clip-tutorial-09",
+  "skill-clip-tutorial-10",
+  "skill-clip-tutorial-11",
+  "skill-clip-tutorial-13",
+  "skill-clip-tutorial-15",
+  "skill-clip-tutorial-21",
+  "skill-clip-tutorial-22",
+  "skill-clip-tutorial-25",
+  "skill-clip-tutorial-26",
+  "skill-clip-tutorial-31",
+] as const;
+
 describe("public manifest contract", () => {
   it("accepts the V1 contract and preserves a leading-zero passcode as text", () => {
     const result = validatePublicManifest(validManifest());
@@ -313,7 +360,15 @@ describe("public manifest contract", () => {
       JUNIOR_RELEASE_IDS.every((id) => ids.includes(id)) &&
       SENIOR_THEME_IDS.every((id) => ids.includes(id));
 
-    if (isUniversityAggregateCandidate) {
+    const isSkillGrowthCandidate =
+      ids.length === 74 &&
+      SKILL_GROWTH_AI_IDS.every((id) => ids.includes(id)) &&
+      SKILL_GROWTH_NON_AI_IDS.every((id) => ids.includes(id)) &&
+      UNIVERSITY_AGGREGATE_IDS.every((id) => ids.includes(id)) &&
+      JUNIOR_RELEASE_IDS.every((id) => ids.includes(id)) &&
+      SENIOR_THEME_IDS.every((id) => ids.includes(id));
+
+    if (isUniversityAggregateCandidate || isSkillGrowthCandidate) {
       const aggregateIds = new Set<string>(UNIVERSITY_AGGREGATE_IDS);
       const aggregateRecords = parsed.records.filter((record) => aggregateIds.has(record.id));
       expect(aggregateRecords).toHaveLength(UNIVERSITY_AGGREGATE_IDS.length);
@@ -338,6 +393,19 @@ describe("public manifest contract", () => {
         record.accessStatus === "verified" &&
         record.shareUrl !== null,
       )).toBe(true);
+      if (isSkillGrowthCandidate) {
+        const skillRecords = parsed.records.filter((record) =>
+          SKILL_GROWTH_AI_IDS.includes(record.id as (typeof SKILL_GROWTH_AI_IDS)[number]) ||
+          SKILL_GROWTH_NON_AI_IDS.includes(record.id as (typeof SKILL_GROWTH_NON_AI_IDS)[number]),
+        );
+        expect(skillRecords).toHaveLength(SKILL_GROWTH_AI_IDS.length + SKILL_GROWTH_NON_AI_IDS.length);
+        expect(skillRecords.every((record) =>
+          record.categoryId.startsWith("skill-") &&
+          record.provider === "quark" &&
+          record.accessStatus === "verified" &&
+          record.shareUrl !== null,
+        )).toBe(true);
+      }
       expect(parsed.records.some((record) =>
         record.id === "university-quark-math-advanced-001" ||
         record.id === "university-quark-linear-algebra-001" ||

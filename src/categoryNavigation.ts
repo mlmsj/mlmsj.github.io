@@ -1,4 +1,4 @@
-import { UNIVERSITY_LEGACY_CATEGORY_IDS } from "./categories";
+import { SKILL_GROWTH_ROOT_IDS, UNIVERSITY_LEGACY_CATEGORY_IDS } from "./categories";
 
 /**
  * These category definitions remain valid for deep links and future imports.
@@ -18,10 +18,20 @@ export const HIDDEN_LEGACY_CATEGORY_IDS: ReadonlySet<string> = new Set(
   UNIVERSITY_LEGACY_CATEGORY_IDS,
 );
 
+/**
+ * Skill-growth roots have a dedicated entry point. Keeping them out of the
+ * generic catalog directory prevents the same categories from being shown in
+ * both navigation systems while their direct routes remain valid.
+ */
+export const HIDDEN_SKILL_GROWTH_ROOT_IDS: ReadonlySet<string> = new Set(
+  SKILL_GROWTH_ROOT_IDS,
+);
+
 export function shouldShowCategoryInNavigation(
   categoryId: string,
   publishedCount: number,
 ) {
   if (HIDDEN_LEGACY_CATEGORY_IDS.has(categoryId)) return false;
+  if (HIDDEN_SKILL_GROWTH_ROOT_IDS.has(categoryId)) return false;
   return !HIDDEN_EMPTY_CATEGORY_IDS.has(categoryId) || publishedCount > 0;
 }
