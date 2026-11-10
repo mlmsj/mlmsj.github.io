@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-05T09:30:00+08:00",
+  "generatedAt": "2026-11-10T00:22:00+08:00",
   "records": [
     {
       "id": "university-series-001",
@@ -564,6 +564,533 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-07",
       "publishedAt": "2026-11-07T09:01:16+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "ai-learning-cognition-001",
+      "title": "AI 学习与认知资料",
+      "description": "AI 与人工智能 / AI 学习与认知方向资料入口。",
+      "categoryId": "skill-ai-learning-cognition",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/17e179f834eb",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-09",
+      "publishedAt": "2026-11-09T23:36:32+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "ai-chatgpt-001",
+      "title": "ChatGPT 教程（1）",
+      "description": "AI 与人工智能 / ChatGPT 教程资料入口。",
+      "categoryId": "skill-ai-chatgpt",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/4345f147b9ba",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-09",
+      "publishedAt": "2026-11-09T23:36:32+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "ai-chatgpt-002",
+      "title": "ChatGPT 教程（2）",
+      "description": "AI 与人工智能 / ChatGPT 教程资料入口。",
+      "categoryId": "skill-ai-chatgpt",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/d53f3db1dbbe",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-09",
+      "publishedAt": "2026-11-09T23:36:32+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "ai-deepseek-001",
+      "title": "DeepSeek 教程（1）",
+      "description": "AI 与人工智能 / DeepSeek 教程资料入口。",
+      "categoryId": "skill-ai-deepseek",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/574043cd1d2c",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-09",
+      "publishedAt": "2026-11-09T23:36:32+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "ai-deepseek-002",
+      "title": "DeepSeek 教程（2）",
+      "description": "AI 与人工智能 / DeepSeek 教程资料入口。",
+      "categoryId": "skill-ai-deepseek",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/38ddf7fa4143",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-09",
+      "publishedAt": "2026-11-09T23:36:32+08:00",
+      "fileType": "folder"
+    },
+    {
+      "id": "skill-coding-scratch-001",
+      "title": "Scratch 与少儿编程",
+      "description": "AI 与数字科技 / 编程与开发 / Scratch 与少儿编程资料入口。",
+      "categoryId": "skill-scratch-kids",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/bed4f87be318",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-coding-python-001",
+      "title": "Python 编程",
+      "description": "AI 与数字科技 / 编程与开发 / Python 编程资料入口。",
+      "categoryId": "skill-python",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/6b9f7822339d",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-coding-cpp-001",
+      "title": "C++ 编程",
+      "description": "AI 与数字科技 / 编程与开发 / C++ 编程资料入口。",
+      "categoryId": "skill-cpp",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/ddb9a7b65c70",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-coding-robotics-001",
+      "title": "机器人与硬件编程",
+      "description": "AI 与数字科技 / 编程与开发 / 机器人与硬件编程资料入口。",
+      "categoryId": "skill-robotics-hardware",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/9ebd37617bad",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-coding-extension-001",
+      "title": "拓展与综合实践",
+      "description": "AI 与数字科技 / 编程与开发 / 拓展与综合实践资料入口。",
+      "categoryId": "skill-coding-extension",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/9819765bce52",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-ps-video-001",
+      "title": "PS 视频课件",
+      "description": "数字创作与自媒体 / Photoshop 与平面设计 / PS 视频课件资料入口。",
+      "categoryId": "skill-ps-video-courses",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/4f3eb80c8fa2",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-ps-online-001",
+      "title": "PS 网课",
+      "description": "数字创作与自媒体 / Photoshop 与平面设计 / PS 网课资料入口。",
+      "categoryId": "skill-ps-online-courses",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/9e869957063f",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-jianying-001",
+      "title": "剪映资料",
+      "description": "数字创作与自媒体 / 视频剪辑 / 剪映资料入口。",
+      "categoryId": "skill-jianying",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/8dabd2871aed",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-premiere-001",
+      "title": "Premiere（PR）剪辑资料",
+      "description": "数字创作与自媒体 / 视频剪辑 / Premiere（PR）剪辑资料入口。",
+      "categoryId": "skill-premiere",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/08c3ebf9bd58",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-video-assets-001",
+      "title": "视频素材",
+      "description": "数字创作与自媒体 / 视频剪辑 / 视频素材入口。",
+      "categoryId": "skill-video-assets",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/d0c0dbe215bd",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-music-sfx-001",
+      "title": "配乐与音效",
+      "description": "数字创作与自媒体 / 视频剪辑 / 配乐与音效入口。",
+      "categoryId": "skill-music-sfx",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/2bfcd2723809",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-social-short-video-001",
+      "title": "短视频运营",
+      "description": "数字创作与自媒体 / 自媒体运营 / 短视频运营资料入口。",
+      "categoryId": "skill-short-video-ops",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/179ac3bdb495",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-social-wechat-001",
+      "title": "公众号运营",
+      "description": "数字创作与自媒体 / 自媒体运营 / 公众号运营资料入口。",
+      "categoryId": "skill-wechat-official-ops",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/2036d2f45d10",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-social-xiaohongshu-001",
+      "title": "小红书运营",
+      "description": "数字创作与自媒体 / 自媒体运营 / 小红书运营资料入口。",
+      "categoryId": "skill-xiaohongshu-ops",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/b5690bd1d279",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-driving-subject-1-001",
+      "title": "科目一",
+      "description": "生活技能与兴趣 / 驾驶与驾考 / 科目一资料入口。",
+      "categoryId": "skill-driving-subject-1",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/0f93e2ddf68f",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-driving-subject-2-001",
+      "title": "科目二",
+      "description": "生活技能与兴趣 / 驾驶与驾考 / 科目二资料入口。",
+      "categoryId": "skill-driving-subject-2",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/a9f489b3862e",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-driving-subject-3-001",
+      "title": "科目三",
+      "description": "生活技能与兴趣 / 驾驶与驾考 / 科目三资料入口。",
+      "categoryId": "skill-driving-subject-3",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/b31d73c82eba",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-driving-subject-4-001",
+      "title": "科目四",
+      "description": "生活技能与兴趣 / 驾驶与驾考 / 科目四资料入口。",
+      "categoryId": "skill-driving-subject-4",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/9bb39744ed15",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-driving-question-bank-001",
+      "title": "题库与综合练习",
+      "description": "生活技能与兴趣 / 驾驶与驾考 / 题库与综合练习资料入口。",
+      "categoryId": "skill-driving-question-bank",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/cb220f337b29",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-calligraphy-online-001",
+      "title": "书法网课",
+      "description": "生活技能与兴趣 / 书法与艺术 / 书法网课资料入口。",
+      "categoryId": "skill-calligraphy-online",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/a5112c20bf72",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-calligraphy-rubbings-001",
+      "title": "碑帖临摹",
+      "description": "生活技能与兴趣 / 书法与艺术 / 碑帖临摹资料入口。",
+      "categoryId": "skill-calligraphy-rubbings",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/1f6d560e18e2",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-travel-ticketing-001",
+      "title": "抢票与出行工具视频教程",
+      "description": "生活技能与兴趣 / 生活实用攻略 / 抢票与出行工具视频教程。",
+      "categoryId": "skill-travel-ticketing",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/4f3e0169cb55",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "video"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-01",
+      "title": "bilibili剪辑教程",
+      "description": "数字创作与自媒体 / 视频剪辑 / 剪辑系统教程。",
+      "categoryId": "skill-editing-system",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/6022bc68db73",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-02",
+      "title": "新片场-奥斯卡剪辑拉片课 -《爆裂鼓手》",
+      "description": "数字创作与自媒体 / 视频剪辑 / 剪辑系统教程。",
+      "categoryId": "skill-editing-system",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/427943769ccc",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-05",
+      "title": "B站-剪辑思维训练营-南门录像厅",
+      "description": "数字创作与自媒体 / 视频剪辑 / 剪辑系统教程。",
+      "categoryId": "skill-editing-system",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/8553b8bc0aae",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-08",
+      "title": "南门录像厅从小白到剪辑师2020",
+      "description": "数字创作与自媒体 / 视频剪辑 / 剪辑系统教程。",
+      "categoryId": "skill-editing-system",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/40f6f4143a3f",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-09",
+      "title": "狼叔视频号运营实战课",
+      "description": "数字创作与自媒体 / 自媒体运营 / 短视频运营。",
+      "categoryId": "skill-short-video-ops",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/c6953c83d08b",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-10",
+      "title": "剪映手机最新课程（2020）",
+      "description": "数字创作与自媒体 / 视频剪辑 / 剪辑系统教程。",
+      "categoryId": "skill-editing-system",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/1aa6d585b19e",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-11",
+      "title": "零基础系统学剪辑思维训练营",
+      "description": "数字创作与自媒体 / 视频剪辑 / 剪辑系统教程。",
+      "categoryId": "skill-editing-system",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/b90bc63d01de",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-13",
+      "title": "剪映手机最新课程（2021）",
+      "description": "数字创作与自媒体 / 视频剪辑 / 剪辑系统教程。",
+      "categoryId": "skill-editing-system",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/b0fe11952cf5",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-15",
+      "title": "新片场-《剪辑大师课》奥斯卡最佳剪辑师的剪辑思路与技巧",
+      "description": "数字创作与自媒体 / 视频剪辑 / 剪辑系统教程。",
+      "categoryId": "skill-editing-system",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/cefaddbdd115",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-21",
+      "title": "电影解说自媒体超系统课程，从小白到解说大神的逆袭之路",
+      "description": "数字创作与自媒体 / 自媒体运营 / 短视频运营。",
+      "categoryId": "skill-short-video-ops",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/ddaac2b86edd",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-22",
+      "title": "【剪辑】短视频涨粉+变现实战训练营",
+      "description": "数字创作与自媒体 / 自媒体运营 / 短视频运营。",
+      "categoryId": "skill-short-video-ops",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/faa72d7e550f",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-25",
+      "title": "视频号风口21天从0到1视频课程",
+      "description": "数字创作与自媒体 / 自媒体运营 / 短视频运营。",
+      "categoryId": "skill-short-video-ops",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/37e0997c9af0",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-26",
+      "title": "最新微信视频号无人直播课程",
+      "description": "数字创作与自媒体 / 自媒体运营 / 短视频运营。",
+      "categoryId": "skill-short-video-ops",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/01db28e7ac81",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
+      "fileType": "folder"
+    }
+    ,
+    {
+      "id": "skill-clip-tutorial-31",
+      "title": "从0到1玩转手机短视频：从前期拍摄到后期剪辑，结合实操案例，快速入门",
+      "description": "数字创作与自媒体 / 视频剪辑 / 剪辑系统教程。",
+      "categoryId": "skill-editing-system",
+      "provider": "quark",
+      "shareUrl": "https://pan.quark.cn/s/187e7c3fe94a",
+      "accessStatus": "verified",
+      "checkedOn": "2026-11-10",
+      "publishedAt": "2026-11-10T00:22:00+08:00",
       "fileType": "folder"
     }
   ]

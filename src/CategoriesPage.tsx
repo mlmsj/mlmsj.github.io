@@ -116,7 +116,13 @@ export function CategoriesPage({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const rootCategories = useMemo(() => getChildCategories(null), []);
+  const rootCategories = useMemo(
+    () =>
+      getChildCategories(null).filter((category) =>
+        shouldShowCategoryInNavigation(category.id, counts[category.id] ?? 0),
+      ),
+    [counts],
+  );
   const params = new URLSearchParams(search);
   const hasCategoryParam =
     params.has(CATEGORY_PARAM) || params.has(CATEGORY_PATH_PARAM);

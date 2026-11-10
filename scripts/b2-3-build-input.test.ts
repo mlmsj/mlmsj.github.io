@@ -14,13 +14,14 @@ describe("B2-3 controlled source input", () => {
       resolve(root, B2_DEFAULT_SOURCE_MANIFEST),
     );
     const { manifest } = readB2SourceManifest(root);
-    expect(manifest.records).toHaveLength(47);
+    expect(manifest.records).toHaveLength(88);
     expect(manifest.records.filter((record) => record.shareUrl === null)).toHaveLength(5);
-    expect(manifest.records.filter((record) => record.shareUrl !== null)).toHaveLength(42);
+    expect(manifest.records.filter((record) => record.shareUrl !== null)).toHaveLength(83);
     expect(manifest.records.some((record) => record.title.includes("高考真题"))).toBe(false);
     expect(manifest.records.filter((record) => record.categoryId.startsWith("domain-junior-")).length).toBe(6);
     expect(manifest.records.filter((record) => record.categoryId.startsWith("domain-senior-")).length).toBe(10);
     expect(manifest.records.filter((record) => record.categoryId.startsWith("purpose-certification-")).length).toBe(7);
+    expect(manifest.records.filter((record) => record.categoryId.startsWith("skill-")).length).toBe(41);
   });
 
   it("rejects public manifest paths instead of falling back to them", () => {

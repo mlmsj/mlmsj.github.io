@@ -10,6 +10,7 @@ import { PublicDeliveryPanel, PublicDetail } from "./PublicDetail";
 import { ResourcesPage } from "./ResourcesPage";
 import { MY_DATA_KEY, validateMyData } from "./myData";
 import type { PublicManifest, PublicManifestRecord } from "./publicManifest";
+import { categories } from "./categories";
 
 const syntheticRecord: PublicManifestRecord = {
   id: "synthetic-public-id",
@@ -80,7 +81,8 @@ describe("static public manifest catalog", () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(responseFor({ ...syntheticManifest, records })));
     render(<CatalogProbe />);
     await screen.findByText("ready");
-    expect(JSON.parse(screen.getByTestId("catalog-counts").textContent ?? "{}")).toEqual({
+    const counts = JSON.parse(screen.getByTestId("catalog-counts").textContent ?? "{}");
+    expect(counts).toMatchObject({
       "stage-junior": 3,
       "domain-junior-textbooks": 0,
       "domain-junior-workbooks": 0,
@@ -133,6 +135,11 @@ describe("static public manifest catalog", () => {
       "subject-junior-math": 2,
       "type-junior-math-notes": 1,
     });
+    const skillCategoryIds = categories
+      .filter((category) => category.id.startsWith("skill-"))
+      .map((category) => category.id);
+    expect(skillCategoryIds).toHaveLength(38);
+    expect(skillCategoryIds.every((categoryId) => counts[categoryId] === 0)).toBe(true);
   });
 
   it("loads the static manifest once and maps delivery fields without using the API", async () => {
@@ -165,6 +172,7 @@ describe("static public manifest catalog", () => {
     expect(screen.getByTestId("catalog-count")).toHaveTextContent("0");
     cleanup();
 
+    window.history.replaceState({}, "", "/resources?view=all");
     render(
       <ResourcesPage
         resourceValues={[]}
@@ -180,6 +188,7 @@ describe("static public manifest catalog", () => {
   });
 
   it("shows loading without an empty claim", () => {
+    window.history.replaceState({}, "", "/resources?view=all");
     render(
       <ResourcesPage
         resourceValues={[]}
@@ -272,6 +281,7 @@ describe("static public manifest catalog", () => {
       accessStatus: "unknown" as unknown as PublicManifestRecord["accessStatus"],
       checkedOn: null,
     });
+    window.history.replaceState({}, "", "/resources?view=all");
     render(
       <ResourcesPage
         resourceValues={[resource, unchecked, withdrawn, unknown]}
@@ -291,7 +301,8 @@ describe("static public manifest catalog", () => {
     expect(screen.getByText("没有匹配的公开资料")).toBeVisible();
     expect(screen.queryByText(syntheticRecord.title)).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "查看全部公开资料" }));
+    fireEvent.click(screen.getByRole("button", { name: "清除筛选" }));
+    fireEvent.click(screen.getByRole("button", { name: /查看全部公开资料/ }));
     expect(screen.getByText(syntheticRecord.title)).toBeVisible();
     window.history.pushState({}, "", "/resources?category=type-junior-math-notes");
     fireEvent.popState(window);
@@ -459,7 +470,7 @@ describe("static public manifest catalog", () => {
     const fetcher = vi.fn().mockResolvedValue(responseFor(syntheticManifest));
     vi.stubGlobal("fetch", fetcher);
     vi.spyOn(window, "scrollTo").mockImplementation(() => undefined);
-    window.history.replaceState({}, "", "/resources");
+    window.history.replaceState({}, "", "/resources?view=all");
 
     render(<App />);
 

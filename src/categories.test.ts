@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   categories,
+  SKILL_GROWTH_ROOT_IDS,
   getCategoryPath,
   getEnabledCategoryPath,
   getChildCategories,
@@ -25,6 +26,23 @@ describe("category data contract", () => {
     expect(getCategoryPath("type-junior-math-notes").map(({ id }) => id)).toEqual(
       ["stage-junior", "subject-junior-math", "type-junior-math-notes"],
     );
+  });
+
+  it("adds the three skill-growth roots without changing the four established roots", () => {
+    expect(getChildCategories(null).slice(0, 4).map(({ id }) => id)).toEqual([
+      "stage-junior",
+      "stage-senior",
+      "stage-university",
+      "purpose-certification",
+    ]);
+    expect(getChildCategories(null).slice(4).map(({ id }) => id)).toEqual([
+      ...SKILL_GROWTH_ROOT_IDS,
+    ]);
+    expect(getCategoryPath("skill-ai-deepseek").map(({ id }) => id)).toEqual([
+      "skill-ai-digital-tech",
+      "skill-ai-knowledge",
+      "skill-ai-deepseek",
+    ]);
   });
 
   it("removes the withdrawn senior exam branch and sorts the current themes by name length", () => {
