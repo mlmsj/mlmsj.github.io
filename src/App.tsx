@@ -179,6 +179,8 @@ function App() {
             counts={catalog.counts}
             onHome={() => go("home")}
             onOpenResources={(location) => openLocation("resources", location)}
+            onProfile={() => go("profile")}
+            onTools={() => go("tools")}
           />
         )}
         {page === "skill-growth" && (
