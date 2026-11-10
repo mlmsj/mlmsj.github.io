@@ -1361,3 +1361,334 @@
     align-self: end;
   }
 }
+
+/* Tool guidance: help users choose a real workflow before searching the catalog. */
+.scenario-guide {
+  margin: 28px 0 8px;
+  padding: 26px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #fffdf6, #f2f8ec);
+  border: 1px solid #dce8d5;
+  border-radius: 24px;
+}
+.scenario-guide-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+}
+.scenario-kicker {
+  margin: 0 0 7px;
+  color: #4e805c;
+  font: 11px "DM Mono", monospace;
+  letter-spacing: 1.5px;
+}
+.scenario-guide-heading h2 {
+  margin: 0;
+  color: #214e30;
+  font-size: 25px;
+  line-height: 1.4;
+}
+.scenario-guide-heading > p {
+  max-width: 300px;
+  margin: 0;
+  color: #718474;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: right;
+}
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 11px;
+  margin-top: 20px;
+}
+.scenario-card {
+  min-width: 0;
+  min-height: 210px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid #dbe7d4;
+  border-radius: 16px;
+  color: #274b35;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.scenario-card:hover,
+.scenario-card.active {
+  background: #fff;
+  border-color: #5a9b69;
+  box-shadow: 0 8px 22px rgba(43, 80, 52, 0.09);
+  transform: translateY(-2px);
+}
+.scenario-card:focus-visible,
+.scenario-tool:focus-visible {
+  outline: 3px solid rgba(61, 119, 73, 0.35);
+  outline-offset: 2px;
+}
+.scenario-card-top {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.scenario-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: #e6f3df;
+  border-radius: 12px;
+  color: #287346;
+}
+.scenario-card > .scenario-card-top > b {
+  color: #8eaa8b;
+  font: 13px "DM Mono", monospace;
+}
+.scenario-card.active > .scenario-card-top > b {
+  color: #3b8152;
+}
+.scenario-eyebrow {
+  margin-top: 16px;
+  color: #65806b;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.scenario-card strong {
+  margin-top: 6px;
+  color: #214e30;
+  font-size: 16px;
+  line-height: 1.45;
+}
+.scenario-card small {
+  margin-top: 8px;
+  color: #718474;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.scenario-detail {
+  margin-top: 14px;
+  padding: 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: 24px;
+  background: #fff;
+  border: 1px solid #dfe8da;
+  border-radius: 18px;
+  box-shadow: 0 5px 18px rgba(43, 80, 52, 0.04);
+}
+.scenario-detail-copy h3,
+.scenario-tools-heading h3 {
+  margin: 0;
+  color: #214e30;
+  font-size: 20px;
+  line-height: 1.45;
+}
+.scenario-detail-copy > p:not(.scenario-kicker) {
+  margin: 9px 0 0;
+  color: #6a7f70;
+  font-size: 13px;
+  line-height: 1.7;
+}
+.scenario-steps {
+  display: grid;
+  gap: 9px;
+  margin: 19px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: scenario-step;
+}
+.scenario-steps li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #3a5f45;
+  font-size: 13px;
+  line-height: 1.5;
+  counter-increment: scenario-step;
+}
+.scenario-steps li::before {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  display: grid;
+  place-items: center;
+  content: counter(scenario-step);
+  background: #e5f3df;
+  border-radius: 50%;
+  color: #317549;
+  font: 11px "DM Mono", monospace;
+}
+.scenario-tools-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 11px;
+}
+.scenario-tools-heading span {
+  padding: 5px 9px;
+  background: #edf7e9;
+  border-radius: 12px;
+  color: #4d815b;
+  font-size: 11px;
+}
+.scenario-tool-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+.scenario-tool {
+  min-width: 0;
+  padding: 11px;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  background: #fbfdf9;
+  border: 1px solid #dfe9da;
+  border-radius: 13px;
+  color: #285637;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.scenario-tool:hover {
+  border-color: #72aa7c;
+  background: #f4fbf0;
+}
+.scenario-tool-icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: #e8f4e3;
+  border-radius: 9px;
+  color: #337a4b;
+}
+.scenario-tool > span:nth-child(2) {
+  min-width: 0;
+}
+.scenario-tool strong,
+.scenario-tool small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.scenario-tool strong {
+  font-size: 13px;
+}
+.scenario-tool small {
+  margin-top: 3px;
+  color: #78907b;
+  font-size: 11px;
+}
+.scenario-tool em {
+  grid-column: 2;
+  color: #4a8b5c;
+  font-size: 11px;
+  font-style: normal;
+}
+
+@media (max-width: 980px) {
+  .scenario-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .scenario-detail {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .scenario-guide {
+    margin-top: 22px;
+    padding: 18px;
+    border-radius: 19px;
+  }
+  .scenario-guide-heading {
+    display: block;
+  }
+  .scenario-guide-heading h2 {
+    font-size: 22px;
+  }
+  .scenario-guide-heading > p {
+    max-width: none;
+    margin-top: 9px;
+    text-align: left;
+  }
+  .scenario-grid {
+    grid-template-columns: 1fr;
+    margin-top: 15px;
+  }
+  .scenario-card {
+    min-height: 0;
+  }
+  .scenario-detail {
+    padding: 16px;
+    gap: 19px;
+  }
+  .scenario-detail-copy h3,
+  .scenario-tools-heading h3 {
+    font-size: 18px;
+  }
+  .scenario-tool-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+[data-theme="dark"] .scenario-guide {
+  background: linear-gradient(135deg, #263b2b, #202b23);
+  border-color: #4d6852;
+}
+[data-theme="dark"] .scenario-guide-heading h2,
+[data-theme="dark"] .scenario-detail-copy h3,
+[data-theme="dark"] .scenario-tools-heading h3,
+[data-theme="dark"] .scenario-card strong {
+  color: #edf5ec;
+}
+[data-theme="dark"] .scenario-guide-heading > p,
+[data-theme="dark"] .scenario-detail-copy > p:not(.scenario-kicker),
+[data-theme="dark"] .scenario-card small,
+[data-theme="dark"] .scenario-tool small {
+  color: #c0d6c2;
+}
+[data-theme="dark"] .scenario-card {
+  background: rgba(32, 42, 34, 0.72);
+  border-color: #4d6352;
+  color: #d5e7d6;
+}
+[data-theme="dark"] .scenario-card:hover,
+[data-theme="dark"] .scenario-card.active {
+  background: #2b4030;
+  border-color: #72aa7c;
+}
+[data-theme="dark"] .scenario-icon,
+[data-theme="dark"] .scenario-tool-icon,
+[data-theme="dark"] .scenario-tools-heading span,
+[data-theme="dark"] .scenario-steps li::before {
+  background: #2b4831;
+  color: #bfe3c3;
+}
+[data-theme="dark"] .scenario-detail {
+  background: #202a22;
+  border-color: #4d6352;
+}
+[data-theme="dark"] .scenario-steps li,
+[data-theme="dark"] .scenario-tool {
+  color: #d5e7d6;
+}
+[data-theme="dark"] .scenario-tool {
+  background: #182219;
+  border-color: #55715b;
+}
+[data-theme="dark"] .scenario-tool:hover {
+  background: #243a2a;
+  border-color: #72aa7c;
+}

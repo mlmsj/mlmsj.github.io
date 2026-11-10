@@ -46,3 +46,570 @@
     order: 3;
   }
 }
+
+/* ZWG-MY-PAGE-REFINEMENT: compact overview with real local-record entry points. */
+.my-page {
+  min-height: 0;
+}
+
+.my-overview,
+.my-overview button {
+  font-family: var(--ui-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif);
+  letter-spacing: 0.01em;
+}
+
+.my-overview {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.my-welcome-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  min-height: 166px;
+  padding: 22px 26px;
+  overflow: hidden;
+  border: 1px solid #dcead4;
+  border-radius: 26px;
+  background: linear-gradient(135deg, #e5f0dc 0%, #f6f8ed 72%);
+  box-shadow: 0 10px 24px rgba(54, 96, 58, .06);
+}
+
+.my-welcome-card::after {
+  content: "";
+  position: absolute;
+  right: -28px;
+  bottom: -56px;
+  width: 300px;
+  height: 130px;
+  border-radius: 50% 50% 0 0;
+  background: rgba(151, 187, 135, .18);
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+
+.my-welcome-mascot,
+.my-welcome-copy,
+.my-welcome-action {
+  position: relative;
+  z-index: 1;
+}
+
+.my-welcome-mascot {
+  width: 108px;
+  height: 108px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 249, .66);
+}
+
+.my-welcome-mascot img {
+  width: 118px;
+  max-width: 118px;
+  height: auto;
+  display: block;
+}
+
+.my-welcome-copy {
+  min-width: 0;
+}
+
+.my-welcome-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #638668;
+  font-size: 12px;
+  line-height: 1.35;
+  letter-spacing: .12em;
+}
+
+.my-welcome-copy h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: 'Noto Serif SC', Georgia, serif;
+  font-size: clamp(25px, 3.2vw, 35px);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: .04em;
+}
+
+.my-welcome-copy p {
+  margin: 8px 0 0;
+  color: #58745f;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.my-welcome-action {
+  min-height: 46px;
+  padding: 9px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: 1.5px solid #55916a;
+  border-radius: 999px;
+  background: rgba(255, 255, 250, .28);
+  color: #286240;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.my-welcome-action i,
+.my-study-row > i,
+.my-service-row > i {
+  font-style: normal;
+  font-size: 23px;
+  line-height: 1;
+}
+
+.my-quick-links {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  padding: 9px 6px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--paper);
+  box-shadow: 0 8px 20px rgba(43, 80, 52, .045);
+}
+
+.my-quick-link {
+  min-width: 0;
+  min-height: 106px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+}
+
+.my-quick-link:last-child {
+  border-right: 0;
+}
+
+.my-quick-link:hover,
+.my-service-row:hover,
+.my-study-row:hover {
+  color: var(--forest);
+  background: rgba(233, 240, 223, .46);
+}
+
+.my-quick-icon,
+.my-overview-heading-icon,
+.my-study-icon,
+.my-service-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: var(--forest);
+}
+
+.my-quick-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.my-quick-link strong {
+  min-width: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+
+.my-overview-section {
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--paper);
+  box-shadow: 0 8px 20px rgba(43, 80, 52, .045);
+}
+
+.my-overview-heading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 15px;
+}
+
+.my-overview-heading-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #edf4e7;
+}
+
+.my-overview-heading h2 {
+  margin: 0;
+  color: var(--ink);
+  font-family: 'Noto Serif SC', Georgia, serif;
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.my-study-row,
+.my-study-empty {
+  width: 100%;
+  min-height: 86px;
+  padding: 13px 15px;
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) 22px;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 250, .62);
+  text-align: left;
+}
+
+.my-study-icon,
+.my-service-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #f0f3ea;
+}
+
+.my-study-copy {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.my-study-copy strong,
+.my-study-copy small,
+.my-study-copy em {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.my-study-copy strong {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.my-study-copy small {
+  color: #637c68;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.my-study-copy em {
+  color: #91a092;
+  font-size: 12px;
+  font-style: normal;
+  line-height: 1.35;
+}
+
+.my-study-row > i {
+  color: var(--forest);
+}
+
+.my-study-empty {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.my-study-empty > span {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.my-study-empty strong {
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.my-study-empty small {
+  color: #7f9281;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.my-study-empty > button {
+  min-height: 42px;
+  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 999px;
+  background: #edf4e7;
+  color: var(--forest);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.my-study-empty > button i {
+  font-style: normal;
+  font-size: 17px;
+}
+
+.my-service-list {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+
+.my-service-row {
+  width: 100%;
+  min-height: 64px;
+  padding: 9px 15px;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 22px;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 250, .5);
+  color: var(--ink);
+  text-align: left;
+}
+
+.my-service-row:last-child {
+  border-bottom: 0;
+}
+
+.my-service-row strong {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.my-service-row > i {
+  color: var(--forest);
+}
+
+[data-theme="dark"] .my-welcome-card {
+  border-color: var(--line);
+  background: linear-gradient(135deg, #203e29 0%, #1d3022 72%);
+}
+
+[data-theme="dark"] .my-welcome-card::after {
+  background: rgba(101, 159, 111, .16);
+}
+
+[data-theme="dark"] .my-welcome-mascot,
+[data-theme="dark"] .my-overview-heading-icon,
+[data-theme="dark"] .my-study-icon,
+[data-theme="dark"] .my-service-icon {
+  background: #29412e;
+}
+
+[data-theme="dark"] .my-welcome-label,
+[data-theme="dark"] .my-welcome-copy p,
+[data-theme="dark"] .my-study-copy small,
+[data-theme="dark"] .my-study-copy em,
+[data-theme="dark"] .my-study-empty small {
+  color: var(--sage);
+}
+
+[data-theme="dark"] .my-welcome-action {
+  border-color: var(--forest);
+  background: rgba(24, 52, 31, .45);
+  color: var(--ink);
+}
+
+[data-theme="dark"] .my-study-row,
+[data-theme="dark"] .my-study-empty,
+[data-theme="dark"] .my-service-row {
+  background: rgba(32, 51, 37, .72);
+}
+
+[data-theme="dark"] .my-quick-link:hover,
+[data-theme="dark"] .my-service-row:hover,
+[data-theme="dark"] .my-study-row:hover {
+  background: rgba(55, 91, 59, .52);
+}
+
+@media (max-width: 800px) {
+  .my-page {
+    padding-bottom: calc(18px + var(--mobile-nav-clearance));
+  }
+
+  .my-overview {
+    gap: 16px;
+  }
+
+  .my-welcome-card {
+    grid-template-columns: 72px minmax(0, 1fr) auto;
+    gap: 10px;
+    min-height: 142px;
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  .my-welcome-mascot {
+    width: 72px;
+    height: 72px;
+  }
+
+  .my-welcome-mascot img {
+    width: 82px;
+    max-width: 82px;
+  }
+
+  .my-welcome-label {
+    margin-bottom: 4px;
+    font-size: 10px;
+    letter-spacing: .08em;
+  }
+
+  .my-welcome-copy h2 {
+    font-size: clamp(21px, 6vw, 28px);
+    line-height: 1.3;
+    letter-spacing: .02em;
+  }
+
+  .my-welcome-copy p {
+    margin-top: 5px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .my-welcome-action {
+    min-height: 40px;
+    padding: 7px 11px;
+    gap: 4px;
+    font-size: 13px;
+  }
+
+  .my-welcome-action i {
+    font-size: 18px;
+  }
+
+  .my-quick-links {
+    padding: 5px 2px;
+    border-radius: 20px;
+  }
+
+  .my-quick-link {
+    min-height: 88px;
+    padding: 7px 4px;
+    gap: 6px;
+  }
+
+  .my-quick-icon {
+    width: 37px;
+    height: 37px;
+  }
+
+  .my-quick-link strong {
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  .my-overview-section {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .my-overview-heading {
+    gap: 9px;
+    margin-bottom: 12px;
+  }
+
+  .my-overview-heading-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .my-overview-heading h2 {
+    font-size: 20px;
+    line-height: 1.35;
+  }
+
+  .my-study-row,
+  .my-study-empty {
+    min-height: 78px;
+    padding: 11px 12px;
+    gap: 9px;
+    border-radius: 16px;
+  }
+
+  .my-study-row {
+    grid-template-columns: 38px minmax(0, 1fr) 18px;
+  }
+
+  .my-study-icon,
+  .my-service-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .my-study-copy strong,
+  .my-service-row strong {
+    font-size: 15px;
+  }
+
+  .my-study-copy small {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .my-study-copy em {
+    font-size: 11px;
+  }
+
+  .my-study-empty strong {
+    font-size: 14px;
+  }
+
+  .my-study-empty small {
+    font-size: 12px;
+  }
+
+  .my-study-empty > button {
+    min-height: 38px;
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  .my-service-list {
+    border-radius: 16px;
+  }
+
+  .my-service-row {
+    min-height: 56px;
+    padding: 8px 12px;
+    grid-template-columns: 36px minmax(0, 1fr) 18px;
+    gap: 9px;
+  }
+
+  .my-service-row > i,
+  .my-study-row > i {
+    font-size: 21px;
+  }
+}
+
+@media (max-width: 360px) {
+  .my-welcome-card {
+    grid-template-columns: 64px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .my-welcome-action {
+    grid-column: 2;
+    justify-self: start;
+    margin-top: -2px;
+  }
+
+  .my-welcome-copy h2 {
+    font-size: 21px;
+  }
+
+  .my-quick-link strong {
+    font-size: 12px;
+  }
+}

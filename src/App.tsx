@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import "./index.css";
 import heroWatercolor from "./assets/zhaowenguan-hero-watercolor.png";
 import categoryStrip from "./assets/zhaowenguan-category-strip.png";
-import assistantCat from "./assets/zhaowenguan-assistant-cat.png";
 import { InfoPage, type InfoPageKey } from "./InfoPages";
 import { Toolbox, ToolDetail, type ToolKey } from "./Toolbox";
 import { appPathFromLocation, locationPathForAppPath } from "./routing";
@@ -418,40 +417,6 @@ function Home({
               </button>
             ))}
           </div>
-        </section>
-        <section className="assistant-card">
-          <div className="assistant-icon" aria-hidden="true" />
-          <div className="assistant-card-copy">
-            <h2>学习助手</h2>
-            <p id="learning-assistant-status">从当前任务出发，快速找到下一步。</p>
-          </div>
-          <div className="assistant-task-grid" role="group" aria-label="学习助手任务入口">
-            <button type="button" className="assistant-task" onClick={() => go("resources")}>
-              <span className="assistant-task-index">01</span>
-              <span className="assistant-task-copy">
-                <strong>资料不会找？</strong>
-                <small>去找资料</small>
-              </span>
-              <i aria-hidden="true">→</i>
-            </button>
-            <button type="button" className="assistant-task" onClick={() => go("tools")}>
-              <span className="assistant-task-index">02</span>
-              <span className="assistant-task-copy">
-                <strong>想制作自己的讲义？</strong>
-                <small>打开学生工具箱</small>
-              </span>
-              <i aria-hidden="true">→</i>
-            </button>
-            <button type="button" className="assistant-task" onClick={() => go("guide")}>
-              <span className="assistant-task-index">03</span>
-              <span className="assistant-task-copy">
-                <strong>不知道工具怎么用？</strong>
-                <small>查看使用说明</small>
-              </span>
-              <i aria-hidden="true">→</i>
-            </button>
-          </div>
-          <img className="assistant-cat" src={assistantCat} alt="水彩小白猫" />
         </section>
       </section>
     </>

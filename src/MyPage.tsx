@@ -1,5 +1,6 @@
 import { useRef, useState, type ChangeEvent } from "react";
 import { Bookmark, Clock3, Download, Info, MessageSquare, Moon, Settings, Sun, Wrench } from "lucide-react";
+import bookSprout from "./assets/zhaowenguan-book-sprout.png";
 import type { Resource } from "./resources";
 import { toolCatalog } from "./toolCatalog";
 import { MAX_IMPORT_BYTES, emptyMyData, mergeMyData, validateMyData, type MyData } from "./myData";
@@ -9,6 +10,8 @@ import "./MyPage.css";
 
 const labels: Record<MySection, string> = { overview: "个人概览", favorites: "我的收藏", history: "最近浏览", downloads: "下载记录", tools: "我的工具", settings: "使用设置", feedback: "意见反馈", about: "关于网站" };
 const icons = { overview: Info, favorites: Bookmark, history: Clock3, downloads: Download, tools: Wrench, settings: Settings, feedback: MessageSquare, about: Info };
+const quickSections = ["favorites", "history", "downloads", "tools"] as const satisfies readonly MySection[];
+const serviceSections = ["settings", "feedback", "about"] as const satisfies readonly MySection[];
 
 type Props = {
   section: MySection;
@@ -54,14 +57,52 @@ function Empty({ text, action, onClick }: { text: string; action: string; onClic
 function validResource(resource: Resource | undefined) { return !!resource && resource.publicationStatus !== "withdrawn" && resource.isPubliclyAccessible !== false }
 
 function Overview(props: Props) {
-  const favorites = props.data.favorites.map(item => ({ ...item, resource: props.resources.find(r => r.id === item.id) })).slice(0, 3);
-  const tools = props.data.favoriteTools.map(item => ({ ...item, tool: toolCatalog.find(t => t.id === item.id) })).slice(0, 4);
-  return <><SectionHead title="个人概览" text="收藏、浏览与常用工具都只保存在这台设备的当前浏览器中。"/>
-    <div className="my-stats">{[["收藏", props.data.favorites.length], ["最近浏览", props.data.recentViews.length], ["常用工具", props.data.favoriteTools.length]].map(([label, value]) => <article key={label}><strong>{value}</strong><span>{label}</span></article>)}</div>
-    <div className="my-overview-grid"><section className="my-panel my-panel-favorites"><div className="my-panel-title"><h3>最近收藏</h3><button onClick={() => props.onSection("favorites")}>查看全部</button></div>{favorites.length ? favorites.map(({ id, at, resource }) => <button className="my-row" key={id} disabled={!validResource(resource)} onClick={() => resource && props.onResource(resource)}><span><b>{resource?.title ?? `已失效资料（${id}）`}</b><small>{validResource(resource) ? formatTime(at) : "资料已下架或不可访问"}</small></span><i>→</i></button>) : <Empty text="还没有收藏资料。" action="去找资料" onClick={props.onHome}/>}</section>
-    <section className="my-panel my-panel-tools"><div className="my-panel-title"><h3>常用工具</h3><button onClick={() => props.onSection("tools")}>查看全部</button></div>{tools.length ? tools.map(({ id, tool }) => <button className="my-row" key={id} disabled={!tool?.available} onClick={() => tool && props.onTool(tool.id)}><span><b>{tool?.name ?? `已失效工具（${id}）`}</b><small>{tool?.available ? "本地处理工具" : "工具暂不可用"}</small></span><i>→</i></button>) : <Empty text="还没有常用工具。" action="去工具箱" onClick={() => props.onTool("")}/>}</section></div>
-    <div className="my-mobile-functions"><h3>我的内容</h3>{(["favorites", "history", "downloads", "tools"] as MySection[]).map(key => <button key={key} onClick={() => props.onSection(key)}>{labels[key]}<span>›</span></button>)}<h3>更多服务</h3>{(["settings", "feedback", "about"] as MySection[]).map(key => <button key={key} onClick={() => props.onSection(key)}>{labels[key]}<span>›</span></button>)}</div>
-  </>;
+  const recentLearning = props.data.recentViews
+    .map(item => ({ ...item, resource: props.resources.find(resource => resource.id === item.id) }))
+    .find(item => validResource(item.resource));
+  const recentResource = recentLearning?.resource;
+  return <div className="my-overview">
+    <section className="my-welcome-card" aria-labelledby="my-welcome-title">
+      <div className="my-welcome-mascot"><img src={bookSprout} alt="昭文馆小书芽" /></div>
+      <div className="my-welcome-copy">
+        <span className="my-welcome-label">本地学习空间</span>
+        <h2 id="my-welcome-title">欢迎来到昭文馆</h2>
+        <p>无需登录，记录只保存在当前浏览器。</p>
+      </div>
+      <button className="my-welcome-action" type="button" onClick={props.onHome}>去找资料 <i aria-hidden="true">→</i></button>
+    </section>
+
+    <nav className="my-quick-links" aria-label="我的快捷入口">
+      {quickSections.map(key => {
+        const Icon = icons[key];
+        return <button className="my-quick-link" key={key} type="button" onClick={() => props.onSection(key)}>
+          <span className="my-quick-icon" aria-hidden="true"><Icon size={23} strokeWidth={1.8}/></span>
+          <strong>{labels[key]}</strong>
+        </button>;
+      })}
+    </nav>
+
+    <section className="my-overview-section my-study-section" aria-labelledby="my-study-title">
+      <div className="my-overview-heading"><span className="my-overview-heading-icon" aria-hidden="true"><Clock3 size={21} strokeWidth={1.8}/></span><h2 id="my-study-title">学习记录</h2></div>
+      {recentResource ? <button className="my-study-row" type="button" onClick={() => props.onResource(recentResource)}>
+        <span className="my-study-icon" aria-hidden="true"><Bookmark size={21} strokeWidth={1.8}/></span>
+        <span className="my-study-copy"><strong>最近学习</strong><small>{recentResource.title}</small><em>{formatTime(recentLearning.at)}</em></span>
+        <i aria-hidden="true">›</i>
+      </button> : <div className="my-study-empty"><span><strong>还没有学习记录</strong><small>打开一份资料后，可以从这里继续。</small></span><button type="button" onClick={props.onHome}>去找资料 <i aria-hidden="true">→</i></button></div>}
+    </section>
+
+    <section className="my-overview-section my-services-section" aria-labelledby="my-services-title">
+      <div className="my-overview-heading"><span className="my-overview-heading-icon" aria-hidden="true"><Settings size={21} strokeWidth={1.8}/></span><h2 id="my-services-title">常用服务</h2></div>
+      <div className="my-service-list">
+        {serviceSections.map(key => {
+          const Icon = icons[key];
+          return <button className="my-service-row" key={key} type="button" onClick={() => props.onSection(key)}>
+            <span className="my-service-icon" aria-hidden="true"><Icon size={20} strokeWidth={1.8}/></span><strong>{labels[key]}</strong><i aria-hidden="true">›</i>
+          </button>;
+        })}
+      </div>
+    </section>
+  </div>;
 }
 
 function Favorites(props: Props) { return <><SectionHead title="我的收藏" text="按收藏时间倒序排列；失效资料会保留记录，方便识别。"/>{props.data.favorites.length ? <div className="my-list">{props.data.favorites.map(item => { const resource = props.resources.find(r => r.id === item.id); const valid = validResource(resource); return <article className="my-list-item" key={item.id}><div><h3>{resource?.title ?? `已失效资料（${item.id}）`}</h3><p>{valid ? `收藏于 ${formatTime(item.at)}` : "资料已下架、删除或不可访问"}</p></div><div><button disabled={!valid} onClick={() => resource && props.onResource(resource)}>查看</button><button onClick={() => props.setData(data => ({ ...data, favorites: data.favorites.filter(x => x.id !== item.id) }))}>取消收藏</button></div></article> })}</div> : <Empty text="收藏夹还是空的。" action="去找资料" onClick={props.onHome}/>}</> }
