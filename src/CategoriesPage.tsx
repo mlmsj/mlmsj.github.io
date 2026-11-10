@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { BookOpen, Bookmark, FileText, Flag, GraduationCap, Home, LayoutGrid, Layers, Leaf, MonitorPlay, Search, Wrench } from "lucide-react";
 import { getChildCategories, type Category } from "./categories";
 import { shouldShowCategoryInNavigation } from "./categoryNavigation";
 import {
@@ -17,6 +18,22 @@ const routeIssueMessages = {
   "invalid-category-path": "原链接中的分类路径不可用，已为你显示可用分类。",
 } as const;
 
+const categoryIcon = (id: string, size = 24) => {
+  if (id.includes("textbooks")) return <BookOpen size={size} strokeWidth={1.8} />;
+  if (id.includes("workbooks")) return <Layers size={size} strokeWidth={1.8} />;
+  if (id.includes("exam") || id.includes("mocks")) return <FileText size={size} strokeWidth={1.8} />;
+  if (id.includes("courses")) return <MonitorPlay size={size} strokeWidth={1.8} />;
+  if (id.includes("subjects")) return <LayoutGrid size={size} strokeWidth={1.8} />;
+  if (id.includes("sprint")) return <Flag size={size} strokeWidth={1.8} />;
+  if (id.startsWith("stage-")) {
+    return id === "stage-junior"
+      ? <GraduationCap size={size} strokeWidth={1.8} />
+      : <BookOpen size={size} strokeWidth={1.8} />;
+  }
+  if (id.startsWith("purpose-")) return <Flag size={size} strokeWidth={1.8} />;
+  return <BookOpen size={size} strokeWidth={1.8} />;
+};
+
 const CategoryCard = ({
   category,
   count = 0,
@@ -32,6 +49,7 @@ const CategoryCard = ({
 }) => {
   const content = (
     <>
+      <span className="category-card-icon" aria-hidden="true">{categoryIcon(category.id)}</span>
       <span className="category-card-copy">
         <strong>{category.name}</strong>
         <span>{category.description}</span>
@@ -90,10 +108,14 @@ export function CategoriesPage({
   onHome,
   counts = {},
   onOpenResources,
+  onProfile,
+  onTools,
 }: {
   onHome: () => void;
   counts?: Record<string, number>;
   onOpenResources: (location: string) => void;
+  onProfile?: () => void;
+  onTools?: () => void;
 }) {
   const [routeState, setRouteState] = useState<CategoryRouteState>(() =>
     readCategoryRouteState(),
@@ -128,11 +150,14 @@ export function CategoriesPage({
     params.has(CATEGORY_PARAM) || params.has(CATEGORY_PATH_PARAM);
   const issues = [...new Set(routeState.issues)];
 
+  const defaultDesktopCategory = rootCategories[0] ?? null;
   const desktopPath = routeState.path.length
     ? routeState.path
     : routeState.category
       ? [routeState.category]
-      : [];
+      : defaultDesktopCategory
+        ? [defaultDesktopCategory]
+        : [];
   const desktopCurrent = desktopPath[desktopPath.length - 1] ?? null;
   const visibleCategoryItems = (items: readonly Category[]) =>
     items.filter((category) =>
@@ -205,6 +230,30 @@ export function CategoriesPage({
       <span>{counts[activeResourceCategory.id] ?? 0} 份资料</span>
     </a>
   ) : null;
+  const activeResourceSummary = activeResourceCategory && activeResourceCategory.level === 1 && activeResourceLocation ? (
+    <a
+      className="category-resource-summary"
+      aria-label={`查看${activeResourceCategory.name}全部资料`}
+      href={activeResourceLocation}
+      onClick={(event) => {
+        if (
+          event.button === 0 &&
+          !event.metaKey &&
+          !event.ctrlKey &&
+          !event.shiftKey &&
+          !event.altKey
+        ) {
+          event.preventDefault();
+          onOpenResources(activeResourceLocation);
+        }
+      }}
+    >
+      <strong>全部资料 <span>{counts[activeResourceCategory.id] ?? 0}</span> 份</strong>
+      <span>包含{getChildCategories(activeResourceCategory.id).slice(0, 4).map((category) => category.name).join("、")}等学习资源</span>
+      <span className="category-summary-a11y" aria-hidden="true">{counts[activeResourceCategory.id] ?? 0} 份资料</span>
+      <i aria-hidden="true">→</i>
+    </a>
+  ) : null;
 
   const renderDesktopCard = (category: Category) => {
     const children = getChildCategories(category.id);
@@ -252,10 +301,11 @@ export function CategoriesPage({
           <p>学习阶段与用途</p>
           <button
             type="button"
-            className={!hasCategoryParam ? "active" : ""}
-            aria-current={!hasCategoryParam ? "true" : undefined}
+            className={desktopPath.length === 0 ? "active" : ""}
+            aria-current={desktopPath.length === 0 ? "true" : undefined}
             onClick={backToRoots}
           >
+            <span className="category-sidebar-icon" aria-hidden="true"><Home size={22} strokeWidth={1.8} /></span>
             <span><strong>全部分类</strong><small>浏览全部目录</small></span>
             <i aria-hidden="true">⌂</i>
           </button>
@@ -271,6 +321,7 @@ export function CategoriesPage({
               }
               onClick={() => selectRoot(category)}
             >
+              <span className="category-sidebar-icon" aria-hidden="true">{categoryIcon(category.id, 22)}</span>
               <span>
                 <strong>{category.name}</strong>
                 <small>{counts[category.id] ?? 0} 份资料</small>
@@ -278,6 +329,15 @@ export function CategoriesPage({
               <i aria-hidden="true">›</i>
             </button>
           ))}
+          <section className="category-assistant" aria-labelledby="category-assistant-title">
+            <div className="category-assistant-heading"><span aria-hidden="true"><Leaf size={22} strokeWidth={1.8} /></span><h2 id="category-assistant-title">学习助手</h2></div>
+            <p>快速了解资料分布，更高效地找到所需资源。</p>
+            <div className="category-assistant-links">
+              <button type="button" onClick={() => defaultDesktopCategory ? selectPath([defaultDesktopCategory]) : onHome()}><Search size={17} strokeWidth={1.8} /><span>按学科查找资料</span></button>
+              <button type="button" onClick={() => onProfile ? onProfile() : onHome()}><Bookmark size={17} strokeWidth={1.8} /><span>收藏常用资料</span></button>
+              <button type="button" onClick={() => onTools ? onTools() : onHome()}><Wrench size={17} strokeWidth={1.8} /><span>使用学习工具</span></button>
+            </div>
+          </section>
         </aside>
 
         <div className="category-main-panel">
@@ -300,7 +360,7 @@ export function CategoriesPage({
               </button>
             )}
           </div>
-          {activeResourceLink}
+          {activeResourceSummary ?? activeResourceLink}
           {desktopItems.length > 0 ? (
             <div className="category-card-grid">
               {desktopItems.map(renderDesktopCard)}

@@ -1,5 +1,5 @@
 import { useRef, useState, type ChangeEvent } from "react";
-import { Bookmark, Clock3, Download, Info, MessageSquare, Moon, Settings, Sun, Wrench } from "lucide-react";
+import { Bookmark, BookOpen, Clock3, Download, FileText, Heart, Image as ImageIcon, Info, LayoutGrid, Leaf, MessageSquare, Moon, ScanText, Settings, Sun, Wrench } from "lucide-react";
 import bookSprout from "./assets/zhaowenguan-book-sprout.png";
 import type { Resource } from "./resources";
 import { toolCatalog } from "./toolCatalog";
@@ -34,7 +34,10 @@ export function MyPage(props: Props) {
         <div className="my-sidebar-head"><div><p className="kicker">MY LIBRARY</p><h1>{section === "overview" ? "我的" : labels[section]}</h1><small>数据仅保存在当前浏览器</small></div>{section !== "overview" && <button onClick={() => onSection("overview")}>← 返回</button>}</div>
         <nav>{mySections.map(key => { const Icon = icons[key]; return <button key={key} className={section === key ? "active" : ""} onClick={() => onSection(key)}><Icon size={17}/><span>{labels[key]}</span></button> })}</nav>
       </aside>
-      <div className="my-content">{renderSection(props)}</div>
+      <div className="my-content">
+        {section !== "overview" && <button className="my-subpage-back" type="button" onClick={() => onSection("overview")}>← 返回个人工作台</button>}
+        {renderSection(props)}
+      </div>
     </div>
   </section>;
 }
@@ -61,7 +64,8 @@ function Overview(props: Props) {
     .map(item => ({ ...item, resource: props.resources.find(resource => resource.id === item.id) }))
     .find(item => validResource(item.resource));
   const recentResource = recentLearning?.resource;
-  return <div className="my-overview">
+  return <>
+    <div className="my-overview my-overview-mobile">
     <section className="my-welcome-card" aria-labelledby="my-welcome-title">
       <div className="my-welcome-mascot"><img src={bookSprout} alt="昭文馆小书芽" /></div>
       <div className="my-welcome-copy">
@@ -102,7 +106,90 @@ function Overview(props: Props) {
         })}
       </div>
     </section>
+    </div>
+    <DesktopOverview {...props} />
+  </>;
+}
+
+type OverviewRecord = { id: string; at: string; resource?: Resource };
+
+function DesktopOverview(props: Props) {
+  const recentItems: OverviewRecord[] = props.data.recentViews
+    .map(item => ({ ...item, resource: props.resources.find(resource => resource.id === item.id) }))
+    .slice(0, 3);
+  const favoriteItems: OverviewRecord[] = props.data.favorites
+    .map(item => ({ ...item, resource: props.resources.find(resource => resource.id === item.id) }))
+    .slice(0, 3);
+  const stats = [
+    { label: "我的收藏", value: props.data.favorites.length, unit: "份", icon: Heart, section: "favorites" as MySection },
+    { label: "最近浏览", value: props.data.recentViews.length, unit: "条", icon: Clock3, section: "history" as MySection },
+    { label: "下载记录", value: props.data.downloads.length, unit: "条", icon: Download, section: "downloads" as MySection },
+    { label: "我的工具", value: props.data.favoriteTools.length, unit: "项", icon: Wrench, section: "tools" as MySection },
+  ];
+  const quickTools = [
+    { label: "PDF 工具", description: "合并、拆分、压缩等", icon: FileText, id: "merge" },
+    { label: "图片工具", description: "格式转换、压缩、裁剪", icon: ImageIcon, id: "image-compress" },
+    { label: "OCR 识别", description: "图片转文字、提取内容", icon: ScanText, id: "ocr" },
+    { label: "更多工具", description: `${toolCatalog.length} 项实用学习工具`, icon: LayoutGrid, id: "" },
+  ] as const;
+  const serviceDescriptions: Record<(typeof serviceSections)[number], string> = {
+    settings: "主题、显示与数据偏好",
+    feedback: "告诉我们你的建议",
+    about: "了解昭文馆与使用说明",
+  };
+
+  return <div className="my-desktop-overview">
+    <section className="my-desktop-welcome" aria-labelledby="my-desktop-welcome-title">
+      <div className="my-desktop-welcome-icon" aria-hidden="true"><BookOpen size={39} strokeWidth={1.7} /></div>
+      <div className="my-desktop-welcome-copy">
+        <span>我的 · 个人工作台</span>
+        <h2 id="my-desktop-welcome-title">管理你的学习空间</h2>
+        <p>收藏、浏览记录、常用工具与个人设置，都在这里。</p>
+      </div>
+      <div className="my-desktop-welcome-art" aria-hidden="true"><img src={bookSprout} alt="" /></div>
+    </section>
+
+    <section className="my-desktop-block" aria-labelledby="my-desktop-stats-title">
+      <div className="my-desktop-block-heading"><h2 id="my-desktop-stats-title">使用概览</h2><span>你的学习记录只保存在当前浏览器</span></div>
+      <div className="my-desktop-stat-grid">
+        {stats.map(({ label, value, unit, icon: Icon, section }) => <button className="my-desktop-stat" key={label} type="button" onClick={() => props.onSection(section)}>
+          <span className="my-desktop-stat-icon" aria-hidden="true"><Icon size={25} strokeWidth={1.8} /></span>
+          <span className="my-desktop-stat-copy"><strong>{value}</strong><span>{label} <em>{unit}</em></span></span>
+          <i aria-hidden="true">→</i>
+        </button>)}
+      </div>
+    </section>
+
+    <div className="my-desktop-record-grid">
+      <DesktopRecordPanel title="最近浏览" icon={Clock3} items={recentItems} emptyText="还没有浏览记录" emptyAction="去找资料" section="history" onSection={props.onSection} onResource={props.onResource} onHome={props.onHome} />
+      <DesktopRecordPanel title="我的收藏" icon={Heart} items={favoriteItems} emptyText="还没有收藏资料" emptyAction="去找资料" section="favorites" onSection={props.onSection} onResource={props.onResource} onHome={props.onHome} />
+    </div>
+
+    <section className="my-desktop-tools" aria-labelledby="my-desktop-tools-title">
+      <div className="my-desktop-section-heading"><div><span className="my-desktop-heading-icon" aria-hidden="true"><Wrench size={20} strokeWidth={1.8} /></span><div><h2 id="my-desktop-tools-title">常用工具</h2><p>常用学习工具，一键开始</p></div></div><button type="button" onClick={() => props.onTool("")}>全部工具 <i aria-hidden="true">→</i></button></div>
+      <div className="my-desktop-tool-grid">
+        {quickTools.map(({ label, description, icon: Icon, id }) => <button className="my-desktop-tool" key={label} type="button" onClick={() => props.onTool(id)}>
+          <span className="my-desktop-tool-icon" aria-hidden="true"><Icon size={24} strokeWidth={1.8} /></span>
+          <span><strong>{label}</strong><small>{description}</small></span>
+          <i aria-hidden="true">→</i>
+        </button>)}
+      </div>
+    </section>
+
+    <section className="my-desktop-services" aria-labelledby="my-desktop-services-title">
+      <div className="my-desktop-section-heading my-desktop-services-heading"><div><span className="my-desktop-heading-icon" aria-hidden="true"><Leaf size={22} strokeWidth={1.8} /></span><h2 id="my-desktop-services-title">更多服务</h2></div></div>
+      <div className="my-desktop-service-grid">
+        {serviceSections.map(key => { const Icon = icons[key]; return <button className="my-desktop-service" key={key} type="button" onClick={() => props.onSection(key)}><span className="my-desktop-service-icon" aria-hidden="true"><Icon size={25} strokeWidth={1.8} /></span><span><strong>{labels[key]}</strong><small>{serviceDescriptions[key]}</small></span><i aria-hidden="true">→</i></button>; })}
+      </div>
+    </section>
   </div>;
+}
+
+function DesktopRecordPanel({ title, icon: Icon, items, emptyText, emptyAction, section, onSection, onResource, onHome }: { title: string; icon: typeof Clock3; items: OverviewRecord[]; emptyText: string; emptyAction: string; section: MySection; onSection: (section: MySection) => void; onResource: (resource: Resource) => void; onHome: () => void }) {
+  return <section className="my-desktop-record-panel" aria-labelledby={`my-record-${section}`}>
+    <div className="my-desktop-record-heading"><div><span className="my-desktop-heading-icon" aria-hidden="true"><Icon size={21} strokeWidth={1.8} /></span><h2 id={`my-record-${section}`}>{title}</h2></div><button type="button" onClick={() => onSection(section)}>查看全部 <i aria-hidden="true">→</i></button></div>
+    {items.length ? <div className="my-desktop-record-list">{items.map(item => item.resource ? <button className="my-desktop-record-row" key={item.id} type="button" onClick={() => onResource(item.resource!)}><span className="my-desktop-record-file" aria-hidden="true"><FileText size={18} strokeWidth={1.8} /></span><span><strong>{item.resource.title}</strong><small>{formatTime(item.at)}</small></span><i aria-hidden="true">→</i></button> : <div className="my-desktop-record-row my-desktop-record-row-disabled" key={item.id}><span className="my-desktop-record-file" aria-hidden="true"><FileText size={18} strokeWidth={1.8} /></span><span><strong>资料暂不可用</strong><small>记录于 {formatTime(item.at)} · 原资料当前不可访问</small></span><i aria-hidden="true">—</i></div>)}</div> : <div className="my-desktop-record-empty"><span className="my-desktop-empty-icon" aria-hidden="true"><Icon size={25} strokeWidth={1.7} /></span><p>{emptyText}<small>打开资料后，记录会显示在这里。</small></p><button type="button" onClick={onHome}>{emptyAction} <i aria-hidden="true">→</i></button></div>}
+  </section>;
 }
 
 function Favorites(props: Props) { return <><SectionHead title="我的收藏" text="按收藏时间倒序排列；失效资料会保留记录，方便识别。"/>{props.data.favorites.length ? <div className="my-list">{props.data.favorites.map(item => { const resource = props.resources.find(r => r.id === item.id); const valid = validResource(resource); return <article className="my-list-item" key={item.id}><div><h3>{resource?.title ?? `已失效资料（${item.id}）`}</h3><p>{valid ? `收藏于 ${formatTime(item.at)}` : "资料已下架、删除或不可访问"}</p></div><div><button disabled={!valid} onClick={() => resource && props.onResource(resource)}>查看</button><button onClick={() => props.setData(data => ({ ...data, favorites: data.favorites.filter(x => x.id !== item.id) }))}>取消收藏</button></div></article> })}</div> : <Empty text="收藏夹还是空的。" action="去找资料" onClick={props.onHome}/>}</> }

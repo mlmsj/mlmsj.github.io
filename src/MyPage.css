@@ -613,3 +613,618 @@
     font-size: 12px;
   }
 }
+
+/* Desktop workstation overview: keep the accepted mobile overview untouched. */
+.my-desktop-overview,
+.my-subpage-back {
+  display: none;
+}
+
+@media (min-width: 801px) {
+  .my-page {
+    width: min(1280px, calc(100% - 64px));
+    padding: 30px 0 76px;
+  }
+
+  .my-layout {
+    display: block;
+  }
+
+  .my-sidebar {
+    display: none;
+  }
+
+  .my-content {
+    width: 100%;
+  }
+
+  .my-subpage-back {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    margin-bottom: 20px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background: transparent;
+    color: #5f8066;
+    font-size: 14px;
+  }
+
+  .my-subpage-back:hover {
+    background: var(--mist);
+    color: var(--forest);
+  }
+
+  .my-overview-mobile {
+    display: none;
+  }
+
+  .my-desktop-overview {
+    display: grid;
+    gap: 20px;
+    min-width: 0;
+    color: var(--ink);
+    font-family: var(--ui-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif);
+    letter-spacing: .01em;
+  }
+
+  .my-desktop-overview button {
+    font-family: inherit;
+  }
+
+  .my-desktop-welcome {
+    position: relative;
+    min-height: 150px;
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr) 270px;
+    align-items: center;
+    gap: 22px;
+    padding: 25px 32px;
+    overflow: hidden;
+    border: 1px solid #dcead4;
+    border-radius: 22px;
+    background: linear-gradient(112deg, #e8f2df 0%, #f7f8ed 64%, #edf4e3 100%);
+    box-shadow: 0 10px 24px rgba(54, 96, 58, .055);
+  }
+
+  .my-desktop-welcome::before,
+  .my-desktop-welcome::after {
+    content: "";
+    position: absolute;
+    right: -30px;
+    pointer-events: none;
+  }
+
+  .my-desktop-welcome::before {
+    bottom: -75px;
+    width: 500px;
+    height: 150px;
+    border-radius: 50% 50% 0 0;
+    background: rgba(151, 187, 135, .17);
+    transform: rotate(-5deg);
+  }
+
+  .my-desktop-welcome::after {
+    right: 160px;
+    bottom: -95px;
+    width: 330px;
+    height: 165px;
+    border-radius: 50% 50% 0 0;
+    background: rgba(255, 255, 250, .42);
+    transform: rotate(9deg);
+  }
+
+  .my-desktop-welcome-icon,
+  .my-desktop-welcome-copy,
+  .my-desktop-welcome-art {
+    position: relative;
+    z-index: 1;
+  }
+
+  .my-desktop-welcome-icon {
+    width: 76px;
+    height: 76px;
+    display: grid;
+    place-items: center;
+    border-radius: 22px;
+    background: rgba(255, 255, 249, .63);
+    color: var(--forest);
+  }
+
+  .my-desktop-welcome-copy {
+    min-width: 0;
+  }
+
+  .my-desktop-welcome-copy > span {
+    display: block;
+    margin-bottom: 5px;
+    color: #5f8066;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .my-desktop-welcome-copy h2 {
+    margin: 0;
+    color: var(--ink);
+    font-family: 'Noto Serif SC', Georgia, serif;
+    font-size: clamp(28px, 3vw, 38px);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: .04em;
+  }
+
+  .my-desktop-welcome-copy p {
+    margin: 8px 0 0;
+    color: #53725b;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  .my-desktop-welcome-art {
+    height: 124px;
+    display: flex;
+    align-items: end;
+    justify-content: end;
+  }
+
+  .my-desktop-welcome-art img {
+    width: 210px;
+    max-width: 100%;
+    max-height: 124px;
+    object-fit: contain;
+    object-position: right bottom;
+  }
+
+  .my-desktop-block {
+    display: grid;
+    gap: 12px;
+  }
+
+  .my-desktop-block-heading,
+  .my-desktop-section-heading,
+  .my-desktop-record-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .my-desktop-block-heading h2,
+  .my-desktop-section-heading h2,
+  .my-desktop-record-heading h2 {
+    margin: 0;
+    color: var(--ink);
+    font-family: 'Noto Serif SC', Georgia, serif;
+    font-size: 23px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .my-desktop-block-heading span,
+  .my-desktop-section-heading p {
+    margin: 0;
+    color: #7a8e7d;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .my-desktop-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .my-desktop-stat {
+    min-width: 0;
+    min-height: 118px;
+    padding: 18px 17px;
+    display: grid;
+    grid-template-columns: 54px minmax(0, 1fr) 18px;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--paper);
+    color: var(--ink);
+    text-align: left;
+    box-shadow: 0 8px 20px rgba(43, 80, 52, .035);
+    transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+  }
+
+  .my-desktop-stat:hover,
+  .my-desktop-tool:hover,
+  .my-desktop-service:hover,
+  .my-desktop-record-row:hover {
+    border-color: #a9c49e;
+    box-shadow: 0 11px 24px rgba(43, 80, 52, .08);
+    transform: translateY(-1px);
+  }
+
+  .my-desktop-stat-icon,
+  .my-desktop-tool-icon,
+  .my-desktop-service-icon,
+  .my-desktop-record-file,
+  .my-desktop-empty-icon,
+  .my-desktop-heading-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    color: var(--forest);
+  }
+
+  .my-desktop-stat-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    background: #edf4e7;
+  }
+
+  .my-desktop-stat-copy {
+    min-width: 0;
+    display: grid;
+    gap: 5px;
+  }
+
+  .my-desktop-stat-copy strong {
+    color: var(--ink);
+    font: 600 30px/1 'DM Mono', monospace;
+  }
+
+  .my-desktop-stat-copy span {
+    color: #627a67;
+    font-size: 14px;
+  }
+
+  .my-desktop-stat-copy em {
+    margin-left: 3px;
+    color: #829387;
+    font-style: normal;
+    font-size: 12px;
+  }
+
+  .my-desktop-stat > i,
+  .my-desktop-tool > i,
+  .my-desktop-service > i,
+  .my-desktop-record-heading button i,
+  .my-desktop-tools button i,
+  .my-desktop-record-empty button i {
+    color: var(--forest);
+    font-size: 21px;
+    font-style: normal;
+    line-height: 1;
+  }
+
+  .my-desktop-record-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .my-desktop-record-panel,
+  .my-desktop-tools,
+  .my-desktop-services {
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--paper);
+    box-shadow: 0 8px 20px rgba(43, 80, 52, .035);
+  }
+
+  .my-desktop-record-panel {
+    min-width: 0;
+    padding: 21px 22px 14px;
+  }
+
+  .my-desktop-record-heading > div,
+  .my-desktop-section-heading > div {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  }
+
+  .my-desktop-heading-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #edf4e7;
+  }
+
+  .my-desktop-record-heading button,
+  .my-desktop-section-heading > button {
+    min-height: 38px;
+    padding: 7px 0 7px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    background: transparent;
+    color: #4f7458;
+    font-size: 14px;
+  }
+
+  .my-desktop-record-list {
+    margin-top: 9px;
+  }
+
+  .my-desktop-record-row {
+    width: 100%;
+    min-width: 0;
+    min-height: 63px;
+    padding: 9px 3px;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) 18px;
+    align-items: center;
+    gap: 11px;
+    border-top: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    text-align: left;
+    transition: background .18s ease, color .18s ease;
+  }
+
+  .my-desktop-record-row:hover {
+    background: #f5f8ef;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .my-desktop-record-row-disabled {
+    cursor: default;
+  }
+
+  .my-desktop-record-row-disabled:hover {
+    background: transparent;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .my-desktop-record-row-disabled strong,
+  .my-desktop-record-row-disabled > i {
+    color: #7d8f81;
+  }
+
+  .my-desktop-record-file {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: #f0f5ea;
+  }
+
+  .my-desktop-record-row > span:nth-child(2) {
+    min-width: 0;
+    display: grid;
+    gap: 3px;
+  }
+
+  .my-desktop-record-row strong,
+  .my-desktop-record-row small {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .my-desktop-record-row strong {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.4;
+  }
+
+  .my-desktop-record-row small {
+    color: #88988b;
+    font-size: 12px;
+  }
+
+  .my-desktop-record-empty {
+    min-height: 145px;
+    margin-top: 9px;
+    padding: 18px 8px 11px;
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid var(--line);
+  }
+
+  .my-desktop-empty-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #f0f5ea;
+  }
+
+  .my-desktop-record-empty p {
+    min-width: 0;
+    margin: 0;
+    display: grid;
+    gap: 4px;
+    color: #637c68;
+    font-size: 14px;
+  }
+
+  .my-desktop-record-empty small {
+    color: #94a297;
+    font-size: 12px;
+  }
+
+  .my-desktop-record-empty > button {
+    min-height: 38px;
+    padding: 7px 0 7px 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    color: #4f7458;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .my-desktop-tools,
+  .my-desktop-services {
+    padding: 20px 21px;
+  }
+
+  .my-desktop-section-heading h2 {
+    margin: 0;
+  }
+
+  .my-desktop-tool-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 15px;
+  }
+
+  .my-desktop-tool {
+    min-width: 0;
+    min-height: 94px;
+    padding: 13px 14px;
+    display: grid;
+    grid-template-columns: 50px minmax(0, 1fr) 16px;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: #fffef9;
+    color: var(--ink);
+    text-align: left;
+    transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+  }
+
+  .my-desktop-tool-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 15px;
+    background: #edf4e7;
+  }
+
+  .my-desktop-tool > span:nth-child(2),
+  .my-desktop-service > span:nth-child(2) {
+    min-width: 0;
+    display: grid;
+    gap: 4px;
+  }
+
+  .my-desktop-tool strong,
+  .my-desktop-service strong {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .my-desktop-tool small,
+  .my-desktop-service small {
+    overflow: hidden;
+    color: #748878;
+    font-size: 12px;
+    line-height: 1.4;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .my-desktop-services {
+    display: grid;
+    grid-template-columns: 210px minmax(0, 1fr);
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .my-desktop-services-heading {
+    padding: 20px 22px;
+  }
+
+  .my-desktop-services-heading > div {
+    gap: 11px;
+  }
+
+  .my-desktop-service-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .my-desktop-service {
+    min-width: 0;
+    min-height: 106px;
+    padding: 15px 20px;
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) 16px;
+    align-items: center;
+    gap: 12px;
+    border-left: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    text-align: left;
+    transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+  }
+
+  .my-desktop-service:hover {
+    background: #f5f8ef;
+    transform: none;
+    box-shadow: none;
+  }
+
+  .my-desktop-service-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #edf4e7;
+  }
+
+  .my-desktop-book-mark,
+  .my-desktop-leaf-mark {
+    display: block;
+    font-size: 32px;
+    line-height: 1;
+  }
+
+  .my-desktop-leaf-mark {
+    transform: rotate(-25deg);
+  }
+
+  [data-theme="dark"] .my-desktop-welcome {
+    border-color: var(--line);
+    background: linear-gradient(112deg, #203e29 0%, #1d3022 64%, #243b28 100%);
+  }
+
+  [data-theme="dark"] .my-desktop-welcome::before {
+    background: rgba(101, 159, 111, .16);
+  }
+
+  [data-theme="dark"] .my-desktop-welcome::after {
+    background: rgba(35, 59, 39, .4);
+  }
+
+  [data-theme="dark"] .my-desktop-welcome-icon,
+  [data-theme="dark"] .my-desktop-heading-icon,
+  [data-theme="dark"] .my-desktop-stat-icon,
+  [data-theme="dark"] .my-desktop-tool-icon,
+  [data-theme="dark"] .my-desktop-service-icon,
+  [data-theme="dark"] .my-desktop-record-file,
+  [data-theme="dark"] .my-desktop-empty-icon {
+    background: #29412e;
+  }
+
+  [data-theme="dark"] .my-desktop-welcome-copy > span,
+  [data-theme="dark"] .my-desktop-welcome-copy p,
+  [data-theme="dark"] .my-desktop-block-heading span,
+  [data-theme="dark"] .my-desktop-section-heading p,
+  [data-theme="dark"] .my-desktop-stat-copy span,
+  [data-theme="dark"] .my-desktop-record-row small,
+  [data-theme="dark"] .my-desktop-record-empty p,
+  [data-theme="dark"] .my-desktop-record-empty small,
+  [data-theme="dark"] .my-desktop-tool small,
+  [data-theme="dark"] .my-desktop-service small {
+    color: var(--sage);
+  }
+
+  [data-theme="dark"] .my-desktop-tool {
+    background: var(--paper);
+  }
+
+  [data-theme="dark"] .my-desktop-record-row:hover,
+  [data-theme="dark"] .my-desktop-service:hover {
+    background: #263b2b;
+  }
+}
