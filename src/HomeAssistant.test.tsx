@@ -12,27 +12,16 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("home learning assistant", () => {
-  it("shows three real task entries instead of an unavailable assistant state", () => {
+describe("home guidance", () => {
+  it("removes the duplicated assistant block and keeps the real guide entry", () => {
     render(<App />);
 
-    const tasks = screen.getByRole("group", { name: "学习助手任务入口" });
-    expect(tasks).toBeVisible();
-    expect(screen.getByRole("button", { name: /资料不会找/ })).toBeVisible();
-    expect(screen.getByRole("button", { name: /想制作自己的讲义/ })).toBeVisible();
-    expect(screen.getByRole("button", { name: /不知道工具怎么用/ })).toBeVisible();
-    expect(screen.queryByText("学习助手暂未开放，敬请期待。")).not.toBeInTheDocument();
-  });
+    expect(screen.queryByRole("group", { name: "学习助手任务入口" })).not.toBeInTheDocument();
+    expect(screen.queryByText("学习助手")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "使用说明" })).toBeVisible();
 
-  it.each([
-    ["资料不会找", "/resources"],
-    ["想制作自己的讲义", "/tools"],
-    ["不知道工具怎么用", "/guide"],
-  ])("routes %s to a real page", (label, expectedPath) => {
-    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "使用说明" }));
 
-    fireEvent.click(screen.getByRole("button", { name: new RegExp(label) }));
-
-    expect(window.location.pathname).toBe(expectedPath);
+    expect(window.location.pathname).toBe("/guide");
   });
 });

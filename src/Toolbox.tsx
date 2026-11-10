@@ -186,6 +186,81 @@ const tools: Tool[] = [
   },
 ];
 
+type Scenario = {
+  key: string;
+  number: string;
+  eyebrow: string;
+  title: string;
+  prompt: string;
+  description: string;
+  steps: string[];
+  toolKeys: ToolKey[];
+  icon: typeof Files;
+};
+
+const scenarios: Scenario[] = [
+  {
+    key: "collect",
+    number: "01",
+    eyebrow: "资料还散在照片和扫描件里",
+    title: "把照片、扫描件变成可用的学习资料",
+    prompt: "老师发来板书照片、试卷照片或扫描讲义，我想先整理成电子资料。",
+    description: "先把不能复制、大小不一的资料整理好，再进入讲义制作。",
+    steps: [
+      "上传照片或扫描件",
+      "识别文字，统一尺寸和格式",
+      "保存为可以继续整理的电子资料",
+    ],
+    toolKeys: ["ocr", "image-resize", "image-format-convert", "image-compress"],
+    icon: Images,
+  },
+  {
+    key: "organize",
+    number: "02",
+    eyebrow: "资料已经有了，但顺序很乱",
+    title: "把零散文件整理成一份完整讲义",
+    prompt: "章节资料、例题和答案分在不同文件里，里面还有重复页或空白页。",
+    description: "先合并，再删除、旋转和调整页面顺序，也可以只拆出需要的章节。",
+    steps: [
+      "把图片转成 PDF，或上传已有 PDF",
+      "合并、拆分并整理页面",
+      "得到一份顺序清楚的讲义",
+    ],
+    toolKeys: ["images-to-pdf", "merge", "pdf-page-organizer", "split"],
+    icon: Files,
+  },
+  {
+    key: "print",
+    number: "03",
+    eyebrow: "想打印出来，却总觉得不合适",
+    title: "让讲义更适合打印和分发",
+    prompt: "页面方向不统一，或者想一张纸打印两页、四页内容。",
+    description: "先调整页面，再选择适合的拼版或图片排版方式，减少打印时的反复试错。",
+    steps: [
+      "检查页面方向和打印范围",
+      "调整页面并进行拼版",
+      "预览后打印或保存",
+    ],
+    toolKeys: ["print-page-adjust", "nup", "image-sheet-layout"],
+    icon: LayoutGrid,
+  },
+  {
+    key: "share",
+    number: "04",
+    eyebrow: "讲义做好了，准备分享或展示",
+    title: "让讲义更清楚、更轻便地分享",
+    prompt: "文件太大、没有页码，或者想加上姓名、班级和学习用途标记。",
+    description: "根据分享方式选择压缩、加页码、水印或逐页转图片，让同学更容易查看。",
+    steps: [
+      "检查文件大小和页码",
+      "添加必要的页码或文字标识",
+      "压缩或转成图片后分享",
+    ],
+    toolKeys: ["pdf-compress", "page-number", "watermark", "pdf-to-images"],
+    icon: ArrowDownToLine,
+  },
+];
+
 const formatBytes = (bytes: number) =>
   bytes < 1024 * 1024
     ? `${(bytes / 1024).toFixed(1)} KB`
@@ -221,13 +296,14 @@ export function Toolbox({ openTool, favoriteToolIds = [], onToggleFavorite }: { 
       <header className="toolbox-hero">
         <p className="toolbox-eyebrow">STUDENT TOOLBOX</p>
         <h1>学生工具箱</h1>
-        <p>文件在浏览器本地处理，不会上传到外部服务器。</p>
+        <p>从资料收集、讲义整理到打印分享，先选择你现在遇到的情况。</p>
         <div className="privacy-chips">
           <span>无需登录</span>
           <span>基础工具免费</span>
           <span>本地处理</span>
         </div>
       </header>
+      <ScenarioGuide openTool={openTool} />
       <div className="tool-search">
         <Search size={19} />
         <input
@@ -297,6 +373,82 @@ export function Toolbox({ openTool, favoriteToolIds = [], onToggleFavorite }: { 
           </div>
         )}
       </section>
+    </section>
+  );
+}
+
+function ScenarioGuide({ openTool }: { openTool: GoTool }) {
+  const [activeKey, setActiveKey] = useState(scenarios[0].key);
+  const active = scenarios.find((scenario) => scenario.key === activeKey) ?? scenarios[0];
+
+  return (
+    <section className="scenario-guide" aria-labelledby="scenario-guide-title">
+      <div className="scenario-guide-heading">
+        <div>
+          <p className="scenario-kicker">START WITH A REAL SITUATION</p>
+          <h2 id="scenario-guide-title">从你的学习任务开始</h2>
+        </div>
+        <p>不知道选哪个工具？先看看你现在更像下面哪一种情况。</p>
+      </div>
+      <div className="scenario-grid" role="group" aria-label="学习工具使用场景">
+        {scenarios.map((scenario) => {
+          const Icon = scenario.icon;
+          const isActive = scenario.key === active.key;
+          return (
+            <button
+              className={`scenario-card ${isActive ? "active" : ""}`}
+              key={scenario.key}
+              aria-pressed={isActive}
+              onClick={() => setActiveKey(scenario.key)}
+            >
+              <span className="scenario-card-top">
+                <span className="scenario-icon"><Icon size={21} /></span>
+                <b>{scenario.number}</b>
+              </span>
+              <span className="scenario-eyebrow">{scenario.eyebrow}</span>
+              <strong>{scenario.title}</strong>
+              <small>{scenario.prompt}</small>
+            </button>
+          );
+        })}
+      </div>
+      <div className="scenario-detail" aria-live="polite">
+        <div className="scenario-detail-copy">
+          <p className="scenario-kicker">你可以这样开始</p>
+          <h3>{active.title}</h3>
+          <p>{active.description}</p>
+          <ol className="scenario-steps">
+            {active.steps.map((step) => <li key={step}>{step}</li>)}
+          </ol>
+        </div>
+        <div className="scenario-detail-tools">
+          <div className="scenario-tools-heading">
+            <h3>推荐工具</h3>
+            <span>{active.toolKeys.length} 个工具</span>
+          </div>
+          <div className="scenario-tool-list">
+            {active.toolKeys.map((toolKey) => {
+              const tool = tools.find((item) => item.key === toolKey);
+              if (!tool) return null;
+              const Icon = tool.icon;
+              return (
+                <button
+                  className="scenario-tool"
+                  key={tool.key}
+                  onClick={() => openTool(tool.key as ToolKey)}
+                >
+                  <span className="scenario-tool-icon"><Icon size={18} /></span>
+                  <span>
+                    <strong>{tool.name}</strong>
+                    <small>{tool.description}</small>
+                  </span>
+                  <em>开始使用 →</em>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
