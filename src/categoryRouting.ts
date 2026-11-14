@@ -5,6 +5,7 @@ import {
   type Category,
 } from "./categories";
 import { locationPathForAppPath } from "./routing";
+import { HIGH_SCHOOL_INDEX_META } from "./highSchoolCourseIndex";
 
 export const CATEGORY_PARAM = "category";
 export const SUBJECT_PARAM = "subject";
@@ -149,6 +150,9 @@ export const resourceFilterLocation = (
 ) => {
   if (getEnabledCategoryPath(categoryId, values).length === 0) {
     return null;
+  }
+  if (categoryId === HIGH_SCHOOL_INDEX_META.formalCategoryId) {
+    return locationPathForAppPath(HIGH_SCHOOL_INDEX_META.canonicalRoute);
   }
   const params = new URLSearchParams({
     [CATEGORY_PARAM]: categoryId,
