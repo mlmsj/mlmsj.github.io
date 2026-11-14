@@ -13,6 +13,8 @@ import { getChildCategories, SKILL_GROWTH_ROOT_IDS } from "./categories";
 import { CategoriesPage } from "./CategoriesPage";
 import { categoryBrowseLocation, categoryPathBrowseLocation } from "./categoryRouting";
 import { ResourcesPage } from "./ResourcesPage";
+import { HighSchoolCoursesPage } from "./HighSchoolCoursesPage";
+import { getHighSchoolSearchTarget } from "./highSchoolSearch";
 import { SkillGrowthPage } from "./SkillGrowthPage";
 import { MyPage } from "./MyPage";
 import { mySections, type MySection } from "./mySections";
@@ -23,6 +25,7 @@ type Page =
   | "resources"
   | "detail"
   | "categories"
+  | "seniorCourses"
   | "skill-growth"
   | "tools"
   | "profile"
@@ -44,6 +47,7 @@ const paths: Record<Page, string> = {
   resources: "/resources",
   detail: "/detail",
   categories: "/categories",
+  seniorCourses: "/high-school/courses",
   "skill-growth": "/skill-growth",
   tools: "/tools",
   profile: "/profile",
@@ -121,6 +125,24 @@ function App() {
       window.history.pushState({}, "", nextLocation);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const search = (value: string) => {
+    const query = value.trim();
+    if (!query) return;
+    const highSchoolTarget = getHighSchoolSearchTarget(query);
+    if (highSchoolTarget) {
+      const searchParams = new URLSearchParams({
+        grade: highSchoolTarget.grade,
+        subject: highSchoolTarget.subject,
+        q: query,
+      });
+      openLocation(
+        "seniorCourses",
+        locationPathForAppPath(`/high-school/courses?${searchParams.toString()}`),
+      );
+      return;
+    }
+    openLocation("resources", locationPathForAppPath(`/resources?q=${encodeURIComponent(query)}`));
+  };
   const detail = (resource: Resource) => {
     setSelected(resource.id);
     updateMyData(data => ({ ...data, recentViews: recordRecent(data.recentViews, resource.id) }));
@@ -165,6 +187,7 @@ function App() {
             go={go}
             resources={publicResources}
             detail={detail}
+            onSearch={search}
             openCategory={(categoryId) =>
               openLocation("categories", categoryBrowseLocation(categoryId))
             }
@@ -174,11 +197,17 @@ function App() {
           />
         )}
         {page === "resources" && <ResourcesPage resourceValues={resources} catalogPhase={catalog.phase} catalogStatus={catalog.status} detail={detail} favoriteIds={myData.favorites.map(item => item.id)} onToggleFavorite={toggleFavorite} />}
+        {page === "seniorCourses" && (
+          <HighSchoolCoursesPage
+            onSearch={search}
+          />
+        )}
         {page === "categories" && (
           <CategoriesPage
             counts={catalog.counts}
             onHome={() => go("home")}
             onOpenResources={(location) => openLocation("resources", location)}
+            onOpenHighSchoolCourses={(location) => openLocation("seniorCourses", location)}
             onProfile={() => go("profile")}
             onTools={() => go("tools")}
           />
@@ -204,6 +233,7 @@ function App() {
           !isToolDetail &&
           page !== "home" &&
           page !== "resources" &&
+          page !== "seniorCourses" &&
           page !== "categories" &&
           page !== "skill-growth" &&
           page !== "detail" &&
@@ -230,7 +260,7 @@ function Header({
   theme: "light" | "dark";
   toggleTheme: () => void;
 }) {
-  const activePage = page === "detail" ? "resources" : [
+  const activePage = page === "detail" || page === "seniorCourses" ? "resources" : [
     "nup",
     "merge",
     "split",
@@ -306,12 +336,14 @@ function Header({
 function Home({
   go,
   detail,
+  onSearch,
   openCategory,
   openCategoryPath,
   resources,
 }: {
   go: (p: Page) => void;
   detail: (r: Resource) => void;
+  onSearch: (query: string) => void;
   openCategory: (categoryId: string) => void;
   openCategoryPath: (categoryIds: readonly string[]) => void;
   resources: readonly Resource[];
@@ -329,7 +361,7 @@ function Home({
     { label: "考研", categoryPath: ["stage-university", "domain-university-postgraduate", "domain-university-postgraduate-kaoyan"] },
     { label: "AI", featured: true },
   ];
-  const search = (q = query) => { window.history.pushState({}, "", locationPathForAppPath(`/resources?q=${encodeURIComponent(q)}`)); window.dispatchEvent(new PopStateEvent("popstate")); };
+  const submitSearch = (q = query) => onSearch(q);
   return (
     <>
       <section
@@ -343,8 +375,8 @@ function Home({
           <p className="motto">钻石不过是一块坚持到底的煤炭</p>
           <div className="search-wrap">
             <span>⌕</span>
-            <input aria-label="搜索学习资料" placeholder="搜索你需要的学习资料..." value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key === "Enter") search();}} />
-            <button onClick={()=>search()}>搜索</button>
+            <input aria-label="搜索学习资料" placeholder="搜索你需要的学习资料..." value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key === "Enter") submitSearch();}} />
+            <button onClick={()=>submitSearch()}>搜索</button>
           </div>
           <div className="hot-search">
             <b>热门搜索：</b>
@@ -483,7 +515,7 @@ function Footer({ go }: { go: (p: Page) => void }) {
   );
 }
 function MobileBottomNav({ page, go }: { page: Page; go: (p: Page) => void }) {
-  const activePage = page === "detail" ? "resources" : [
+  const activePage = page === "detail" || page === "seniorCourses" ? "resources" : [
     "nup",
     "merge",
     "split",

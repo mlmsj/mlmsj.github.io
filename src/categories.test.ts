@@ -26,6 +26,35 @@ describe("category data contract", () => {
     expect(getCategoryPath("type-junior-math-notes").map(({ id }) => id)).toEqual(
       ["stage-junior", "subject-junior-math", "type-junior-math-notes"],
     );
+    expect(getChildCategories("domain-junior-textbooks").map(({ id }) => id)).toEqual([
+      "type-junior-textbooks-dao-fa",
+      "type-junior-textbooks-geography",
+      "type-junior-textbooks-geography-atlas",
+      "type-junior-textbooks-chemistry",
+      "type-junior-textbooks-science",
+      "type-junior-textbooks-history",
+      "type-junior-textbooks-biology",
+      "type-junior-textbooks-math",
+      "type-junior-textbooks-physics",
+      "type-junior-textbooks-english",
+      "type-junior-textbooks-chinese",
+    ]);
+    expect(getCategoryPath("type-junior-textbooks-math").map(({ id }) => id)).toEqual([
+      "stage-junior",
+      "domain-junior-textbooks",
+      "type-junior-textbooks-math",
+    ]);
+    expect(getChildCategories("domain-junior-workbooks")).toHaveLength(13);
+    expect(getChildCategories("domain-junior-exams").map(({ id }) => id)).toEqual([
+      "type-junior-exams-real",
+      "type-junior-exams-mock",
+    ]);
+    expect(getChildCategories("domain-junior-courses").map(({ id }) => id)).toEqual([
+      "type-junior-courses-by-org",
+      "type-junior-courses-by-grade",
+    ]);
+    expect(getChildCategories("domain-junior-subjects")).toHaveLength(3);
+    expect(getChildCategories("domain-junior-sprint")).toHaveLength(4);
   });
 
   it("adds the three skill-growth roots without changing the four established roots", () => {
@@ -59,6 +88,36 @@ describe("category data contract", () => {
       "domain-senior-policies",
     ]);
     expect(getCategoryPath("missing-senior-exam")).toEqual([]);
+  });
+
+  it("exposes the current high-school second-level material mappings", () => {
+    const seniorMaterialParents = [
+      ["domain-senior-courses", 2],
+      ["domain-senior-one-series", 11],
+      ["domain-senior-subjects", 9],
+      ["domain-senior-competition", 2],
+      ["domain-senior-workbooks", 2],
+      ["domain-senior-sprint", 3],
+      ["domain-senior-mocks", 4],
+      ["domain-senior-textbooks", 19],
+      ["domain-senior-volunteer", 6],
+      ["domain-senior-policies", 4],
+    ] as const;
+
+    expect(
+      seniorMaterialParents.reduce(
+        (total, [parentId, expectedCount]) => {
+          expect(getChildCategories(parentId)).toHaveLength(expectedCount);
+          return total + expectedCount;
+        },
+        0,
+      ),
+    ).toBe(62);
+    expect(getCategoryPath("type-senior-textbooks-chinese").map(({ id }) => id)).toEqual([
+      "stage-senior",
+      "domain-senior-textbooks",
+      "type-senior-textbooks-chinese",
+    ]);
   });
 
   it("exposes the certification root with the confirmed second-level order", () => {

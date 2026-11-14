@@ -66,4 +66,24 @@ describe("home category navigation", () => {
     expect(window.location.pathname).toBe("/categories");
     expect(window.location.search).toBe(expectedSearch);
   });
+
+  it.each([
+    ["李政", "高二", "化学"],
+    ["数学", "高一", "数学"],
+    ["英语", "高一", "英语"],
+  ])("routes home search %s into the high-school course index", (query, grade, subject) => {
+    render(<App />);
+
+    fireEvent.change(screen.getByRole("textbox", { name: "搜索学习资料" }), {
+      target: { value: query },
+    });
+    const homeSearch = screen.getByRole("textbox", { name: "搜索学习资料" }).parentElement;
+    fireEvent.click(within(homeSearch!).getByRole("button", { name: "搜索" }));
+
+    expect(window.location.pathname).toBe("/high-school/courses");
+    expect(window.location.search).toBe(
+      `?grade=${encodeURIComponent(grade)}&subject=${encodeURIComponent(subject)}&q=${encodeURIComponent(query)}`,
+    );
+    expect(screen.getByRole("heading", { name: "高中网课" })).toBeVisible();
+  });
 });

@@ -158,4 +158,27 @@ describe("CategoriesPage", () => {
       expect(link).toHaveAttribute("href", expect.stringContaining("/resources?category=subject-junior-math"));
     }
   });
+
+  it("shows junior resource detail categories on the category page like textbooks", () => {
+    const cases = [
+      ["domain-junior-workbooks", "数学核心考点"],
+      ["domain-junior-exams", "真题"],
+      ["domain-junior-courses", "按机构分类"],
+      ["domain-junior-subjects", "数学"],
+      ["domain-junior-sprint", "考前冲刺押题卷"],
+    ] as const;
+
+    for (const [categoryId, childName] of cases) {
+      window.history.replaceState(
+        {},
+        "",
+        `/categories?category=stage-junior&subject=${categoryId}`,
+      );
+      const { unmount } = renderPage();
+      const desktop = screen.getByTestId("category-desktop");
+      expect(within(desktop).getByText(childName)).toBeVisible();
+      expect(within(desktop).queryByText("暂无资料类型")).not.toBeInTheDocument();
+      unmount();
+    }
+  });
 });

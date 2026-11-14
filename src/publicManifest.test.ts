@@ -48,16 +48,20 @@ const PRODUCTION_ANCHOR_IDS = [
 ] as const;
 
 const UNIVERSITY_AGGREGATE_IDS = [
+  "university-topic-major-001",
   "university-topic-math-001",
   "university-topic-professional-courses-001",
   "university-topic-textbooks-001",
   "university-topic-ideology-001",
+  "university-topic-competition-root-001",
   "university-topic-competition-001",
   "university-topic-cet-001",
   "university-topic-ielts-001",
   "university-topic-proof-001",
   "university-topic-computer-001",
+  "university-topic-postgraduate-001",
   "university-topic-postgrad-001",
+  "university-topic-planning-001",
   "university-topic-career-001",
   "university-quark-career-ppt-001",
   "university-quark-resume-templates-001",
@@ -76,6 +80,47 @@ const JUNIOR_RELEASE_IDS = [
   "jh-topic-sprint-001",
 ] as const;
 
+const JUNIOR_TEXTBOOK_SUBJECT_IDS = [
+  "jh-textbooks-subject-dao-fa-001",
+  "jh-textbooks-subject-geography-001",
+  "jh-textbooks-subject-geography-atlas-001",
+  "jh-textbooks-subject-chemistry-001",
+  "jh-textbooks-subject-science-001",
+  "jh-textbooks-subject-history-001",
+  "jh-textbooks-subject-biology-001",
+  "jh-textbooks-subject-math-001",
+  "jh-textbooks-subject-physics-001",
+  "jh-textbooks-subject-english-001",
+  "jh-textbooks-subject-chinese-001",
+] as const;
+
+const JUNIOR_RESOURCE_DETAIL_IDS = [
+  "jh-workbooks-math-core-001",
+  "jh-workbooks-lixiangshu-001",
+  "jh-workbooks-yibanguo-001",
+  "jh-workbooks-wanwei-001",
+  "jh-workbooks-kuaijie-english-001",
+  "jh-workbooks-kekezhixing-001",
+  "jh-workbooks-xiaoti-kuangzuo-001",
+  "jh-workbooks-zhongkao-english-vocab-001",
+  "jh-workbooks-xinghuo-english-001",
+  "jh-workbooks-wusan-001",
+  "jh-workbooks-jinkaojuan-001",
+  "jh-workbooks-baiti-daguoguan-001",
+  "jh-workbooks-xueyi-jinjuan-001",
+  "jh-exams-real-001",
+  "jh-exams-mock-001",
+  "jh-courses-by-org-001",
+  "jh-courses-by-grade-001",
+  "jh-subjects-math-001",
+  "jh-subjects-physics-001",
+  "jh-subjects-chinese-001",
+  "jh-sprint-exam-papers-001",
+  "jh-sprint-english-001",
+  "jh-sprint-physics-001",
+  "jh-sprint-math-001",
+] as const;
+
 const SENIOR_THEME_IDS = [
   "hs-topic-textbooks-001",
   "hs-topic-workbooks-001",
@@ -87,6 +132,71 @@ const SENIOR_THEME_IDS = [
   "hs-topic-competition-001",
   "hs-topic-volunteer-001",
   "hs-topic-policies-001",
+] as const;
+
+const SENIOR_RESOURCE_DETAIL_IDS = [
+  "hs-courses-2027-001",
+  "hs-courses-by-org-001",
+  "hs-one-series-yishu-001",
+  "hs-one-series-yisheng-001",
+  "hs-one-series-yiying-001",
+  "hs-one-series-yidi-001",
+  "hs-one-series-yihua-001",
+  "hs-one-series-yizheng-001",
+  "hs-one-series-yiwu-001",
+  "hs-one-series-last-ten-lessons-001",
+  "hs-one-series-free-gaokao-001",
+  "hs-one-series-huang-furen-001",
+  "hs-one-series-shiyou-yuwen-001",
+  "hs-subjects-chinese-001",
+  "hs-subjects-physics-001",
+  "hs-subjects-chemistry-001",
+  "hs-subjects-math-001",
+  "hs-subjects-geography-001",
+  "hs-subjects-english-001",
+  "hs-subjects-history-001",
+  "hs-subjects-biology-001",
+  "hs-subjects-politics-001",
+  "hs-competition-foundation-001",
+  "hs-competition-real-001",
+  "hs-workbooks-first-round-2027-001",
+  "hs-workbooks-synchronous-2027-001",
+  "hs-sprint-answering-001",
+  "hs-sprint-papers-001",
+  "hs-sprint-class-001",
+  "hs-mocks-real-001",
+  "hs-mocks-academic-001",
+  "hs-mocks-mock-001",
+  "hs-mocks-guangdong-spring-001",
+  "hs-textbooks-after-school-answers-001",
+  "hs-textbooks-japanese-001",
+  "hs-textbooks-russian-001",
+  "hs-textbooks-information-technology-001",
+  "hs-textbooks-general-technology-001",
+  "hs-textbooks-politics-001",
+  "hs-textbooks-english-001",
+  "hs-textbooks-chinese-001",
+  "hs-textbooks-arts-001",
+  "hs-textbooks-music-001",
+  "hs-textbooks-physics-001",
+  "hs-textbooks-physical-education-001",
+  "hs-textbooks-math-001",
+  "hs-textbooks-biology-001",
+  "hs-textbooks-fine-arts-001",
+  "hs-textbooks-history-001",
+  "hs-textbooks-chemistry-001",
+  "hs-textbooks-geography-001",
+  "hs-textbooks-mental-health-001",
+  "hs-volunteer-college-life-001",
+  "hs-volunteer-admissions-friend-001",
+  "hs-volunteer-zhang-xuefeng-001",
+  "hs-volunteer-forms-001",
+  "hs-volunteer-materials-001",
+  "hs-volunteer-peoples-daily-001",
+  "hs-policies-new-curriculum-001",
+  "hs-policies-repeat-study-001",
+  "hs-policies-textbook-comparison-001",
+  "hs-policies-exam-notes-001",
 ] as const;
 
 const SKILL_GROWTH_AI_IDS = [
@@ -355,18 +465,19 @@ describe("public manifest contract", () => {
     expect(parsed.records.some((record) => record.id === "university-series-001")).toBe(false);
     expect(parsed.records.some((record) => record.id === "university-quark-english-contest-001")).toBe(false);
     const isUniversityAggregateCandidate =
-      ids.length === 33 &&
+      ids.length === 37 &&
       UNIVERSITY_AGGREGATE_IDS.every((id) => ids.includes(id)) &&
       JUNIOR_RELEASE_IDS.every((id) => ids.includes(id)) &&
       SENIOR_THEME_IDS.every((id) => ids.includes(id));
 
     const isSkillGrowthCandidate =
-      ids.length === 74 &&
+      (ids.length === 74 || ids.length === 85 || ids.length === 109 || ids.length === 113 || ids.length === 175) &&
       SKILL_GROWTH_AI_IDS.every((id) => ids.includes(id)) &&
       SKILL_GROWTH_NON_AI_IDS.every((id) => ids.includes(id)) &&
       UNIVERSITY_AGGREGATE_IDS.every((id) => ids.includes(id)) &&
       JUNIOR_RELEASE_IDS.every((id) => ids.includes(id)) &&
-      SENIOR_THEME_IDS.every((id) => ids.includes(id));
+      SENIOR_THEME_IDS.every((id) => ids.includes(id)) &&
+      (ids.length === 74 || ids.length === 113 || JUNIOR_TEXTBOOK_SUBJECT_IDS.every((id) => ids.includes(id)));
 
     if (isUniversityAggregateCandidate || isSkillGrowthCandidate) {
       const aggregateIds = new Set<string>(UNIVERSITY_AGGREGATE_IDS);
@@ -384,6 +495,31 @@ describe("public manifest contract", () => {
       );
       expect(juniorRecords).toHaveLength(JUNIOR_RELEASE_IDS.length);
       expect(juniorRecords.every((record) => record.shareUrl !== null)).toBe(true);
+      if (ids.length >= 85) {
+        const juniorTextbookSubjectRecords = parsed.records.filter((record) =>
+          JUNIOR_TEXTBOOK_SUBJECT_IDS.includes(record.id as (typeof JUNIOR_TEXTBOOK_SUBJECT_IDS)[number]),
+        );
+        expect(juniorTextbookSubjectRecords).toHaveLength(JUNIOR_TEXTBOOK_SUBJECT_IDS.length);
+        expect(juniorTextbookSubjectRecords.every((record) =>
+          record.categoryId.startsWith("type-junior-textbooks-") &&
+          record.provider === "quark" &&
+          record.accessStatus === "verified" &&
+          record.shareUrl !== null,
+        )).toBe(true);
+      }
+      if (ids.length === 109 || ids.length === 113) {
+        const juniorResourceDetailRecords = parsed.records.filter((record) =>
+          JUNIOR_RESOURCE_DETAIL_IDS.includes(record.id as (typeof JUNIOR_RESOURCE_DETAIL_IDS)[number]),
+        );
+        expect(juniorResourceDetailRecords).toHaveLength(JUNIOR_RESOURCE_DETAIL_IDS.length);
+        expect(juniorResourceDetailRecords.every((record) =>
+          record.categoryId.startsWith("type-junior-") &&
+          !record.categoryId.startsWith("type-junior-textbooks-") &&
+          record.provider === "quark" &&
+          record.accessStatus === "verified" &&
+          record.shareUrl !== null,
+        )).toBe(true);
+      }
       const seniorThemeIds = new Set<string>(SENIOR_THEME_IDS);
       const seniorThemeRecords = parsed.records.filter((record) => seniorThemeIds.has(record.id));
       expect(seniorThemeRecords).toHaveLength(SENIOR_THEME_IDS.length);
@@ -393,6 +529,18 @@ describe("public manifest contract", () => {
         record.accessStatus === "verified" &&
         record.shareUrl !== null,
       )).toBe(true);
+      if (ids.length === 175) {
+        const seniorResourceDetailRecords = parsed.records.filter((record) =>
+          SENIOR_RESOURCE_DETAIL_IDS.includes(record.id as (typeof SENIOR_RESOURCE_DETAIL_IDS)[number]),
+        );
+        expect(seniorResourceDetailRecords).toHaveLength(SENIOR_RESOURCE_DETAIL_IDS.length);
+        expect(seniorResourceDetailRecords.every((record) =>
+          record.categoryId.startsWith("type-senior-") &&
+          record.provider === "quark" &&
+          record.accessStatus === "verified" &&
+          record.shareUrl !== null,
+        )).toBe(true);
+      }
       if (isSkillGrowthCandidate) {
         const skillRecords = parsed.records.filter((record) =>
           SKILL_GROWTH_AI_IDS.includes(record.id as (typeof SKILL_GROWTH_AI_IDS)[number]) ||

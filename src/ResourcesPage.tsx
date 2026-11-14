@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type MouseEvent } from "react";
+import { useCallback, useEffect, useMemo, useState, type MouseEvent, type ReactNode } from "react";
 import {
   categories,
   getCategoryPath,
@@ -11,10 +11,12 @@ import {
   isPublishedPublicResource,
 } from "./categoryCounts";
 import {
+  canOpenPublicShare,
   getResourceAccessLabel,
   type PublicCatalogPhase,
 } from "./publicCatalog";
 import { categoryPathBrowseLocation, resourceFilterLocation } from "./categoryRouting";
+import { HIGH_SCHOOL_INDEX_META } from "./highSchoolCourseIndex";
 import { parseResourceFilterState } from "./resourceFiltering";
 import {
   getResourceMetadataLabel,
@@ -31,6 +33,155 @@ const RESOURCE_STAGE_IDS = [
   "stage-university",
   "purpose-certification",
 ] as const;
+const RESOURCE_GROUP_STAGE_IDS = new Set(["stage-junior", "stage-senior", "stage-university"]);
+
+const compareCategoryPaths = (
+  left: readonly Category[],
+  right: readonly Category[],
+) => {
+  if (left.length === 0 || right.length === 0) {
+    return right.length - left.length;
+  }
+
+  const sharedLength = Math.min(left.length, right.length);
+  for (let index = 0; index < sharedLength; index += 1) {
+    const leftCategory = left[index];
+    const rightCategory = right[index];
+    if (leftCategory.id === rightCategory.id) continue;
+
+    return (
+      leftCategory.sortOrder - rightCategory.sortOrder ||
+      leftCategory.name.localeCompare(rightCategory.name, "zh-CN") ||
+      leftCategory.id.localeCompare(rightCategory.id)
+    );
+  }
+
+  return left.length - right.length;
+};
+
+type ResourceListEntry =
+  | {
+      kind: "resource";
+      resource: Resource;
+      nested: boolean;
+      order: number;
+    }
+  | {
+      kind: "group";
+      id: string;
+      category: Category;
+      parent: Resource;
+      children: Resource[];
+      order: number;
+    };
+
+type ResourceGroupToggle = {
+  id: string;
+  isExpanded: boolean;
+  childCount: number;
+  onToggle: () => void;
+};
+
+const getResourceGroupCategory = (
+  resource: Resource,
+  categoryValues: readonly Category[],
+) => {
+  if (!resource.categoryId) return null;
+  return (
+    getCategoryPath(resource.categoryId, categoryValues).find(
+      (category) =>
+        category.level === 2 &&
+        category.parentId !== null &&
+        RESOURCE_GROUP_STAGE_IDS.has(category.parentId) &&
+        (category.id.startsWith("domain-junior-") ||
+          category.id.startsWith("domain-senior-") ||
+          category.id.startsWith("domain-university-")),
+    ) ?? null
+  );
+};
+
+const buildResourceListEntries = (
+  resources: readonly Resource[],
+  categoryValues: readonly Category[],
+  enableGrouping: boolean,
+): ResourceListEntry[] => {
+  if (!enableGrouping) {
+    return resources.map((resource, order) => ({
+      kind: "resource",
+      resource,
+      nested: false,
+      order,
+    }));
+  }
+
+  const directEntries: ResourceListEntry[] = [];
+  const groups = new Map<
+    string,
+    {
+      category: Category;
+      parent: { resource: Resource; order: number } | null;
+      children: { resource: Resource; order: number }[];
+      order: number;
+    }
+  >();
+
+  resources.forEach((resource, order) => {
+    const category = getResourceGroupCategory(resource, categoryValues);
+    if (!category) {
+      directEntries.push({ kind: "resource", resource, nested: false, order });
+      return;
+    }
+
+    const existing = groups.get(category.id) ?? {
+      category,
+      parent: null,
+      children: [],
+      order,
+    };
+    if (resource.categoryId === category.id) {
+      existing.parent = { resource, order };
+    } else {
+      existing.children.push({ resource, order });
+    }
+    groups.set(category.id, existing);
+  });
+
+  const groupedEntries: ResourceListEntry[] = [...directEntries];
+  for (const [id, group] of groups) {
+    if (group.parent && group.children.length > 0) {
+      groupedEntries.push({
+        kind: "group",
+        id,
+        category: group.category,
+        parent: group.parent.resource,
+        children: group.children
+          .sort((left, right) => left.order - right.order)
+          .map(({ resource }) => resource),
+        order: group.order,
+      });
+      continue;
+    }
+
+    if (group.parent) {
+      groupedEntries.push({
+        kind: "resource",
+        resource: group.parent.resource,
+        nested: false,
+        order: group.parent.order,
+      });
+    }
+    for (const child of group.children) {
+      groupedEntries.push({
+        kind: "resource",
+        resource: child.resource,
+        nested: false,
+        order: child.order,
+      });
+    }
+  }
+
+  return groupedEntries.sort((left, right) => left.order - right.order);
+};
 
 const shouldShowResults = (search: string) => {
   const params = new URLSearchParams(search);
@@ -80,6 +231,10 @@ export function ResourcesPage({
   );
   const [searchTerm, setSearchTerm] = useState(query);
   const [page, setPage] = useState(1);
+  const [resourceGroupExpansion, setResourceGroupExpansion] = useState<{
+    key: string;
+    ids: ReadonlySet<string>;
+  }>(() => ({ key: "", ids: new Set() }));
   const [showResults, setShowResults] = useState(() =>
     shouldShowResults(window.location.search),
   );
@@ -172,14 +327,73 @@ export function ResourcesPage({
     [categoryValuesForSearch, searchTerm],
   );
 
-  const total = filteredResources.length;
-  const visibleResources = filteredResources.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE,
-  );
   const categoryPath = filterState.category
     ? getCategoryPath(filterState.category.id, categoryValues)
     : [];
+  const orderedResources = useMemo(() => {
+    if (!filterState.category) return filteredResources;
+
+    return filteredResources
+      .map((resource, index) => ({
+        resource,
+        index,
+        path: resource.categoryId
+          ? getCategoryPath(resource.categoryId, categoryValues)
+          : [],
+      }))
+      .sort(
+        (left, right) =>
+          compareCategoryPaths(left.path, right.path) || left.index - right.index,
+      )
+      .map(({ resource }) => resource);
+  }, [categoryValues, filterState.category, filteredResources]);
+  const total = orderedResources.length;
+  const resourceListEntries = useMemo(
+    () =>
+      buildResourceListEntries(
+        orderedResources,
+        categoryValues,
+        true,
+      ),
+    [categoryValues, orderedResources],
+  );
+  const listTotal = resourceListEntries.length;
+  const visibleResourceEntries = useMemo(
+    () => resourceListEntries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [page, resourceListEntries],
+  );
+  const expandableResourceGroupIds = useMemo(
+    () =>
+      visibleResourceEntries.flatMap((entry) =>
+        entry.kind === "group" ? [entry.id] : [],
+      ),
+    [visibleResourceEntries],
+  );
+  const selectedCategoryId = filterState.category?.id;
+  const defaultExpandedResourceGroupKey = useMemo(() => {
+    const defaultExpanded = new Set<string>();
+    if (searchTerm.trim()) {
+      expandableResourceGroupIds.forEach((id) => defaultExpanded.add(id));
+    }
+    if (selectedCategoryId && expandableResourceGroupIds.includes(selectedCategoryId)) {
+      defaultExpanded.add(selectedCategoryId);
+    }
+    return [...defaultExpanded].sort().join("|");
+  }, [expandableResourceGroupIds, searchTerm, selectedCategoryId]);
+  const resourceGroupContextKey = `${selectedCategoryId ?? ""}::${searchTerm.trim()}::${expandableResourceGroupIds.join("|")}`;
+  const defaultExpandedResourceGroups = useMemo(
+    () =>
+      new Set(
+        defaultExpandedResourceGroupKey
+          ? defaultExpandedResourceGroupKey.split("|")
+          : [],
+      ),
+    [defaultExpandedResourceGroupKey],
+  );
+  const expandedResourceGroups =
+    resourceGroupExpansion.key === resourceGroupContextKey
+      ? resourceGroupExpansion.ids
+      : defaultExpandedResourceGroups;
   const hasDirectFilter =
     filterState.hasCategoryParameter || searchTerm.trim().length > 0;
   const showBrowseOverview = !hasDirectFilter;
@@ -199,6 +413,185 @@ export function ResourcesPage({
     category.id === "skill-ai-digital-tech"
       ? locationPathForAppPath("/skill-growth")
       : categoryPathBrowseLocation([category.id], categoryValues);
+
+  const highSchoolCourseLocation = resourceFilterLocation(
+    HIGH_SCHOOL_INDEX_META.formalCategoryId,
+    categoryValues,
+  );
+
+  const toggleResourceGroup = (groupId: string) => {
+    setResourceGroupExpansion((current) => {
+      const base =
+        current.key === resourceGroupContextKey
+          ? current.ids
+          : defaultExpandedResourceGroups;
+      const next = new Set(base);
+      if (next.has(groupId)) next.delete(groupId);
+      else next.add(groupId);
+      return { key: resourceGroupContextKey, ids: next };
+    });
+  };
+
+  const renderResourceItem = (
+    resource: Resource,
+    displayIndex: string,
+    nested: boolean,
+    groupToggle?: ResourceGroupToggle,
+  ) => {
+    const accessLabel = getResourceAccessLabel(resource);
+    const metadataLabel = getResourceMetadataLabel(resource);
+    const resourcePath = resource.categoryId
+      ? getCategoryPath(resource.categoryId, categoryValues)
+      : [];
+    const isNestedResource =
+      nested ||
+      (Boolean(filterState.category) &&
+        resourcePath.length > categoryPath.length + 1);
+    const groupShareUrl =
+      groupToggle &&
+      canOpenPublicShare(resource) &&
+      resource.delivery?.shareUrl
+        ? resource.delivery.shareUrl
+        : null;
+
+    const resourceCopy = (
+      <span className="resource-item-copy">
+        <span className="resource-item-labels">
+          <small>{resource.tag}</small>
+          {accessLabel && <small className={`resource-access-status resource-access-status-${resource.delivery?.accessStatus}`}>{accessLabel}</small>}
+        </span>
+        <span className="resource-item-title-row">
+          <strong>{resource.title}</strong>
+          {metadataLabel && (
+            <small className="resource-metadata" aria-label={`文件信息：${metadataLabel}`}>
+              {metadataLabel}
+            </small>
+          )}
+        </span>
+        <em>{resource.description}</em>
+      </span>
+    );
+    const resourceTime = groupToggle ? (
+      <time className="resource-item-time resource-item-time--group-parent">
+        {groupShareUrl && (
+          <a
+            className="resource-group-open-link"
+            href={groupShareUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`打开总资料：${resource.title}`}
+          >
+            打开总资料 ↗
+          </a>
+        )}
+        <span>{resource.meta}</span>
+      </time>
+    ) : (
+      <time className="resource-item-time">{resource.meta}　→</time>
+    );
+    const resourceBody = groupToggle ? (
+      <div className="resource-item resource-item--group-parent-body">
+        <b>{displayIndex}</b>
+        {resourceCopy}
+        {resourceTime}
+      </div>
+    ) : (
+      <button className="resource-item" onClick={() => detail(resource)}>
+        <b>{displayIndex}</b>
+        {resourceCopy}
+        {resourceTime}
+      </button>
+    );
+
+    return (
+      <article
+        className={`resource-item-shell${isNestedResource ? " resource-item-shell--nested" : ""}${groupToggle ? " resource-item-shell--group-parent" : ""}${onToggleFavorite ? " resource-item-shell--with-favorite" : ""}`}
+        key={resource.id}
+      >
+        {resourceBody}
+        {groupToggle && (
+          <button
+            type="button"
+            className="resource-group-toggle"
+            aria-label={`${groupToggle.isExpanded ? "收起" : "展开"}下级资料（${groupToggle.childCount}项）`}
+            aria-expanded={groupToggle.isExpanded}
+            aria-controls={groupToggle.isExpanded ? `resource-group-${groupToggle.id}` : undefined}
+            title={`${groupToggle.isExpanded ? "收起" : "展开"} ${groupToggle.childCount} 个下级资料`}
+            onClick={groupToggle.onToggle}
+          >
+            <span
+              className={`resource-group-toggle-icon${groupToggle.isExpanded ? " is-expanded" : ""}`}
+              aria-hidden="true"
+            />
+            <span aria-hidden="true">{groupToggle.childCount}项</span>
+          </button>
+        )}
+        {onToggleFavorite && (
+          <button
+            className="resource-favorite-button"
+            aria-label={`${favoriteIds.includes(resource.id) ? "取消收藏" : "收藏"}：${resource.title}`}
+            aria-pressed={favoriteIds.includes(resource.id)}
+            onClick={() => onToggleFavorite(resource.id)}
+          >
+            {favoriteIds.includes(resource.id) ? "★" : "☆"}
+          </button>
+        )}
+      </article>
+    );
+  };
+
+  const renderedResourceItems = visibleResourceEntries.reduce<{
+    items: ReactNode[];
+    nextIndex: number;
+  }>((accumulator, entry) => {
+    if (entry.kind === "resource") {
+      const displayIndex = String((page - 1) * PAGE_SIZE + accumulator.nextIndex + 1).padStart(2, "0");
+      return {
+        items: [
+          ...accumulator.items,
+          renderResourceItem(entry.resource, displayIndex, entry.nested),
+        ],
+        nextIndex: accumulator.nextIndex + 1,
+      };
+    }
+
+    const isExpanded = expandedResourceGroups.has(entry.id);
+    const parentPosition = accumulator.nextIndex + 1;
+    const parentIndex = String((page - 1) * PAGE_SIZE + parentPosition).padStart(2, "0");
+    const children = isExpanded
+      ? entry.children.map((resource, childIndex) =>
+          renderResourceItem(
+            resource,
+            `${parentIndex}-${String(childIndex + 1).padStart(2, "0")}`,
+            true,
+          ),
+        )
+      : [];
+    const group = (
+      <div className="resource-group-shell" key={`group-${entry.id}`}>
+        {renderResourceItem(entry.parent, parentIndex, false, {
+          id: entry.id,
+          isExpanded,
+          childCount: entry.children.length,
+          onToggle: () => toggleResourceGroup(entry.id),
+        })}
+        {isExpanded && (
+          <div
+            className="resource-group-children"
+            id={`resource-group-${entry.id}`}
+            role="group"
+            aria-label={`${entry.category.name}下级资料`}
+          >
+            {children}
+          </div>
+        )}
+      </div>
+    );
+    return {
+      items: [...accumulator.items, group],
+      nextIndex: parentPosition,
+    };
+  }, { items: [], nextIndex: 0 }).items;
 
   return (
     <section className="page-section resource-page">
@@ -226,6 +619,18 @@ export function ResourcesPage({
         <div className="resource-filter-notice" role="status">
           分类链接无效或已停用，未展示任何筛选结果。
           <button type="button" onClick={clearFilter}>清除筛选</button>
+        </div>
+      )}
+
+      {filterState.category?.id === "stage-senior" && highSchoolCourseLocation && (
+        <div className="resource-category-entry" aria-label="高中网课课程索引入口">
+          <span>高中 → 网课</span>
+          <a
+            href={highSchoolCourseLocation}
+            onClick={(event) => handleLinkClick(event, highSchoolCourseLocation)}
+          >
+            打开 2027 课程索引
+          </a>
         </div>
       )}
 
@@ -354,45 +759,9 @@ export function ResourcesPage({
               </p>
             )}
 
-            {catalogPhase === "ready" && visibleResources.length > 0 ? (
+            {catalogPhase === "ready" && visibleResourceEntries.length > 0 ? (
               <div className="resource-list">
-                {visibleResources.map((resource, index) => {
-                  const accessLabel = getResourceAccessLabel(resource);
-                  const metadataLabel = getResourceMetadataLabel(resource);
-                  return (
-                    <article className="resource-item-shell" key={resource.id}>
-                      <button className="resource-item" onClick={() => detail(resource)}>
-                        <b>{String((page - 1) * PAGE_SIZE + index + 1).padStart(2, "0")}</b>
-                        <span className="resource-item-copy">
-                          <span className="resource-item-labels">
-                            <small>{resource.tag}</small>
-                            {accessLabel && <small className={`resource-access-status resource-access-status-${resource.delivery?.accessStatus}`}>{accessLabel}</small>}
-                          </span>
-                          <span className="resource-item-title-row">
-                            <strong>{resource.title}</strong>
-                            {metadataLabel && (
-                              <small className="resource-metadata" aria-label={`文件信息：${metadataLabel}`}>
-                                {metadataLabel}
-                              </small>
-                            )}
-                          </span>
-                          <em>{resource.description}</em>
-                        </span>
-                        <time className="resource-item-time">{resource.meta}　→</time>
-                      </button>
-                      {onToggleFavorite && (
-                        <button
-                          className="resource-favorite-button"
-                          aria-label={`${favoriteIds.includes(resource.id) ? "取消收藏" : "收藏"}：${resource.title}`}
-                          aria-pressed={favoriteIds.includes(resource.id)}
-                          onClick={() => onToggleFavorite(resource.id)}
-                        >
-                          {favoriteIds.includes(resource.id) ? "★" : "☆"}
-                        </button>
-                      )}
-                    </article>
-                  );
-                })}
+                {renderedResourceItems}
               </div>
             ) : catalogPhase === "ready" ? (
               <div className="resource-empty" role="status">
@@ -404,11 +773,11 @@ export function ResourcesPage({
               </div>
             ) : null}
 
-            {catalogPhase === "ready" && total > 0 && (
+            {catalogPhase === "ready" && listTotal > 0 && (
               <nav className="resource-pagination" aria-label="公开资料分页">
                 <button disabled={page <= 1} onClick={() => setPage(page - 1)}>上一页</button>
-                <span>第 {page} 页 · 共 {total} 条</span>
-                <button disabled={page * PAGE_SIZE >= total} onClick={() => setPage(page + 1)}>下一页</button>
+                <span>第 {page} 页 · 共 {listTotal} 个入口</span>
+                <button disabled={page * PAGE_SIZE >= listTotal} onClick={() => setPage(page + 1)}>下一页</button>
               </nav>
             )}
           </div>

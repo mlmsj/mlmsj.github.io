@@ -108,12 +108,14 @@ export function CategoriesPage({
   onHome,
   counts = {},
   onOpenResources,
+  onOpenHighSchoolCourses,
   onProfile,
   onTools,
 }: {
   onHome: () => void;
   counts?: Record<string, number>;
   onOpenResources: (location: string) => void;
+  onOpenHighSchoolCourses?: (location: string) => void;
   onProfile?: () => void;
   onTools?: () => void;
 }) {
@@ -183,22 +185,39 @@ export function CategoriesPage({
   const selectPath = (path: readonly Category[]) =>
     navigate(categoryPathBrowseLocation(path.map((category) => category.id)));
   const selectRoot = (category: Category) => selectPath([category]);
+  const openResourceLocation = (location: string, categoryId?: string) => {
+    if (categoryId === "domain-senior-courses" && onOpenHighSchoolCourses) {
+      onOpenHighSchoolCourses(location);
+      return;
+    }
+    onOpenResources(location);
+  };
   const selectDesktopChild = (category: Category) => {
     const children = getChildCategories(category.id);
+    if (category.id === "domain-senior-courses") {
+      const location = resourceFilterLocation(category.id);
+      if (location) openResourceLocation(location, category.id);
+      return;
+    }
     if (children.length > 0) {
       selectPath([...desktopPath, category]);
     } else {
       const location = resourceFilterLocation(category.id);
-      if (location) onOpenResources(location);
+      if (location) openResourceLocation(location, category.id);
     }
   };
   const selectMobileChild = (category: Category) => {
     const children = getChildCategories(category.id);
+    if (category.id === "domain-senior-courses") {
+      const location = resourceFilterLocation(category.id);
+      if (location) openResourceLocation(location, category.id);
+      return;
+    }
     if (children.length > 0) {
       selectPath([...mobilePath, category]);
     } else {
       const location = resourceFilterLocation(category.id);
-      if (location) onOpenResources(location);
+      if (location) openResourceLocation(location, category.id);
     }
   };
   const backToRoots = () => selectPath([]);
@@ -222,7 +241,7 @@ export function CategoriesPage({
           !event.altKey
         ) {
           event.preventDefault();
-          onOpenResources(activeResourceLocation);
+          openResourceLocation(activeResourceLocation, activeResourceCategory.id);
         }
       }}
     >
@@ -244,7 +263,7 @@ export function CategoriesPage({
           !event.altKey
         ) {
           event.preventDefault();
-          onOpenResources(activeResourceLocation);
+          openResourceLocation(activeResourceLocation, activeResourceCategory.id);
         }
       }}
     >
@@ -268,7 +287,7 @@ export function CategoriesPage({
             ? resourceFilterLocation(category.id) ?? undefined
             : undefined
         }
-        onNavigate={onOpenResources}
+        onNavigate={(location) => openResourceLocation(location, category.id)}
       />
     );
   };
@@ -415,7 +434,7 @@ export function CategoriesPage({
                       ? resourceFilterLocation(category.id) ?? undefined
                       : undefined
                   }
-                  onNavigate={onOpenResources}
+                  onNavigate={(location) => openResourceLocation(location, category.id)}
                 />
               );
             })}

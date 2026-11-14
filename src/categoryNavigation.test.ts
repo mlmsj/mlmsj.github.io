@@ -10,4 +10,10 @@ describe("skill-growth navigation isolation", () => {
     expect(shouldShowCategoryInNavigation("skill-ai-digital-tech", 0)).toBe(false);
     expect(shouldShowCategoryInNavigation("skill-ai-deepseek", 0)).toBe(true);
   });
+
+  it("keeps junior resource detail mappings visible like textbook subjects", () => {
+    expect(shouldShowCategoryInNavigation("type-junior-workbooks-wanwei", 1)).toBe(true);
+    expect(shouldShowCategoryInNavigation("type-junior-exams-real", 1)).toBe(true);
+    expect(shouldShowCategoryInNavigation("type-junior-textbooks-math", 1)).toBe(true);
+  });
 });
