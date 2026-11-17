@@ -129,6 +129,134 @@ describe("resource category filtering and deep links", () => {
     expect(screen.getByRole("heading", { name: "知识点整理（1）" })).toBeVisible();
   });
 
+  it("shows legacy certification resources through the current purpose route", () => {
+    window.history.replaceState({}, "", "/resources?category=purpose-certification-ielts");
+    const legacyIeltsResource = {
+      ...visibleResource,
+      id: "legacy-ielts",
+      title: "雅思系列",
+      categoryId: "domain-university-certification-ielts",
+    };
+    render(<ResourcesPage detail={vi.fn()} resourceValues={[legacyIeltsResource]} />);
+
+    expect(screen.getByRole("heading", { name: "雅思（1）" })).toBeVisible();
+    expect(screen.getByText("雅思系列")).toBeVisible();
+  });
+
+  it("sorts numbered first-round workbook entries numerically", () => {
+    window.history.replaceState({}, "", "/resources?category=type-senior-workbooks-first-round-2027");
+    const numberedWorkbooks = [
+      { ...visibleResource, id: "workbook-10", title: "10.十年真题", categoryId: "type-senior-workbooks-first-round-2027" },
+      { ...visibleResource, id: "workbook-2", title: "2.五三", categoryId: "type-senior-workbooks-first-round-2027" },
+      { ...visibleResource, id: "workbook-25", title: "25.新高掌", categoryId: "type-senior-workbooks-first-round-2027" },
+    ];
+    const { container } = render(<ResourcesPage detail={vi.fn()} resourceValues={numberedWorkbooks} />);
+
+    expect(Array.from(container.querySelectorAll(".resource-item-copy strong")).map((node) => node.textContent)).toEqual([
+      "2.五三",
+      "10.十年真题",
+      "25.新高掌",
+    ]);
+  });
+
+  it("sorts numbered synchronous workbook entries numerically", () => {
+    window.history.replaceState({}, "", "/resources?category=type-senior-workbooks-synchronous-2027");
+    const numberedWorkbooks = [
+      { ...visibleResource, id: "sync-7", title: "7.五三", categoryId: "type-senior-workbooks-synchronous-2027" },
+      { ...visibleResource, id: "sync-1", title: "1.赢在学考", categoryId: "type-senior-workbooks-synchronous-2027" },
+      { ...visibleResource, id: "sync-3", title: "3.教材帮", categoryId: "type-senior-workbooks-synchronous-2027" },
+    ];
+    const { container } = render(<ResourcesPage detail={vi.fn()} resourceValues={numberedWorkbooks} />);
+
+    expect(Array.from(container.querySelectorAll(".resource-item-copy strong")).map((node) => node.textContent)).toEqual([
+      "1.赢在学考",
+      "3.教材帮",
+      "7.五三",
+    ]);
+  });
+
+  it("puts the certification aggregate entry before numbered entries", () => {
+    window.history.replaceState({}, "", "/resources?category=purpose-certification-ielts");
+    const certificationResources = [
+      { ...visibleResource, id: "university-topic-ielts-001", title: "雅思系列", categoryId: "domain-university-certification-ielts" },
+      { ...visibleResource, id: "certification-08", title: "08.总结", categoryId: "domain-university-certification-ielts" },
+      { ...visibleResource, id: "certification-02", title: "02.计划+学习方法", categoryId: "domain-university-certification-ielts" },
+      { ...visibleResource, id: "certification-01", title: "01.小白指南", categoryId: "domain-university-certification-ielts" },
+    ];
+    const { container } = render(<ResourcesPage detail={vi.fn()} resourceValues={certificationResources} />);
+
+    expect(Array.from(container.querySelectorAll(".resource-item-copy strong")).map((node) => node.textContent)).toEqual([
+      "雅思系列",
+      "01.小白指南",
+      "02.计划+学习方法",
+      "08.总结",
+    ]);
+  });
+
+  it.each([
+    ["purpose-certification-civil-service", "certification-topic-civil-service-001", "考公系列"],
+    ["purpose-certification-foreign-language", "certification-topic-foreign-language-001", "外语系列"],
+  ])("sorts numbered detail links after the aggregate entry for %s", (categoryId, aggregateId, aggregateTitle) => {
+    window.history.replaceState({}, "", `/resources?category=${categoryId}`);
+    const resources = [
+      { ...visibleResource, id: `${categoryId}-detail-10`, title: "10.综合资料", categoryId },
+      { ...visibleResource, id: `${categoryId}-detail-02`, title: "02.学习资料", categoryId },
+      { ...visibleResource, id: aggregateId, title: aggregateTitle, categoryId },
+      { ...visibleResource, id: `${categoryId}-detail-01`, title: "01.入门资料", categoryId },
+    ];
+    const { container } = render(<ResourcesPage detail={vi.fn()} resourceValues={resources} />);
+
+    expect(Array.from(container.querySelectorAll(".resource-item-copy strong")).map((node) => node.textContent)).toEqual([
+      aggregateTitle,
+      "01.入门资料",
+      "02.学习资料",
+      "10.综合资料",
+    ]);
+  });
+
+  it("puts the high-school aggregate entry before numbered workbook entries", () => {
+    window.history.replaceState({}, "", "/resources?category=type-senior-workbooks-first-round-2027");
+    const workbookResources = [
+      { ...visibleResource, id: "hs-workbooks-first-round-2027-item-002", title: "2.解题觉醒", categoryId: "type-senior-workbooks-first-round-2027" },
+      { ...visibleResource, id: "hs-workbooks-first-round-2027-001", title: "一轮复习（27版）", categoryId: "type-senior-workbooks-first-round-2027" },
+      { ...visibleResource, id: "hs-workbooks-first-round-2027-item-001", title: "1.五三", categoryId: "type-senior-workbooks-first-round-2027" },
+    ];
+    const { container } = render(<ResourcesPage detail={vi.fn()} resourceValues={workbookResources} />);
+
+    expect(Array.from(container.querySelectorAll(".resource-item-copy strong")).map((node) => node.textContent)).toEqual([
+      "一轮复习（27版）",
+      "1.五三",
+      "2.解题觉醒",
+    ]);
+  });
+
+  it.each([
+    ["junior courses", "domain-junior-courses", "jh-topic-courses-001", "type-junior-courses-by-org", "初中网课", "按机构分类"],
+    ["junior courses by organisation", "type-junior-courses-by-org", "jh-courses-by-org-001", "type-junior-courses-by-org", "按机构分类", "01.机构资料"],
+    ["junior courses by grade", "type-junior-courses-by-grade", "jh-courses-by-grade-001", "type-junior-courses-by-grade", "按年级分类", "01.年级资料"],
+    ["senior one-series", "domain-senior-one-series", "hs-topic-one-series-001", "type-senior-one-series-yishu", "一系列", "【一数儿】"],
+    ["senior one-series leaf", "type-senior-one-series-yishu", "hs-one-series-yishu-001", "type-senior-one-series-yishu", "【一数儿】", "01.章节资料"],
+    ["senior subjects", "domain-senior-subjects", "hs-topic-subjects-001", "type-senior-subjects-math", "高中学科分类", "数学"],
+    ["senior subjects leaf", "type-senior-subjects-math", "hs-subjects-math-001", "type-senior-subjects-math", "数学", "01.学科资料"],
+    ["university major", "domain-university-major", "university-topic-major-001", "domain-university-major-math", "大学专业", "01.专业资料"],
+    ["university postgraduate", "domain-university-postgraduate", "university-topic-postgraduate-001", "domain-university-postgraduate-kaoyan", "大学升学", "考研"],
+    ["university postgraduate leaf", "domain-university-postgraduate-kaoyan", "university-topic-postgrad-001", "domain-university-postgraduate-kaoyan", "考研", "01.考研资料"],
+    ["civil service", "purpose-certification-civil-service", "certification-topic-civil-service-001", "purpose-certification-civil-service", "考公系列", "01.考公资料"],
+    ["foreign language", "purpose-certification-foreign-language", "certification-topic-foreign-language-001", "purpose-certification-foreign-language", "外语系列", "01.外语资料"],
+  ])("puts the aggregate entry first for %s", (_label, categoryId, aggregateId, detailCategoryId, aggregateTitle, detailTitle) => {
+    window.history.replaceState({}, "", `/resources?category=${categoryId}`);
+    const resources = [
+      { ...visibleResource, id: "detail-resource", title: detailTitle, categoryId: detailCategoryId },
+      { ...visibleResource, id: aggregateId, title: aggregateTitle, categoryId },
+    ];
+    const { container } = render(<ResourcesPage detail={vi.fn()} resourceValues={resources} />);
+
+    expect(Array.from(container.querySelectorAll(".resource-item-copy strong")).map((node) => node.textContent)).toEqual([
+      aggregateTitle,
+      detailTitle,
+    ]);
+  });
+
   it("handles invalid filters safely and clears them", () => {
     window.history.replaceState({}, "", "/resources?category=missing");
     render(<ResourcesPage detail={vi.fn()} />);
@@ -378,6 +506,58 @@ describe("resource category filtering and deep links", () => {
     fireEvent.click(toggles[0]);
 
     expect(screen.getByRole("button", { name: /2027版/ })).toBeVisible();
+    expect(screen.getByRole("button", { name: "收起下级资料（1项）" })).toBeVisible();
+  });
+
+  it("groups certification detail materials below their series entries", () => {
+    window.history.replaceState({}, "", "/resources?category=purpose-certification");
+    const branches = [
+      [
+        "purpose-certification-foreign-language",
+        "purpose-certification-foreign-language-french",
+        "外语系列",
+        "法语",
+      ],
+      [
+        "purpose-certification-civil-service",
+        "purpose-certification-civil-service-yuandong-shenlun",
+        "考公系列",
+        "001.袁东申论",
+      ],
+      [
+        "purpose-certification-upgrade",
+        "purpose-certification-upgrade-past-papers",
+        "专升本系列",
+        "01.历年真题",
+      ],
+    ] as const;
+    const resources = branches.flatMap(([parentCategoryId, childCategoryId, parentTitle, childTitle], index) => [
+      {
+        ...visibleResource,
+        id: `certification-group-parent-${index}`,
+        title: parentTitle,
+        categoryId: parentCategoryId,
+        tag: `考证 / ${parentTitle}`,
+      },
+      {
+        ...visibleResource,
+        id: `certification-group-child-${index}`,
+        title: childTitle,
+        categoryId: childCategoryId,
+        tag: `考证 / ${parentTitle} / ${childTitle}`,
+      },
+    ]);
+
+    render(<ResourcesPage detail={vi.fn()} resourceValues={resources} />);
+
+    const toggles = screen.getAllByRole("button", { name: "展开下级资料（1项）" });
+    expect(toggles).toHaveLength(branches.length);
+    expect(screen.queryByText("法语")).not.toBeInTheDocument();
+
+    fireEvent.click(toggles[0]);
+
+    expect(screen.getByText("法语")).toBeVisible();
+    expect(screen.getByText("考证 / 外语系列 / 法语")).toBeVisible();
     expect(screen.getByRole("button", { name: "收起下级资料（1项）" })).toBeVisible();
   });
 

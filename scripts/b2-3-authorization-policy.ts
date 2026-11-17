@@ -7,7 +7,7 @@ import type { PublicProjectionPolicy } from "../src/publicProjection";
 
 /**
  * The owner authorization record explicitly covers the current university
- * public projection: twenty-one curated university/certification aggregate entries. The replaced leaf
+ * public projection: thirty-four curated university/certification aggregate entries. The replaced leaf
  * records remain in source history but are intentionally omitted from the
  * current public projection. The computer aggregate is a clean study-material
  * subset; installation, activation, and executable packages stay out of it.
@@ -34,6 +34,19 @@ export const B2_3_APPROVED_RESOURCE_IDS = [
   "certification-topic-foreign-language-001",
   "certification-topic-upgrade-001",
   "certification-topic-civil-service-001",
+  "certification-topic-foreign-language-german-001",
+  "certification-topic-foreign-language-russian-001",
+  "certification-topic-foreign-language-french-001",
+  "certification-topic-foreign-language-japanese-001",
+  "certification-topic-foreign-language-spanish-001",
+  "certification-topic-foreign-language-italian-001",
+  "certification-topic-civil-service-yuandong-001",
+  "certification-topic-civil-service-gaozhao-001",
+  "certification-topic-civil-service-huasheng-001",
+  "certification-topic-upgrade-past-papers-001",
+  "certification-topic-upgrade-subjects-001",
+  "certification-topic-upgrade-annual-mocks-001",
+  "certification-topic-upgrade-comprehensive-001",
 ] as const;
 
 const B2_3_CURRENT_AGGREGATE_RESOURCE_IDS = new Set<string>([
@@ -319,6 +332,52 @@ export const HS_RESOURCE_DETAIL_62_DELIVERY_IDS = new Map<string, string>([
   ["hs-policies-exam-notes-001", "dlv-hs-policies-exam-notes-001-quark-01"],
 ]);
 
+export const HS_WORKBOOK_FIRST_ROUND_61_APPROVED_RESOURCE_IDS = Array.from(
+  { length: 61 },
+  (_, index) => `hs-workbooks-first-round-2027-item-${String(index + 1).padStart(3, "0")}`,
+);
+
+export const HS_WORKBOOK_FIRST_ROUND_61_DELIVERY_IDS = new Map<string, string>(
+  HS_WORKBOOK_FIRST_ROUND_61_APPROVED_RESOURCE_IDS.map((resourceId) => [
+    resourceId,
+    `dlv-${resourceId}-quark-01`,
+  ]),
+);
+
+export const HS_WORKBOOK_SYNCHRONOUS_7_APPROVED_RESOURCE_IDS = Array.from(
+  { length: 7 },
+  (_, index) => `hs-workbooks-synchronous-2027-item-${String(index + 1).padStart(3, "0")}`,
+);
+
+export const HS_WORKBOOK_SYNCHRONOUS_7_DELIVERY_IDS = new Map<string, string>(
+  HS_WORKBOOK_SYNCHRONOUS_7_APPROVED_RESOURCE_IDS.map((resourceId) => [
+    resourceId,
+    `dlv-${resourceId}-quark-01`,
+  ]),
+);
+
+export const CERTIFICATION_FIRST_LEVEL_33_APPROVED_RESOURCE_IDS = [
+  ...Array.from(
+    { length: 6 },
+    (_, index) => `university-topic-cet-item-${String(index + 1).padStart(3, "0")}`,
+  ),
+  ...Array.from(
+    { length: 11 },
+    (_, index) => `university-topic-ielts-item-${String(index + 1).padStart(3, "0")}`,
+  ),
+  ...Array.from(
+    { length: 16 },
+    (_, index) => `university-topic-computer-item-${String(index + 1).padStart(3, "0")}`,
+  ),
+];
+
+export const CERTIFICATION_FIRST_LEVEL_33_DELIVERY_IDS = new Map<string, string>(
+  CERTIFICATION_FIRST_LEVEL_33_APPROVED_RESOURCE_IDS.map((resourceId) => [
+    resourceId,
+    `dlv-${resourceId}-quark-01`,
+  ]),
+);
+
 export const SKILL_GROWTH_AI_APPROVED_RESOURCE_IDS = [
   "ai-learning-cognition-001",
   "ai-chatgpt-001",
@@ -333,6 +392,26 @@ export const SKILL_GROWTH_AI_DELIVERY_IDS = new Map<string, string>([
   ["ai-chatgpt-002", "dlv-ai-chatgpt-002-quark-01"],
   ["ai-deepseek-001", "dlv-ai-deepseek-001-quark-01"],
   ["ai-deepseek-002", "dlv-ai-deepseek-002-quark-01"],
+]);
+
+export const BAIDU_AI_APPROVED_RESOURCE_IDS = [
+  "ai-baidu-office-001",
+  "ai-baidu-photography-001",
+  "ai-baidu-painting-001",
+  "ai-baidu-aigc-001",
+  "ai-baidu-self-media-001",
+  "ai-baidu-intro-001",
+  "ai-baidu-chatgpt-001",
+] as const;
+
+export const BAIDU_AI_DELIVERY_IDS = new Map<string, string>([
+  ["ai-baidu-office-001", "dlv-ai-baidu-office-001-baidu-01"],
+  ["ai-baidu-photography-001", "dlv-ai-baidu-photography-001-baidu-01"],
+  ["ai-baidu-painting-001", "dlv-ai-baidu-painting-001-baidu-01"],
+  ["ai-baidu-aigc-001", "dlv-ai-baidu-aigc-001-baidu-01"],
+  ["ai-baidu-self-media-001", "dlv-ai-baidu-self-media-001-baidu-01"],
+  ["ai-baidu-intro-001", "dlv-ai-baidu-intro-001-baidu-01"],
+  ["ai-baidu-chatgpt-001", "dlv-ai-baidu-chatgpt-001-baidu-01"],
 ]);
 
 export const SKILL_GROWTH_NON_AI_APPROVED_RESOURCE_IDS = [
@@ -667,6 +746,114 @@ export const B2_3_POLICIES = new Map<string, PublicProjectionPolicy>(
         },
       ] as const;
     }),
+    ...HS_WORKBOOK_FIRST_ROUND_61_APPROVED_RESOURCE_IDS.map((resourceId) => {
+      const deliveryId = HS_WORKBOOK_FIRST_ROUND_61_DELIVERY_IDS.get(resourceId);
+      if (!deliveryId) throw new Error(`Missing high-school first-round workbook Delivery ID: ${resourceId}`);
+      return [
+        resourceId,
+        {
+          deliveryId,
+          browseState: "observed",
+          evidence: [
+            {
+              evidenceId: `auth-${resourceId}-resource-01`,
+              subjectType: "resource",
+              resourceId,
+              actionScope: ["display_metadata", "expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: "docs/HS-WORKBOOK-FIRST-ROUND-2027.md#公开链接核验",
+              reviewedAt: "2026-11-16T22:20:00+08:00",
+            },
+            {
+              evidenceId: `auth-${resourceId}-delivery-01`,
+              subjectType: "delivery",
+              resourceId,
+              deliveryId,
+              actionScope: ["expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: "docs/HS-WORKBOOK-FIRST-ROUND-2027.md#公开链接核验",
+              reviewedAt: "2026-11-16T22:20:00+08:00",
+            },
+          ],
+        },
+      ] as const;
+    }),
+    ...HS_WORKBOOK_SYNCHRONOUS_7_APPROVED_RESOURCE_IDS.map((resourceId) => {
+      const deliveryId = HS_WORKBOOK_SYNCHRONOUS_7_DELIVERY_IDS.get(resourceId);
+      if (!deliveryId) throw new Error(`Missing high-school synchronous workbook Delivery ID: ${resourceId}`);
+      return [
+        resourceId,
+        {
+          deliveryId,
+          browseState: "observed",
+          evidence: [
+            {
+              evidenceId: `auth-${resourceId}-resource-01`,
+              subjectType: "resource",
+              resourceId,
+              actionScope: ["display_metadata", "expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: "docs/HS-WORKBOOK-SYNCHRONOUS-2027.md#公开链接核验",
+              reviewedAt: "2026-11-16T23:50:00+08:00",
+            },
+            {
+              evidenceId: `auth-${resourceId}-delivery-01`,
+              subjectType: "delivery",
+              resourceId,
+              deliveryId,
+              actionScope: ["expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: "docs/HS-WORKBOOK-SYNCHRONOUS-2027.md#公开链接核验",
+              reviewedAt: "2026-11-16T23:50:00+08:00",
+            },
+          ],
+        },
+      ] as const;
+    }),
+    ...CERTIFICATION_FIRST_LEVEL_33_APPROVED_RESOURCE_IDS.map((resourceId) => {
+      const deliveryId = CERTIFICATION_FIRST_LEVEL_33_DELIVERY_IDS.get(resourceId);
+      if (!deliveryId) throw new Error(`Missing certification first-level Delivery ID: ${resourceId}`);
+      return [
+        resourceId,
+        {
+          deliveryId,
+          browseState: "observed",
+          evidence: [
+            {
+              evidenceId: `auth-${resourceId}-resource-01`,
+              subjectType: "resource",
+              resourceId,
+              actionScope: ["display_metadata", "expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: "docs/CERTIFICATION-FIRST-LEVEL-20261117.md#公开链接核验",
+              reviewedAt: "2026-11-17T00:00:00+08:00",
+            },
+            {
+              evidenceId: `auth-${resourceId}-delivery-01`,
+              subjectType: "delivery",
+              resourceId,
+              deliveryId,
+              actionScope: ["expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: "docs/CERTIFICATION-FIRST-LEVEL-20261117.md#公开链接核验",
+              reviewedAt: "2026-11-17T00:00:00+08:00",
+            },
+          ],
+        },
+      ] as const;
+    }),
     ...SKILL_GROWTH_AI_APPROVED_RESOURCE_IDS.map((resourceId) => {
       const deliveryId = SKILL_GROWTH_AI_DELIVERY_IDS.get(resourceId);
       if (!deliveryId) throw new Error(`Missing skill-growth AI Delivery ID: ${resourceId}`);
@@ -698,6 +885,42 @@ export const B2_3_POLICIES = new Map<string, PublicProjectionPolicy>(
               status: "approved",
               evidenceRef: "docs/ZWG-SKILL-GROWTH-AI-PUBLIC-RELEASE-20261109.md#站长授权与公开接入确认",
               reviewedAt: "2026-11-09",
+            },
+          ],
+        },
+      ] as const;
+    }),
+    ...BAIDU_AI_APPROVED_RESOURCE_IDS.map((resourceId) => {
+      const deliveryId = BAIDU_AI_DELIVERY_IDS.get(resourceId);
+      if (!deliveryId) throw new Error(`Missing Baidu AI Delivery ID: ${resourceId}`);
+      return [
+        resourceId,
+        {
+          deliveryId,
+          browseState: "observed",
+          evidence: [
+            {
+              evidenceId: `auth-${resourceId}-resource-01`,
+              subjectType: "resource",
+              resourceId,
+              actionScope: ["display_metadata", "expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: "docs/BAIDU-AI-RESOURCE-CANDIDATE.md#公开链接核验",
+              reviewedAt: "2026-11-15T00:00:00+08:00",
+            },
+            {
+              evidenceId: `auth-${resourceId}-delivery-01`,
+              subjectType: "delivery",
+              resourceId,
+              deliveryId,
+              actionScope: ["expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: "docs/BAIDU-AI-RESOURCE-CANDIDATE.md#公开链接核验",
+              reviewedAt: "2026-11-15T00:00:00+08:00",
             },
           ],
         },

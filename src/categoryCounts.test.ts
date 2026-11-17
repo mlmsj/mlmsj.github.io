@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { Category } from "./categories";
+import { categories, type Category } from "./categories";
 import {
   getPublishedResourceCount,
   getPublishedResourcesForCategory,
@@ -70,6 +70,58 @@ describe("public resources and recursive category counts", () => {
       expect(selected.map(({ id: resourceId }) => resourceId)).toEqual(expected);
       expect(getPublishedResourceCount(id, values, items)).toBe(selected.length);
     }
+  });
+
+  it("exposes published legacy university certification records through current certification routes", () => {
+    const certificationResources = [
+      resource("legacy-university-certification", "domain-university-certification"),
+      resource("legacy-ielts", "domain-university-certification-ielts"),
+      resource("legacy-computer", "domain-university-certification-computer"),
+      resource("legacy-cet", "domain-university-certification-cet"),
+      resource("current-foreign-language", "purpose-certification-foreign-language"),
+    ];
+
+    expect(
+      getPublishedResourcesForCategory(
+        "purpose-certification",
+        categories,
+        certificationResources,
+      ).map(({ id }) => id),
+    ).toEqual([
+      "legacy-university-certification",
+      "legacy-ielts",
+      "legacy-computer",
+      "legacy-cet",
+      "current-foreign-language",
+    ]);
+    expect(
+      getPublishedResourceCount(
+        "purpose-certification-ielts",
+        categories,
+        certificationResources,
+      ),
+    ).toBe(1);
+    expect(
+      getPublishedResourceCount(
+        "purpose-certification-computer",
+        categories,
+        certificationResources,
+      ),
+    ).toBe(1);
+    expect(
+      getPublishedResourceCount(
+        "purpose-certification-cet",
+        categories,
+        certificationResources,
+      ),
+    ).toBe(1);
+    expect(
+      getPublishedResourceCount(
+        "purpose-certification-university",
+        categories,
+        certificationResources,
+      ),
+    ).toBe(1);
   });
 
   it("keeps metadata-only resources visible without exposing a link", () => {

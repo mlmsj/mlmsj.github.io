@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { SkillGrowthPage } from "./SkillGrowthPage";
+import type { Resource } from "./resources";
 
 describe("skill-growth entry", () => {
   it("renders the three approved boards and real public counts", () => {
@@ -48,5 +49,40 @@ describe("skill-growth entry", () => {
     expect(onOpenResources).toHaveBeenCalledWith(
       "/resources?category=skill-ai-deepseek",
     );
+  });
+
+  it("shows published resources assigned directly to a skill-growth group", () => {
+    const directResource: Resource = {
+      id: "skill-growth-direct-fixture",
+      title: "AI+办公",
+      meta: "2026-11-15",
+      tag: "AI 与人工智能",
+      description: "AI 办公资料入口。",
+      categoryId: "skill-ai-knowledge",
+      classificationStatus: "classified",
+      publicationStatus: "published",
+      isPubliclyAccessible: true,
+      delivery: {
+        provider: "baidu",
+        shareUrl: "https://pan.baidu.com/s/fixture?pwd=abcd",
+        accessStatus: "verified",
+        checkedOn: "2026-11-15",
+      },
+      fileType: "folder",
+    };
+
+    render(
+      <SkillGrowthPage
+        counts={{ "skill-ai-knowledge": 1 }}
+        resourceValues={[directResource]}
+        onHome={vi.fn()}
+        onOpenCategories={vi.fn()}
+        onOpenResources={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: /直接资料/ })).toBeVisible();
+    const directLink = document.querySelector<HTMLAnchorElement>("a.skill-growth-direct-resource");
+    expect(directLink?.getAttribute("href")).toBe(directResource.delivery?.shareUrl);
   });
 });

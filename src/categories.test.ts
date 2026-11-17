@@ -72,6 +72,16 @@ describe("category data contract", () => {
       "skill-ai-knowledge",
       "skill-ai-deepseek",
     ]);
+    expect(getChildCategories("skill-ai-knowledge").map(({ id }) => id)).toEqual([
+      "skill-ai-learning-cognition",
+      "skill-ai-chatgpt",
+      "skill-ai-deepseek",
+      "skill-ai-office",
+      "skill-ai-photography",
+      "skill-ai-painting",
+      "skill-ai-aigc",
+      "skill-ai-self-media",
+    ]);
   });
 
   it("removes the withdrawn senior exam branch and sorts the current themes by name length", () => {
@@ -133,6 +143,30 @@ describe("category data contract", () => {
     expect(getEnabledCategoryPath("purpose-certification-upgrade").map(({ id }) => id)).toEqual([
       "purpose-certification",
       "purpose-certification-upgrade",
+    ]);
+    expect(getChildCategories("purpose-certification-foreign-language").map(({ id }) => id)).toEqual([
+      "purpose-certification-foreign-language-german",
+      "purpose-certification-foreign-language-russian",
+      "purpose-certification-foreign-language-french",
+      "purpose-certification-foreign-language-japanese",
+      "purpose-certification-foreign-language-spanish",
+      "purpose-certification-foreign-language-italian",
+    ]);
+    expect(getChildCategories("purpose-certification-civil-service").map(({ id }) => id)).toEqual([
+      "purpose-certification-civil-service-yuandong-shenlun",
+      "purpose-certification-civil-service-gaozhao-xingce",
+      "purpose-certification-civil-service-huasheng-shisan",
+    ]);
+    expect(getChildCategories("purpose-certification-upgrade").map(({ id }) => id)).toEqual([
+      "purpose-certification-upgrade-past-papers",
+      "purpose-certification-upgrade-subjects",
+      "purpose-certification-upgrade-annual-mocks",
+      "purpose-certification-upgrade-comprehensive",
+    ]);
+    expect(getEnabledCategoryPath("purpose-certification-foreign-language-french").map(({ id }) => id)).toEqual([
+      "purpose-certification",
+      "purpose-certification-foreign-language",
+      "purpose-certification-foreign-language-french",
     ]);
   });
 

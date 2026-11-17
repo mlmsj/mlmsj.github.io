@@ -19,6 +19,12 @@ import { categoryPathBrowseLocation, resourceFilterLocation } from "./categoryRo
 import { HIGH_SCHOOL_INDEX_META } from "./highSchoolCourseIndex";
 import { parseResourceFilterState } from "./resourceFiltering";
 import {
+  compareCategoryPaths,
+  getAggregateResourceRank,
+  getLeadingSequenceNumber,
+  NUMERIC_WORKBOOK_CATEGORY_IDS,
+} from "./resourceOrdering";
+import {
   getResourceMetadataLabel,
   matchesResourceQuery,
   sortResourcesByUpdatedAt,
@@ -33,31 +39,12 @@ const RESOURCE_STAGE_IDS = [
   "stage-university",
   "purpose-certification",
 ] as const;
-const RESOURCE_GROUP_STAGE_IDS = new Set(["stage-junior", "stage-senior", "stage-university"]);
-
-const compareCategoryPaths = (
-  left: readonly Category[],
-  right: readonly Category[],
-) => {
-  if (left.length === 0 || right.length === 0) {
-    return right.length - left.length;
-  }
-
-  const sharedLength = Math.min(left.length, right.length);
-  for (let index = 0; index < sharedLength; index += 1) {
-    const leftCategory = left[index];
-    const rightCategory = right[index];
-    if (leftCategory.id === rightCategory.id) continue;
-
-    return (
-      leftCategory.sortOrder - rightCategory.sortOrder ||
-      leftCategory.name.localeCompare(rightCategory.name, "zh-CN") ||
-      leftCategory.id.localeCompare(rightCategory.id)
-    );
-  }
-
-  return left.length - right.length;
-};
+const RESOURCE_GROUP_PARENT_IDS = new Set([
+  "stage-junior",
+  "stage-senior",
+  "stage-university",
+  "purpose-certification",
+]);
 
 type ResourceListEntry =
   | {
@@ -92,10 +79,11 @@ const getResourceGroupCategory = (
       (category) =>
         category.level === 2 &&
         category.parentId !== null &&
-        RESOURCE_GROUP_STAGE_IDS.has(category.parentId) &&
+        RESOURCE_GROUP_PARENT_IDS.has(category.parentId) &&
         (category.id.startsWith("domain-junior-") ||
           category.id.startsWith("domain-senior-") ||
-          category.id.startsWith("domain-university-")),
+          category.id.startsWith("domain-university-") ||
+          category.id.startsWith("purpose-certification-")),
     ) ?? null
   );
 };
@@ -119,7 +107,7 @@ const buildResourceListEntries = (
     string,
     {
       category: Category;
-      parent: { resource: Resource; order: number } | null;
+      parents: { resource: Resource; order: number }[];
       children: { resource: Resource; order: number }[];
       order: number;
     }
@@ -134,12 +122,12 @@ const buildResourceListEntries = (
 
     const existing = groups.get(category.id) ?? {
       category,
-      parent: null,
+      parents: [],
       children: [],
       order,
     };
     if (resource.categoryId === category.id) {
-      existing.parent = { resource, order };
+      existing.parents.push({ resource, order });
     } else {
       existing.children.push({ resource, order });
     }
@@ -148,12 +136,12 @@ const buildResourceListEntries = (
 
   const groupedEntries: ResourceListEntry[] = [...directEntries];
   for (const [id, group] of groups) {
-    if (group.parent && group.children.length > 0) {
+    if (group.parents.length === 1 && group.children.length > 0) {
       groupedEntries.push({
         kind: "group",
         id,
         category: group.category,
-        parent: group.parent.resource,
+        parent: group.parents[0].resource,
         children: group.children
           .sort((left, right) => left.order - right.order)
           .map(({ resource }) => resource),
@@ -162,12 +150,12 @@ const buildResourceListEntries = (
       continue;
     }
 
-    if (group.parent) {
+    for (const parent of group.parents) {
       groupedEntries.push({
         kind: "resource",
-        resource: group.parent.resource,
+        resource: parent.resource,
         nested: false,
-        order: group.parent.order,
+        order: parent.order,
       });
     }
     for (const child of group.children) {
@@ -332,6 +320,9 @@ export function ResourcesPage({
     : [];
   const orderedResources = useMemo(() => {
     if (!filterState.category) return filteredResources;
+    const shouldSortNumberedWorkbooks = NUMERIC_WORKBOOK_CATEGORY_IDS.has(
+      filterState.category.id,
+    );
 
     return filteredResources
       .map((resource, index) => ({
@@ -341,10 +332,21 @@ export function ResourcesPage({
           ? getCategoryPath(resource.categoryId, categoryValues)
           : [],
       }))
-      .sort(
-        (left, right) =>
-          compareCategoryPaths(left.path, right.path) || left.index - right.index,
-      )
+      .sort((left, right) => {
+        const categoryComparison = compareCategoryPaths(left.path, right.path);
+        if (categoryComparison !== 0) return categoryComparison;
+        const aggregateComparison =
+          getAggregateResourceRank(left.resource) -
+          getAggregateResourceRank(right.resource);
+        if (aggregateComparison !== 0) return aggregateComparison;
+        if (shouldSortNumberedWorkbooks) {
+          const sequenceComparison =
+            getLeadingSequenceNumber(left.resource.title) -
+            getLeadingSequenceNumber(right.resource.title);
+          if (sequenceComparison !== 0) return sequenceComparison;
+        }
+        return left.index - right.index;
+      })
       .map(({ resource }) => resource);
   }, [categoryValues, filterState.category, filteredResources]);
   const total = orderedResources.length;

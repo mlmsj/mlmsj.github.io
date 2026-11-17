@@ -205,6 +205,7 @@ function App() {
         {page === "categories" && (
           <CategoriesPage
             counts={catalog.counts}
+            resourceValues={resources}
             onHome={() => go("home")}
             onOpenResources={(location) => openLocation("resources", location)}
             onOpenHighSchoolCourses={(location) => openLocation("seniorCourses", location)}
@@ -215,6 +216,7 @@ function App() {
         {page === "skill-growth" && (
           <SkillGrowthPage
             counts={catalog.counts}
+            resourceValues={resources}
             onHome={() => go("home")}
             onOpenCategories={(location) => openLocation("categories", location)}
             onOpenResources={(location) => openLocation("resources", location)}
@@ -438,7 +440,7 @@ function Home({
             <button onClick={() => go("resources")}>查看全部更新　→</button>
           </div>
           <div className="updates-grid">
-            {resources.map((resource,index) => (
+            {resources.slice(0, 5).map((resource,index) => (
               <button
                 className="update-row"
                 key={resource.id}

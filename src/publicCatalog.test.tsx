@@ -138,7 +138,7 @@ describe("static public manifest catalog", () => {
     const skillCategoryIds = categories
       .filter((category) => category.id.startsWith("skill-"))
       .map((category) => category.id);
-    expect(skillCategoryIds).toHaveLength(38);
+    expect(skillCategoryIds).toHaveLength(43);
     expect(skillCategoryIds.every((categoryId) => counts[categoryId] === 0)).toBe(true);
   });
 

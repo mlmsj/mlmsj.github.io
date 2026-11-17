@@ -10,6 +10,8 @@ import {
   resourceFilterLocation,
   type CategoryRouteState,
 } from "./categoryRouting";
+import { canOpenPublicShare } from "./publicCatalog";
+import { getResourceMetadataLabel, type Resource } from "./resources";
 
 const routeIssueMessages = {
   "invalid-category": "原链接中的一级分类不可用，已为你显示可用分类。",
@@ -104,6 +106,76 @@ const EmptyCategoryState = ({ message }: { message: string }) => (
   </div>
 );
 
+const providerLabels = {
+  quark: "夸克网盘",
+  baidu: "百度网盘",
+} as const;
+
+function DirectResourceCard({ resource }: { resource: Resource }) {
+  const shareUrl = resource.delivery?.shareUrl;
+  const canOpen = canOpenPublicShare(resource) && Boolean(shareUrl);
+  const metadata = getResourceMetadataLabel(resource);
+  const content = (
+    <>
+      <span className="category-direct-resource-copy">
+        <small>{providerLabels[resource.delivery?.provider ?? "quark"]} · 已核验</small>
+        <strong>{resource.title}</strong>
+        <em>{resource.description}</em>
+        {metadata && <small>{metadata}</small>}
+      </span>
+      <span className="category-direct-resource-arrow" aria-hidden="true">↗</span>
+    </>
+  );
+
+  if (canOpen && shareUrl) {
+    return (
+      <a
+        className="category-direct-resource"
+        href={shareUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <article className="category-direct-resource is-unavailable">
+      {content}
+      <small>当前暂无公开入口</small>
+    </article>
+  );
+}
+
+function DirectResourceSection({
+  category,
+  resources,
+}: {
+  category: Category;
+  resources: readonly Resource[];
+}) {
+  if (resources.length === 0) return null;
+  return (
+    <section className="category-direct-resources" aria-labelledby={`${category.id}-direct-resources-title`}>
+      <div className="category-direct-resources-head">
+        <div>
+          <p className="kicker">DIRECT ENTRIES</p>
+          <h3 id={`${category.id}-direct-resources-title`}>
+            {category.name}直接资料 <span>{resources.length}</span>
+          </h3>
+        </div>
+        <p>本级已核验的资料入口</p>
+      </div>
+      <div className="category-direct-resource-grid">
+        {resources.map((resource) => (
+          <DirectResourceCard key={resource.id} resource={resource} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function CategoriesPage({
   onHome,
   counts = {},
@@ -111,6 +183,7 @@ export function CategoriesPage({
   onOpenHighSchoolCourses,
   onProfile,
   onTools,
+  resourceValues = [],
 }: {
   onHome: () => void;
   counts?: Record<string, number>;
@@ -118,6 +191,7 @@ export function CategoriesPage({
   onOpenHighSchoolCourses?: (location: string) => void;
   onProfile?: () => void;
   onTools?: () => void;
+  resourceValues?: readonly Resource[];
 }) {
   const [routeState, setRouteState] = useState<CategoryRouteState>(() =>
     readCategoryRouteState(),
@@ -225,6 +299,12 @@ export function CategoriesPage({
   const backMobile = () => selectPath(mobilePath.slice(0, -1));
 
   const activeResourceCategory = desktopCurrent;
+  const directResourcesFor = (category: Category | null) =>
+    category
+      ? resourceValues.filter((resource) => resource.categoryId === category.id)
+      : [];
+  const desktopDirectResources = directResourcesFor(desktopCurrent);
+  const mobileDirectResources = directResourcesFor(mobileCurrent);
   const activeResourceLocation = activeResourceCategory
     ? resourceFilterLocation(activeResourceCategory.id)
     : null;
@@ -387,6 +467,12 @@ export function CategoriesPage({
           ) : (
             <EmptyCategoryState message={desktopEmpty} />
           )}
+          {desktopCurrent && desktopDirectResources.length > 0 && (
+            <DirectResourceSection
+              category={desktopCurrent}
+              resources={desktopDirectResources}
+            />
+          )}
         </div>
       </div>
 
@@ -444,6 +530,12 @@ export function CategoriesPage({
             message={mobileCurrent && mobileCurrent.level >= 2
               ? "暂无资料类型"
               : "暂无下级分类"}
+          />
+        )}
+        {mobileCurrent && mobileDirectResources.length > 0 && (
+          <DirectResourceSection
+            category={mobileCurrent}
+            resources={mobileDirectResources}
           />
         )}
       </div>

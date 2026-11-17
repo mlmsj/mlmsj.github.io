@@ -63,7 +63,9 @@ const ISO_DATE_TIME =
   /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/u;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/u;
 const SHARE_PATH = /^\/s\/[A-Za-z0-9_-]+\/?$/u;
+const QUARK_SHARE_FRAGMENT = /^#\/list\/share\/[A-Za-z0-9_-]{1,128}$/u;
 const STABLE_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/u;
+const BAIDU_SHARE_PASSWORD = /^[A-Za-z0-9]{4,64}$/u;
 const PUBLIC_TEXT_LEAKS = [
   /(?:^|[^a-z])(?:access[_ -]?token|authorization|cookie|password|secret|token)(?:$|[^a-z])/iu,
   /(?:^|[^a-z])(?:fid|fs_id|parent[_ -]?fid|stoken)(?:$|[^a-z])/iu,
@@ -195,15 +197,23 @@ export const isAllowedPublicShareUrl = (
     return false;
   }
 
+  const validFragment =
+    parsed.hash === "" ||
+    (provider === "quark" && QUARK_SHARE_FRAGMENT.test(parsed.hash));
+
   return (
     parsed.protocol === "https:" &&
     parsed.username === "" &&
     parsed.password === "" &&
     parsed.port === "" &&
-    parsed.search === "" &&
-    parsed.hash === "" &&
+    validFragment &&
     PUBLIC_SHARE_HOSTS[provider].includes(parsed.hostname) &&
-    SHARE_PATH.test(parsed.pathname)
+    SHARE_PATH.test(parsed.pathname) &&
+    (parsed.search === "" ||
+      (provider === "baidu" &&
+        parsed.searchParams.size === 1 &&
+        parsed.searchParams.has("pwd") &&
+        BAIDU_SHARE_PASSWORD.test(parsed.searchParams.get("pwd") ?? "")))
   );
 };
 

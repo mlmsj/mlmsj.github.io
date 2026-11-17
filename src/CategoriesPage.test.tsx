@@ -159,6 +159,45 @@ describe("CategoriesPage", () => {
     }
   });
 
+  it("shows resources assigned directly to a selected category", () => {
+    const directResource: Resource = {
+      id: "ai-direct-fixture",
+      title: "AI+办公",
+      meta: "2026-11-15",
+      tag: "AI 与人工智能",
+      description: "AI 办公资料入口。",
+      categoryId: "skill-ai-knowledge",
+      classificationStatus: "classified",
+      publicationStatus: "published",
+      isPubliclyAccessible: true,
+      delivery: {
+        provider: "baidu",
+        shareUrl: "https://pan.baidu.com/s/fixture?pwd=abcd",
+        accessStatus: "verified",
+        checkedOn: "2026-11-15",
+      },
+      fileType: "folder",
+    };
+    window.history.replaceState(
+      {},
+      "",
+      "/categories?category=skill-ai-digital-tech&subject=skill-ai-knowledge",
+    );
+    render(
+      <CategoriesPage
+        onHome={vi.fn()}
+        onOpenResources={openResources}
+        counts={{ "skill-ai-knowledge": 1 }}
+        resourceValues={[directResource]}
+      />,
+    );
+
+    const desktop = screen.getByTestId("category-desktop");
+    expect(within(desktop).getByRole("heading", { name: /AI 与人工智能直接资料/ })).toBeVisible();
+    const directLink = desktop.querySelector<HTMLAnchorElement>("a.category-direct-resource");
+    expect(directLink?.getAttribute("href")).toBe(directResource.delivery?.shareUrl);
+  });
+
   it("shows junior resource detail categories on the category page like textbooks", () => {
     const cases = [
       ["domain-junior-workbooks", "数学核心考点"],

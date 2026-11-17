@@ -246,6 +246,26 @@ const SKILL_GROWTH_NON_AI_IDS = [
   "skill-clip-tutorial-31",
 ] as const;
 
+const BAIDU_AI_IDS = [
+  "ai-baidu-office-001",
+  "ai-baidu-photography-001",
+  "ai-baidu-painting-001",
+  "ai-baidu-aigc-001",
+  "ai-baidu-self-media-001",
+  "ai-baidu-intro-001",
+  "ai-baidu-chatgpt-001",
+] as const;
+
+const HIGH_SCHOOL_FIRST_ROUND_WORKBOOK_IDS = Array.from(
+  { length: 61 },
+  (_, index) => `hs-workbooks-first-round-2027-item-${String(index + 1).padStart(3, "0")}`,
+);
+
+const HIGH_SCHOOL_SYNCHRONOUS_WORKBOOK_IDS = Array.from(
+  { length: 7 },
+  (_, index) => `hs-workbooks-synchronous-2027-item-${String(index + 1).padStart(3, "0")}`,
+);
+
 describe("public manifest contract", () => {
   it("accepts the V1 contract and preserves a leading-zero passcode as text", () => {
     const result = validatePublicManifest(validManifest());
@@ -293,7 +313,7 @@ describe("public manifest contract", () => {
     ).toContain("INVALID_CATEGORY");
   });
 
-  it("rejects non-HTTPS, wrong-host, credential-bearing, query and wrong-provider URLs", () => {
+  it("rejects non-HTTPS, wrong-host, credential-bearing and wrong-provider URLs", () => {
     expect(isAllowedPublicShareUrl("quark", "http://pan.quark.cn/s/a")).toBe(false);
     expect(isAllowedPublicShareUrl("quark", "//pan.quark.cn/s/a")).toBe(false);
     expect(isAllowedPublicShareUrl("quark", "https://evilpan.quark.cn/s/a")).toBe(false);
@@ -304,10 +324,14 @@ describe("public manifest contract", () => {
     expect(isAllowedPublicShareUrl("quark", "https://pan.quark.cn:443/s/a")).toBe(false);
     expect(isAllowedPublicShareUrl("quark", "https://pan.quark.cn:8443/s/a")).toBe(false);
     expect(isAllowedPublicShareUrl("quark", "https://pan.quark.cn/s/a?pwd=1234")).toBe(false);
+    expect(isAllowedPublicShareUrl("quark", "https://pan.quark.cn/s/a#/list/share/b")).toBe(true);
     expect(isAllowedPublicShareUrl("quark", "https://pan.quark.cn/s/a#fragment")).toBe(false);
     expect(isAllowedPublicShareUrl("quark", "https://pan.baidu.com/s/a")).toBe(false);
     expect(isAllowedPublicShareUrl("quark", "HTTPS://PAN.QUARK.CN/s/a")).toBe(true);
     expect(isAllowedPublicShareUrl("baidu", "https://pan.baidu.com/s/a")).toBe(true);
+    expect(isAllowedPublicShareUrl("baidu", "https://pan.baidu.com/s/a?pwd=1234")).toBe(true);
+    expect(isAllowedPublicShareUrl("baidu", "https://pan.baidu.com/s/a?pwd=1234&foo=bar")).toBe(false);
+    expect(isAllowedPublicShareUrl("baidu", "https://pan.baidu.com/s/a?pwd=abc")).toBe(false);
   });
 
   it("rejects whitespace, control characters, backslashes, encoded and invalid paths, and long URLs", () => {
@@ -471,7 +495,7 @@ describe("public manifest contract", () => {
       SENIOR_THEME_IDS.every((id) => ids.includes(id));
 
     const isSkillGrowthCandidate =
-      (ids.length === 74 || ids.length === 85 || ids.length === 109 || ids.length === 113 || ids.length === 175) &&
+      (ids.length === 74 || ids.length === 85 || ids.length === 109 || ids.length === 113 || ids.length === 175 || ids.length === 182 || ids.length === 243 || ids.length === 250 || ids.length === 284 || ids.length === 296) &&
       SKILL_GROWTH_AI_IDS.every((id) => ids.includes(id)) &&
       SKILL_GROWTH_NON_AI_IDS.every((id) => ids.includes(id)) &&
       UNIVERSITY_AGGREGATE_IDS.every((id) => ids.includes(id)) &&
@@ -540,6 +564,65 @@ describe("public manifest contract", () => {
           record.accessStatus === "verified" &&
           record.shareUrl !== null,
         )).toBe(true);
+      }
+      if (ids.length === 243 || ids.length === 250 || ids.length === 284 || ids.length === 296) {
+        const baiduAiRecords = parsed.records.filter((record) =>
+          BAIDU_AI_IDS.includes(record.id as (typeof BAIDU_AI_IDS)[number]),
+        );
+        expect(baiduAiRecords).toHaveLength(BAIDU_AI_IDS.length);
+        const baiduAiCategories = new Map([
+          ["ai-baidu-office-001", "skill-ai-office"],
+          ["ai-baidu-photography-001", "skill-ai-photography"],
+          ["ai-baidu-painting-001", "skill-ai-painting"],
+          ["ai-baidu-aigc-001", "skill-ai-aigc"],
+          ["ai-baidu-self-media-001", "skill-ai-self-media"],
+          ["ai-baidu-intro-001", "skill-ai-learning-cognition"],
+          ["ai-baidu-chatgpt-001", "skill-ai-chatgpt"],
+        ]);
+        expect(baiduAiRecords.every((record) =>
+          baiduAiCategories.get(record.id) === record.categoryId &&
+          record.provider === "baidu" &&
+          record.accessStatus === "verified" &&
+          record.shareUrl !== null,
+        )).toBe(true);
+        const firstRoundWorkbookRecords = parsed.records.filter((record) =>
+          HIGH_SCHOOL_FIRST_ROUND_WORKBOOK_IDS.includes(record.id),
+        );
+        expect(firstRoundWorkbookRecords).toHaveLength(HIGH_SCHOOL_FIRST_ROUND_WORKBOOK_IDS.length);
+        expect(firstRoundWorkbookRecords.every((record) =>
+          record.categoryId === "type-senior-workbooks-first-round-2027" &&
+          record.provider === "quark" &&
+          record.accessStatus === "verified" &&
+          record.shareUrl !== null &&
+          /^\d+\./.test(record.title),
+        )).toBe(true);
+        if (ids.length === 250 || ids.length === 284 || ids.length === 296) {
+          const synchronousWorkbookRecords = parsed.records.filter((record) =>
+            HIGH_SCHOOL_SYNCHRONOUS_WORKBOOK_IDS.includes(record.id),
+          );
+          expect(synchronousWorkbookRecords).toHaveLength(HIGH_SCHOOL_SYNCHRONOUS_WORKBOOK_IDS.length);
+          expect(synchronousWorkbookRecords.every((record) =>
+            record.categoryId === "type-senior-workbooks-synchronous-2027" &&
+            record.provider === "quark" &&
+            record.accessStatus === "verified" &&
+            record.shareUrl !== null &&
+            /^\d+\./.test(record.title),
+          )).toBe(true);
+        }
+        if (ids.length === 284 || ids.length === 296) {
+          const certificationFirstLevelRecords = parsed.records.filter((record) =>
+            record.id.startsWith("university-topic-cet-item-") ||
+            record.id.startsWith("university-topic-ielts-item-") ||
+            record.id.startsWith("university-topic-computer-item-"),
+          );
+          expect(certificationFirstLevelRecords).toHaveLength(33);
+          expect(certificationFirstLevelRecords.every((record) =>
+            record.categoryId.startsWith("domain-university-certification") &&
+            record.provider === "quark" &&
+            record.accessStatus === "verified" &&
+            record.shareUrl !== null,
+          )).toBe(true);
+        }
       }
       if (isSkillGrowthCandidate) {
         const skillRecords = parsed.records.filter((record) =>

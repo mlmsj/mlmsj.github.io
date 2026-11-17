@@ -23,6 +23,9 @@ import {
   categoryPathBrowseLocation,
   resourceFilterLocation,
 } from "./categoryRouting";
+import { isPublishedPublicResource } from "./categoryCounts";
+import { canOpenPublicShare } from "./publicCatalog";
+import { getResourceMetadataLabel, type Resource } from "./resources";
 
 const boardIcons: Record<string, LucideIcon> = {
   "skill-ai-digital-tech": BrainCircuit,
@@ -42,6 +45,11 @@ const groupIcons: Record<string, LucideIcon> = {
 };
 
 const countLabel = (count: number) => `${count} 份公开资料`;
+
+const providerLabels = {
+  quark: "夸克网盘",
+  baidu: "百度网盘",
+} as const;
 
 function categoryLocation(categoryId: string) {
   const path = getCategoryPath(categoryId);
@@ -120,16 +128,87 @@ function ResourceCategoryLink({
   );
 }
 
+function DirectSkillResourceLink({ resource }: { resource: Resource }) {
+  const shareUrl = resource.delivery?.shareUrl;
+  const canOpen = canOpenPublicShare(resource) && Boolean(shareUrl);
+  const metadata = getResourceMetadataLabel(resource);
+  const content = (
+    <>
+      <span className="skill-growth-direct-copy">
+        <strong>{resource.title}</strong>
+        <small>
+          {providerLabels[resource.delivery?.provider ?? "quark"]} · 已核验
+          {metadata ? ` · ${metadata}` : ""}
+        </small>
+      </span>
+      <ArrowUpRight size={15} aria-hidden="true" />
+    </>
+  );
+
+  if (canOpen && shareUrl) {
+    return (
+      <a
+        className="skill-growth-direct-resource"
+        href={shareUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <article className="skill-growth-direct-resource is-unavailable" aria-disabled="true">
+      {content}
+      <small>当前暂无公开入口</small>
+    </article>
+  );
+}
+
+function DirectSkillResourceSection({
+  category,
+  resources,
+}: {
+  category: Category;
+  resources: readonly Resource[];
+}) {
+  if (resources.length === 0) return null;
+  return (
+    <section
+      className="skill-growth-direct-resources"
+      aria-labelledby={`${category.id}-skill-growth-direct-title`}
+    >
+      <div className="skill-growth-direct-head">
+        <div>
+          <p className="kicker">DIRECT ENTRIES</p>
+          <h3 id={`${category.id}-skill-growth-direct-title`}>
+            直接资料 <span>{resources.length}</span>
+          </h3>
+        </div>
+        <small>已核验入口</small>
+      </div>
+      <div className="skill-growth-direct-resource-grid">
+        {resources.map((resource) => (
+          <DirectSkillResourceLink key={resource.id} resource={resource} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function SkillGrowthPage({
   counts = {},
   onHome,
   onOpenCategories,
   onOpenResources,
+  resourceValues = [],
 }: {
   counts?: Readonly<Record<string, number>>;
   onHome: () => void;
   onOpenCategories: (location: string) => void;
   onOpenResources: (location: string) => void;
+  resourceValues?: readonly Resource[];
 }) {
   const boards = SKILL_GROWTH_ROOT_IDS.map((id) => getCategoryById(id)).filter(
     (category): category is Category => Boolean(category),
@@ -193,6 +272,11 @@ export function SkillGrowthPage({
                 {groups.map((group) => {
                   const GroupIcon = groupIcons[group.id] ?? Sparkles;
                   const leaves = getChildCategories(group.id);
+                  const directResources = resourceValues.filter(
+                    (resource) =>
+                      resource.categoryId === group.id &&
+                      isPublishedPublicResource(resource),
+                  );
                   return (
                     <article className="skill-growth-group" key={group.id}>
                       <CategoryBrowseLink
@@ -217,6 +301,10 @@ export function SkillGrowthPage({
                           />
                         ))}
                       </div>
+                      <DirectSkillResourceSection
+                        category={group}
+                        resources={directResources}
+                      />
                     </article>
                   );
                 })}

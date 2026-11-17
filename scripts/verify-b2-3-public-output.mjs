@@ -41,6 +41,19 @@ const APPROVED_IDS = new Set([
   "certification-topic-foreign-language-001",
   "certification-topic-upgrade-001",
   "certification-topic-civil-service-001",
+  "certification-topic-foreign-language-german-001",
+  "certification-topic-foreign-language-russian-001",
+  "certification-topic-foreign-language-french-001",
+  "certification-topic-foreign-language-japanese-001",
+  "certification-topic-foreign-language-spanish-001",
+  "certification-topic-foreign-language-italian-001",
+  "certification-topic-civil-service-yuandong-001",
+  "certification-topic-civil-service-gaozhao-001",
+  "certification-topic-civil-service-huasheng-001",
+  "certification-topic-upgrade-past-papers-001",
+  "certification-topic-upgrade-subjects-001",
+  "certification-topic-upgrade-annual-mocks-001",
+  "certification-topic-upgrade-comprehensive-001",
   "jh-topic-textbooks-001",
   "jh-topic-workbooks-001",
   "jh-topic-exams-001",
@@ -159,6 +172,13 @@ const APPROVED_IDS = new Set([
   "ai-chatgpt-002",
   "ai-deepseek-001",
   "ai-deepseek-002",
+  "ai-baidu-office-001",
+  "ai-baidu-photography-001",
+  "ai-baidu-painting-001",
+  "ai-baidu-aigc-001",
+  "ai-baidu-self-media-001",
+  "ai-baidu-intro-001",
+  "ai-baidu-chatgpt-001",
   "skill-coding-scratch-001",
   "skill-coding-python-001",
   "skill-coding-cpp-001",
@@ -196,7 +216,21 @@ const APPROVED_IDS = new Set([
   "skill-clip-tutorial-26",
   "skill-clip-tutorial-31",
 ]);
-
+for (let index = 1; index <= 61; index += 1) {
+  APPROVED_IDS.add(`hs-workbooks-first-round-2027-item-${String(index).padStart(3, "0")}`);
+}
+for (let index = 1; index <= 7; index += 1) {
+  APPROVED_IDS.add(`hs-workbooks-synchronous-2027-item-${String(index).padStart(3, "0")}`);
+}
+for (const [prefix, count] of [
+  ["university-topic-cet-item", 6],
+  ["university-topic-ielts-item", 11],
+  ["university-topic-computer-item", 16],
+]) {
+  for (let index = 1; index <= count; index += 1) {
+    APPROVED_IDS.add(`${prefix}-${String(index).padStart(3, "0")}`);
+  }
+}
 const readJson = async (filePath) => JSON.parse(await readFile(filePath, "utf8"));
 const collectFiles = async (directory) => {
   const entries = await readdir(directory, { withFileTypes: true });
