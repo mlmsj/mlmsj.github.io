@@ -132,6 +132,19 @@ describe("R15-3 navigation and tool state semantics", () => {
     expect(bottom.getByRole("button", { name: bottomLabel })).toHaveAttribute("aria-current", "page");
   });
 
+  it.each([
+    "/tools/pdf-compress",
+    "/tools/ocr",
+    "/tools/page-number",
+    "/tools/watermark",
+  ])("keeps the tools tab active on %s", path => {
+    window.history.replaceState({}, "", path);
+    render(<App />);
+
+    const bottom = within(screen.getByRole("navigation", { name: "移动底部导航" }));
+    expect(bottom.getByRole("button", { name: "工具" })).toHaveAttribute("aria-current", "page");
+  });
+
   it("keeps the mobile menu state and controlled region synchronized", () => {
     render(<App />);
     const menuButton = screen.getByRole("button", { name: "打开菜单" });
@@ -141,6 +154,10 @@ describe("R15-3 navigation and tool state semantics", () => {
     fireEvent.click(menuButton);
     expect(screen.getByRole("button", { name: "关闭菜单" })).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByRole("navigation", { name: "移动主导航" })).toBeVisible();
+
+    fireEvent.click(screen.getByRole("button", { name: "关闭菜单" }));
+    expect(screen.getByRole("button", { name: "打开菜单" })).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("navigation", { name: "移动主导航" })).toBeNull();
   });
 
   it("exposes toolbox filter state and keeps it synchronized after a change", () => {

@@ -1709,3 +1709,9 @@ footer { max-width: 1180px; margin: auto; padding: 25px 28px 32px; display: flex
     max-width: 100px;
   }
 }
+
+@media (max-width: 800px) {
+  .site-header .mobile-menu {
+    z-index: 21;
+  }
+}

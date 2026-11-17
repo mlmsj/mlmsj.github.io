@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import "./index.css";
 import heroWatercolor from "./assets/zhaowenguan-hero-watercolor.png";
 import categoryStrip from "./assets/zhaowenguan-category-strip.png";
@@ -62,6 +62,23 @@ const paths: Record<Page, string> = {
   disclaimer: "/disclaimer",
   contact: "/contact",
 };
+const toolKeys: ToolKey[] = [
+  "nup",
+  "merge",
+  "split",
+  "images-to-pdf",
+  "image-compress",
+  "print-page-adjust",
+  "image-sheet-layout",
+  "pdf-page-organizer",
+  "pdf-to-images",
+  "pdf-compress",
+  "ocr",
+  "page-number",
+  "watermark",
+  "image-format-convert",
+  "image-resize",
+];
 const pageFromPath = (): Page => {
   const appPath = appPathFromLocation(window.location.pathname);
   if (appPath.startsWith("/profile")) return "profile";
@@ -123,23 +140,6 @@ function App() {
   const toggleTool = (id: string) => updateMyData(data => ({ ...data, favoriteTools: toggleTimed(data.favoriteTools, id) }));
   const openProfile = (section: MySection) => { setProfileSection(section); openLocation("profile", locationPathForAppPath(`/profile/${section}`)) };
   const isInfoPage = infoPages.includes(page as InfoPageKey);
-  const toolKeys: ToolKey[] = [
-    "nup",
-    "merge",
-    "split",
-    "images-to-pdf",
-    "image-compress",
-    "print-page-adjust",
-    "image-sheet-layout",
-    "pdf-page-organizer",
-    "pdf-to-images",
-    "pdf-compress",
-    "ocr",
-    "page-number",
-    "watermark",
-    "image-format-convert",
-    "image-resize",
-  ];
   const isToolDetail = toolKeys.includes(page as ToolKey);
   return (
     <div className="app-shell">
@@ -204,28 +204,12 @@ function Header({
 }: {
   page: Page;
   mobileOpen: boolean;
-  setMobileOpen: (v: boolean) => void;
+  setMobileOpen: Dispatch<SetStateAction<boolean>>;
   go: (p: Page) => void;
   theme: "light" | "dark";
   toggleTheme: () => void;
 }) {
-  const activePage = page === "detail" ? "resources" : [
-    "nup",
-    "merge",
-    "split",
-    "images-to-pdf",
-    "image-compress",
-    "print-page-adjust",
-    "image-sheet-layout",
-    "pdf-page-organizer",
-    "pdf-to-images",
-    "pdf-compress",
-    "ocr",
-    "page-number",
-    "watermark",
-    "image-format-convert",
-    "image-resize",
-  ].includes(page)
+  const activePage = page === "detail" ? "resources" : toolKeys.includes(page as ToolKey)
     ? "tools"
     : page;
   return (
@@ -255,11 +239,12 @@ function Header({
             <span />
           </button>
           <button
+            type="button"
             className="menu-button"
             aria-label={mobileOpen ? "关闭菜单" : "打开菜单"}
             aria-expanded={mobileOpen}
             aria-controls="mobile-navigation"
-            onClick={() => setMobileOpen(!mobileOpen)}
+            onClick={() => setMobileOpen(open => !open)}
           >
             ☰
           </button>
@@ -269,6 +254,7 @@ function Header({
         <nav id="mobile-navigation" className="mobile-menu" aria-label="移动主导航">
           {nav.map((item) => (
             <button
+              type="button"
               key={item.key}
               className={activePage === item.key ? "active" : ""}
               aria-current={activePage === item.key ? "page" : undefined}
@@ -451,19 +437,7 @@ function Footer({ go }: { go: (p: Page) => void }) {
   );
 }
 function MobileBottomNav({ page, go }: { page: Page; go: (p: Page) => void }) {
-  const activePage = page === "detail" ? "resources" : [
-    "nup",
-    "merge",
-    "split",
-    "images-to-pdf",
-    "image-compress",
-    "print-page-adjust",
-    "image-sheet-layout",
-    "pdf-page-organizer",
-    "pdf-to-images",
-    "image-format-convert",
-    "image-resize",
-  ].includes(page)
+  const activePage = page === "detail" ? "resources" : toolKeys.includes(page as ToolKey)
     ? "tools"
     : page;
   return (
