@@ -2381,6 +2381,22 @@ footer { max-width: 1180px; margin: auto; padding: 25px 28px 32px; display: flex
   margin: 0;
 }
 
+.resource-item-labels .resource-delivery-channels {
+  padding: 2px 7px;
+  border: 1px solid #d4dfd0;
+  border-radius: 10px;
+  background: #f7faf4;
+  color: #55775b;
+  font-size: 11px;
+}
+
+.resource-item-labels .resource-delivery-channels.is-dual {
+  border-color: #b8ceb2;
+  background: #eaf2e6;
+  color: #345b3c;
+  font-weight: 600;
+}
+
 .resource-item-title-row > strong {
   min-width: 0;
   overflow-wrap: anywhere;
@@ -2566,6 +2582,18 @@ footer { max-width: 1180px; margin: auto; padding: 25px 28px 32px; display: flex
 [data-theme="dark"] .resource-item-labels > small:first-child {
   background: #2c4431;
   color: #cce4cf;
+}
+
+[data-theme="dark"] .resource-item-labels .resource-delivery-channels {
+  border-color: #48634c;
+  background: #263b2a;
+  color: #cce4cf;
+}
+
+[data-theme="dark"] .resource-item-labels .resource-delivery-channels.is-dual {
+  border-color: #6b8d6d;
+  background: #304b34;
+  color: #e0f0dc;
 }
 
 /* UI-05/UI-06: final hierarchy pass for the personal page and resource directory. */
@@ -4646,7 +4674,6 @@ footer { max-width: 1180px; margin: auto; padding: 25px 28px 32px; display: flex
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 14px;
-  text-decoration: none;
   transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
 }
 
@@ -4701,6 +4728,48 @@ footer { max-width: 1180px; margin: auto; padding: 25px 28px 32px; display: flex
 .senior-teacher-action {
   color: #68916c;
   font-size: 12px;
+}
+
+.senior-teacher-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.senior-teacher-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border: 1px solid #cfe0c7;
+  border-radius: 999px;
+  color: #68916c;
+  background: #f4faef;
+  font-size: 11px;
+  line-height: 1.25;
+  text-decoration: none;
+  transition: color .18s ease, background .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.senior-teacher-link:hover,
+.senior-teacher-link:focus-visible {
+  border-color: #9abb91;
+  color: #3f6e47;
+  background: #e9f4e2;
+  transform: translateY(-1px);
+}
+
+.senior-teacher-link-baidu {
+  border-color: #e3c8ba;
+  color: #a2654d;
+  background: #fff6f0;
+}
+
+.senior-teacher-link-baidu:hover,
+.senior-teacher-link-baidu:focus-visible {
+  border-color: #cc987f;
+  color: #884f3a;
+  background: #ffebe0;
 }
 
 .senior-resource-card {
@@ -4803,6 +4872,32 @@ footer { max-width: 1180px; margin: auto; padding: 25px 28px 32px; display: flex
   color: #dcebd4;
   background: #2c4b32;
   border-color: #46694b;
+}
+
+[data-theme="dark"] .senior-teacher-link {
+  border-color: #46694b;
+  color: #cce4cf;
+  background: #2a4930;
+}
+
+[data-theme="dark"] .senior-teacher-link:hover,
+[data-theme="dark"] .senior-teacher-link:focus-visible {
+  border-color: #79a17a;
+  color: #eff9ea;
+  background: #355b3b;
+}
+
+[data-theme="dark"] .senior-teacher-link-baidu {
+  border-color: #795748;
+  color: #f0c6b0;
+  background: #4a3028;
+}
+
+[data-theme="dark"] .senior-teacher-link-baidu:hover,
+[data-theme="dark"] .senior-teacher-link-baidu:focus-visible {
+  border-color: #bd8269;
+  color: #fff0e6;
+  background: #613d31;
 }
 
 [data-theme="dark"] .senior-resource-empty {

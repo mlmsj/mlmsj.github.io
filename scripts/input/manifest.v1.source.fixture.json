@@ -26,6 +26,14 @@
     },
     {
       "id": "university-topic-math-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/11LB4XfIeHlgbebkr1xyHYA?pwd=gp7a",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "大学数学",
       "description": "大学 专业课 数学 高等数学 线性代数 概率论 数学分析 微积分",
       "categoryId": "domain-university-major-math",
@@ -50,6 +58,14 @@
     },
     {
       "id": "university-topic-textbooks-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1tFb11TrmY-adGEtAXIhHWg?pwd=53j6",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "大学教材",
       "description": "大学 大学教材 教材 生物化学",
       "categoryId": "domain-university-major-textbooks",
@@ -86,6 +102,14 @@
     },
     {
       "id": "university-topic-cet-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1HfWWinRo_R2TWMi0gTAI1g?pwd=g2vi",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "四六级",
       "description": "大学 四六级 四级 六级 英语",
       "categoryId": "domain-university-certification-cet",
@@ -110,6 +134,14 @@
     },
     {
       "id": "university-topic-computer-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1B1idUJ4wz8y7hy_BxLwvig?pwd=6n2b",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "计算机",
       "description": "大学计算机考试学习资料；不含安装、激活及可执行程序。",
       "categoryId": "domain-university-certification-computer",
@@ -542,6 +574,14 @@
     },
     {
       "id": "certification-topic-upgrade-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1sRuZsoL74CeTtsTgd-Hunw?pwd=hvyc",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "专升本系列",
       "description": "专升本考试资料聚合入口。",
       "categoryId": "purpose-certification-upgrade",
@@ -722,6 +762,14 @@
     },
     {
       "id": "university-topic-proof-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1Iq9S6K9hgaJcCGRXKcpV6w?pwd=mdhj",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "大学证明",
       "description": "大学阶段空白证明打印模板。",
       "categoryId": "domain-university-proof",
@@ -1468,6 +1516,14 @@
     },
     {
       "id": "hs-topic-textbooks-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1daJkVIsDR6oGCcrXI8sU2Q?pwd=hpqw",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "高中课本教材",
       "description": "高中各学科电子课本与教材资料。",
       "categoryId": "domain-senior-textbooks",
@@ -1480,6 +1536,14 @@
     },
     {
       "id": "hs-topic-workbooks-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1JRPtzohEPt8iAOLzu9KBMg?pwd=51vd",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "高中教辅与刷题",
       "description": "高中阶段教辅、复习与刷题资料。",
       "categoryId": "domain-senior-workbooks",
@@ -1492,6 +1556,14 @@
     },
     {
       "id": "hs-topic-courses-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/5XDA8Nnq9Ev8tmubi9x_6lg",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "高中网课",
       "description": "高中网课及讲义资料。",
       "categoryId": "domain-senior-courses",
@@ -1504,6 +1576,14 @@
     },
     {
       "id": "hs-topic-mock-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1qJHMblVqFuJGQ_bfvYAs4Q?pwd=vpzu",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "高中模拟题",
       "description": "高中阶段模拟题与真题资料聚合入口。",
       "categoryId": "domain-senior-mocks",
@@ -1516,6 +1596,14 @@
     },
     {
       "id": "hs-topic-sprint-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1JMjBMkTuGM2CFbATunyWwg?pwd=ywxe",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "高中考前冲刺",
       "description": "高中考前冲刺、押题与答题规范资料。",
       "categoryId": "domain-senior-sprint",
@@ -1528,6 +1616,14 @@
     },
     {
       "id": "hs-topic-subjects-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1oX50UnSHVqRdz9YEtb5YKQ?pwd=pyh5",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "高中学科分类",
       "description": "高中按学科整理的资料入口。",
       "categoryId": "domain-senior-subjects",
@@ -1540,6 +1636,14 @@
     },
     {
       "id": "hs-topic-one-series-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1cg28UKor55fMJA_hR1lh7w?pwd=44hi",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "一系列",
       "description": "高中一系列公益资料入口。",
       "categoryId": "domain-senior-one-series",
@@ -1552,6 +1656,14 @@
     },
     {
       "id": "hs-topic-competition-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1WMctlZRPX1vCE3cLwAnpYA?pwd=hjwh",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "高中竞赛",
       "description": "高中竞赛资料聚合入口。",
       "categoryId": "domain-senior-competition",
@@ -1564,6 +1676,14 @@
     },
     {
       "id": "hs-topic-volunteer-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1ZYfKDe-LsqLNrfpbeNvJZg?pwd=3tyy",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "高中志愿填报",
       "description": "高中升学志愿填报资料聚合入口。",
       "categoryId": "domain-senior-volunteer",
@@ -1576,6 +1696,14 @@
     },
     {
       "id": "hs-topic-policies-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1slq2td42kIUgGMRVS4y3Fg?pwd=j3e4",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "高考相关政策",
       "description": "高考相关政策与公开说明资料聚合入口。",
       "categoryId": "domain-senior-policies",
@@ -1612,6 +1740,14 @@
     },
     {
       "id": "hs-one-series-yishu-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1hxO27wk5O0EYW-kU1kYZWw?pwd=2afd",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "【一数儿】",
       "description": "高中 / 一系列 / 【一数儿】资料目录。",
       "categoryId": "type-senior-one-series-yishu",
@@ -1624,6 +1760,14 @@
     },
     {
       "id": "hs-one-series-yisheng-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1UOquRurjcaX1Gh9o55A_3g?pwd=j63r",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "【一生儿】",
       "description": "高中 / 一系列 / 【一生儿】资料目录。",
       "categoryId": "type-senior-one-series-yisheng",
@@ -1636,6 +1780,14 @@
     },
     {
       "id": "hs-one-series-yiying-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/11OU7jNvnFU0p9rnDLSJVHg?pwd=6p7f",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "【一英儿】",
       "description": "高中 / 一系列 / 【一英儿】资料目录。",
       "categoryId": "type-senior-one-series-yiying",
@@ -1648,6 +1800,14 @@
     },
     {
       "id": "hs-one-series-yidi-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1sWahrlp_QzA8WFmOUI8MGA?pwd=4nfh",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "［一地儿】",
       "description": "高中 / 一系列 / ［一地儿】资料目录。",
       "categoryId": "type-senior-one-series-yidi",
@@ -1660,6 +1820,14 @@
     },
     {
       "id": "hs-one-series-yihua-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/15UlIDp_PTAWFPWaKtiFEvQ?pwd=hdvu",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "【一化儿】",
       "description": "高中 / 一系列 / 【一化儿】资料目录。",
       "categoryId": "type-senior-one-series-yihua",
@@ -1684,6 +1852,14 @@
     },
     {
       "id": "hs-one-series-yiwu-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1AJ2CEKV7sfdF_IYFh8Esyg?pwd=ynjf",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "【一物儿】",
       "description": "高中 / 一系列 / 【一物儿】资料目录。",
       "categoryId": "type-senior-one-series-yiwu",
@@ -1696,6 +1872,14 @@
     },
     {
       "id": "hs-one-series-last-ten-lessons-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1W88Xsm54fWbX3n61-fmT6A?pwd=3sex",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "最后十课",
       "description": "高中 / 一系列 / 最后十课资料目录。",
       "categoryId": "type-senior-one-series-last-ten-lessons",
@@ -1708,6 +1892,14 @@
     },
     {
       "id": "hs-one-series-free-gaokao-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1Gkq12DP-DSLURnQ-uiyLNg?pwd=ict4",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "【FREE 高考】",
       "description": "高中 / 一系列 / 【FREE 高考】资料目录。",
       "categoryId": "type-senior-one-series-free-gaokao",
@@ -1720,6 +1912,14 @@
     },
     {
       "id": "hs-one-series-huang-furen-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1Eth_mlSVCAFAPcoLDN9AKw?pwd=54ae",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "［黄夫人］",
       "description": "高中 / 一系列 / ［黄夫人］资料目录。",
       "categoryId": "type-senior-one-series-huang-furen",
@@ -1732,6 +1932,14 @@
     },
     {
       "id": "hs-one-series-shiyou-yuwen-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1UAtk8I_BWNvTWKqwBK8tEg?pwd=mnb5",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "【学过石油的语文老师】",
       "description": "高中 / 一系列 / 【学过石油的语文老师】资料目录。",
       "categoryId": "type-senior-one-series-shiyou-yuwen",
@@ -1744,6 +1952,14 @@
     },
     {
       "id": "hs-subjects-chinese-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1EME9kCZEeIosKzv7AI4Sfg?pwd=ryiv",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "语文",
       "description": "高中 / 学科分类 / 语文资料目录。",
       "categoryId": "type-senior-subjects-chinese",
@@ -1756,6 +1972,14 @@
     },
     {
       "id": "hs-subjects-physics-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1LfWIBCTcld75cGf0tb4DfA?pwd=vzv9",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "物理",
       "description": "高中 / 学科分类 / 物理资料目录。",
       "categoryId": "type-senior-subjects-physics",
@@ -1768,6 +1992,14 @@
     },
     {
       "id": "hs-subjects-chemistry-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1nbsuGva9RbWD0WmRpFHolw?pwd=bri3",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "化学",
       "description": "高中 / 学科分类 / 化学资料目录。",
       "categoryId": "type-senior-subjects-chemistry",
@@ -1780,6 +2012,14 @@
     },
     {
       "id": "hs-subjects-math-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1gI6vg3Zg6Lj5llLoAS027g?pwd=ey5u",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "数学",
       "description": "高中 / 学科分类 / 数学资料目录。",
       "categoryId": "type-senior-subjects-math",
@@ -1792,6 +2032,14 @@
     },
     {
       "id": "hs-subjects-geography-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1KOxzlurzZ_ie7Pm8pMJ3ng?pwd=s3gs",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "地理",
       "description": "高中 / 学科分类 / 地理资料目录。",
       "categoryId": "type-senior-subjects-geography",
@@ -1804,6 +2052,14 @@
     },
     {
       "id": "hs-subjects-english-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1fwF1k06qDd51J6-Ex7S9Ag?pwd=nbjr",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "英语",
       "description": "高中 / 学科分类 / 英语资料目录。",
       "categoryId": "type-senior-subjects-english",
@@ -1816,6 +2072,14 @@
     },
     {
       "id": "hs-subjects-history-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1orT3qxgRyJB79RTm2aedog?pwd=cfba",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "历史",
       "description": "高中 / 学科分类 / 历史资料目录。",
       "categoryId": "type-senior-subjects-history",
@@ -1828,6 +2092,14 @@
     },
     {
       "id": "hs-subjects-biology-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1ftmUQlj1dcjU-6FFsF40wA?pwd=f77q",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "生物",
       "description": "高中 / 学科分类 / 生物资料目录。",
       "categoryId": "type-senior-subjects-biology",
@@ -1840,6 +2112,14 @@
     },
     {
       "id": "hs-subjects-politics-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1UC3LvLaCbgTICrymia4mJw?pwd=5u7u",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "政治",
       "description": "高中 / 学科分类 / 政治资料目录。",
       "categoryId": "type-senior-subjects-politics",
@@ -2800,6 +3080,14 @@
     },
     {
       "id": "hs-textbooks-after-school-answers-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1IRt0W-270dgigFPfdF-z0g?pwd=y2pw",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "《高中课后习题参考答案》",
       "description": "高中 / 课本教材 / 《高中课后习题参考答案》资料目录。",
       "categoryId": "type-senior-textbooks-after-school-answers",
@@ -2872,6 +3160,14 @@
     },
     {
       "id": "hs-textbooks-english-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1m-cJS-CegZRRJfEDyCGfTg?pwd=wmfs",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "全部版本 • 高中英语【电子课本】",
       "description": "高中 / 课本教材 / 全部版本 • 高中英语【电子课本】资料目录。",
       "categoryId": "type-senior-textbooks-english",
@@ -2884,6 +3180,14 @@
     },
     {
       "id": "hs-textbooks-chinese-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1pnFxXQsSmbhubiCWL7gLgw?pwd=35ew",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "全部版本 • 高中语文【电子课本】",
       "description": "高中 / 课本教材 / 全部版本 • 高中语文【电子课本】资料目录。",
       "categoryId": "type-senior-textbooks-chinese",
@@ -2920,6 +3224,14 @@
     },
     {
       "id": "hs-textbooks-physics-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1IrJZvI7VIcXnjU54HHbmmg?pwd=qrvt",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "全部版本 • 高中物理【电子课本】",
       "description": "高中 / 课本教材 / 全部版本 • 高中物理【电子课本】资料目录。",
       "categoryId": "type-senior-textbooks-physics",
@@ -2944,6 +3256,14 @@
     },
     {
       "id": "hs-textbooks-math-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1IJm2rMDnGl8Imsu-yRmjmQ?pwd=kypv",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "全部版本 • 高中数学【电子课本】",
       "description": "高中 / 课本教材 / 全部版本 • 高中数学【电子课本】资料目录。",
       "categoryId": "type-senior-textbooks-math",
@@ -2956,6 +3276,14 @@
     },
     {
       "id": "hs-textbooks-biology-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1zUFhqktT7pz2A8ri6FhlYA?pwd=is28",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "全部版本 • 高中生物【电子课本】",
       "description": "高中 / 课本教材 / 全部版本 • 高中生物【电子课本】资料目录。",
       "categoryId": "type-senior-textbooks-biology",
@@ -2992,6 +3320,14 @@
     },
     {
       "id": "hs-textbooks-chemistry-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1tAhoBaTzZ9_BJzIIwUmRjQ?pwd=pam8",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "全部版本 • 高中化学【电子课本】",
       "description": "高中 / 课本教材 / 全部版本 • 高中化学【电子课本】资料目录。",
       "categoryId": "type-senior-textbooks-chemistry",
@@ -3004,6 +3340,14 @@
     },
     {
       "id": "hs-textbooks-geography-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1mGj5xNfWavnQr-26Pvmvfw?pwd=ciqt",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "全部版本 • 高中地理【电子课本】",
       "description": "高中 / 课本教材 / 全部版本 • 高中地理【电子课本】资料目录。",
       "categoryId": "type-senior-textbooks-geography",
@@ -3208,6 +3552,14 @@
     },
     {
       "id": "skill-coding-scratch-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1QoA38HWGE71Ofhzcs9cmIg?pwd=35ee",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "Scratch 与少儿编程",
       "description": "AI 与数字科技 / 编程与开发 / Scratch 与少儿编程资料入口。",
       "categoryId": "skill-scratch-kids",
@@ -3221,6 +3573,14 @@
     ,
     {
       "id": "skill-coding-python-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1MjxX2QHocYaJT8W2BiqCzg?pwd=8pia",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "Python 编程",
       "description": "AI 与数字科技 / 编程与开发 / Python 编程资料入口。",
       "categoryId": "skill-python",
@@ -3234,6 +3594,14 @@
     ,
     {
       "id": "skill-coding-cpp-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1KFvUw-5YbsCEYQfRAsrORg?pwd=j737",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "C++ 编程",
       "description": "AI 与数字科技 / 编程与开发 / C++ 编程资料入口。",
       "categoryId": "skill-cpp",
@@ -3247,6 +3615,14 @@
     ,
     {
       "id": "skill-coding-robotics-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1eagTse0ko0dKU4sA3Z9cLw?pwd=a742",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "机器人与硬件编程",
       "description": "AI 与数字科技 / 编程与开发 / 机器人与硬件编程资料入口。",
       "categoryId": "skill-robotics-hardware",
@@ -3260,6 +3636,14 @@
     ,
     {
       "id": "skill-coding-extension-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1LjuR_rZzHxsdfIGepSPdEQ?pwd=gpaf",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "拓展与综合实践",
       "description": "AI 与数字科技 / 编程与开发 / 拓展与综合实践资料入口。",
       "categoryId": "skill-coding-extension",
@@ -3364,6 +3748,14 @@
     ,
     {
       "id": "skill-social-wechat-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1f3nFpEIJfh7dtp7L4wefqA?pwd=saru",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "公众号运营",
       "description": "数字创作与自媒体 / 自媒体运营 / 公众号运营资料入口。",
       "categoryId": "skill-wechat-official-ops",
@@ -3390,6 +3782,14 @@
     ,
     {
       "id": "skill-driving-subject-1-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1kgMC7feeZy9Pj7OzQ6nwuQ?pwd=jp39",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "科目一",
       "description": "生活技能与兴趣 / 驾驶与驾考 / 科目一资料入口。",
       "categoryId": "skill-driving-subject-1",
@@ -3429,6 +3829,14 @@
     ,
     {
       "id": "skill-driving-subject-4-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1ARTAbTXumUsRxR-l_TF2yA?pwd=nqv3",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "科目四",
       "description": "生活技能与兴趣 / 驾驶与驾考 / 科目四资料入口。",
       "categoryId": "skill-driving-subject-4",
@@ -3455,6 +3863,14 @@
     ,
     {
       "id": "skill-calligraphy-online-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1Zbu_FVcIddvzoMYbPTeksg?pwd=duxm",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "书法网课",
       "description": "生活技能与兴趣 / 书法与艺术 / 书法网课资料入口。",
       "categoryId": "skill-calligraphy-online",
@@ -3468,6 +3884,14 @@
     ,
     {
       "id": "skill-calligraphy-rubbings-001",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1jAazY2ZN8bWAFTzGgmrbZQ?pwd=thpy",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ],
       "title": "碑帖临摹",
       "description": "生活技能与兴趣 / 书法与艺术 / 碑帖临摹资料入口。",
       "categoryId": "skill-calligraphy-rubbings",

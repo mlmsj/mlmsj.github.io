@@ -24,7 +24,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-06",
       "publishedAt": "2026-11-06T14:18:07+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/11LB4XfIeHlgbebkr1xyHYA?pwd=gp7a",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "university-topic-professional-courses-001",
@@ -48,7 +56,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-06",
       "publishedAt": "2026-11-06T14:18:07+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1tFb11TrmY-adGEtAXIhHWg?pwd=53j6",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "university-topic-ideology-001",
@@ -72,7 +88,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-06",
       "publishedAt": "2026-11-06T14:37:23+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1HfWWinRo_R2TWMi0gTAI1g?pwd=g2vi",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "university-topic-ielts-001",
@@ -96,7 +120,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-06",
       "publishedAt": "2026-11-06T15:19:48+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1B1idUJ4wz8y7hy_BxLwvig?pwd=6n2b",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "certification-topic-university-001",
@@ -528,7 +560,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-07",
       "publishedAt": "2026-11-07T09:01:16+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1sRuZsoL74CeTtsTgd-Hunw?pwd=hvyc",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "certification-topic-civil-service-001",
@@ -708,7 +748,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-06",
       "publishedAt": "2026-11-06T15:17:19+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1Iq9S6K9hgaJcCGRXKcpV6w?pwd=mdhj",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "university-topic-postgraduate-001",
@@ -1308,7 +1356,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1daJkVIsDR6oGCcrXI8sU2Q?pwd=hpqw",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-topic-workbooks-001",
@@ -1320,7 +1376,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1JRPtzohEPt8iAOLzu9KBMg?pwd=51vd",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-topic-courses-001",
@@ -1332,7 +1396,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/5XDA8Nnq9Ev8tmubi9x_6lg",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-topic-mock-001",
@@ -1344,7 +1416,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1qJHMblVqFuJGQ_bfvYAs4Q?pwd=vpzu",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-topic-sprint-001",
@@ -1356,7 +1436,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1JMjBMkTuGM2CFbATunyWwg?pwd=ywxe",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-topic-subjects-001",
@@ -1368,7 +1456,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-06T14:59:09+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1oX50UnSHVqRdz9YEtb5YKQ?pwd=pyh5",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-topic-one-series-001",
@@ -1380,7 +1476,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1cg28UKor55fMJA_hR1lh7w?pwd=44hi",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-topic-competition-001",
@@ -1392,7 +1496,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1WMctlZRPX1vCE3cLwAnpYA?pwd=hjwh",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-topic-volunteer-001",
@@ -1404,7 +1516,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1ZYfKDe-LsqLNrfpbeNvJZg?pwd=3tyy",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-topic-policies-001",
@@ -1416,7 +1536,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1slq2td42kIUgGMRVS4y3Fg?pwd=j3e4",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-courses-2027-001",
@@ -1452,7 +1580,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1hxO27wk5O0EYW-kU1kYZWw?pwd=2afd",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-one-series-yisheng-001",
@@ -1464,7 +1600,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1UOquRurjcaX1Gh9o55A_3g?pwd=j63r",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-one-series-yiying-001",
@@ -1476,7 +1620,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/11OU7jNvnFU0p9rnDLSJVHg?pwd=6p7f",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-one-series-yidi-001",
@@ -1488,7 +1640,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1sWahrlp_QzA8WFmOUI8MGA?pwd=4nfh",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-one-series-yihua-001",
@@ -1500,7 +1660,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/15UlIDp_PTAWFPWaKtiFEvQ?pwd=hdvu",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-one-series-yizheng-001",
@@ -1524,7 +1692,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1AJ2CEKV7sfdF_IYFh8Esyg?pwd=ynjf",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-one-series-last-ten-lessons-001",
@@ -1536,7 +1712,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1W88Xsm54fWbX3n61-fmT6A?pwd=3sex",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-one-series-free-gaokao-001",
@@ -1548,7 +1732,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1Gkq12DP-DSLURnQ-uiyLNg?pwd=ict4",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-one-series-huang-furen-001",
@@ -1560,7 +1752,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1Eth_mlSVCAFAPcoLDN9AKw?pwd=54ae",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-one-series-shiyou-yuwen-001",
@@ -1572,7 +1772,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1UAtk8I_BWNvTWKqwBK8tEg?pwd=mnb5",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-subjects-chinese-001",
@@ -1584,7 +1792,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1EME9kCZEeIosKzv7AI4Sfg?pwd=ryiv",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-subjects-physics-001",
@@ -1596,7 +1812,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1LfWIBCTcld75cGf0tb4DfA?pwd=vzv9",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-subjects-chemistry-001",
@@ -1608,7 +1832,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1nbsuGva9RbWD0WmRpFHolw?pwd=bri3",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-subjects-math-001",
@@ -1620,7 +1852,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1gI6vg3Zg6Lj5llLoAS027g?pwd=ey5u",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-subjects-geography-001",
@@ -1632,7 +1872,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1KOxzlurzZ_ie7Pm8pMJ3ng?pwd=s3gs",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-subjects-english-001",
@@ -1644,7 +1892,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1fwF1k06qDd51J6-Ex7S9Ag?pwd=nbjr",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-subjects-history-001",
@@ -1656,7 +1912,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1orT3qxgRyJB79RTm2aedog?pwd=cfba",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-subjects-biology-001",
@@ -1668,7 +1932,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1ftmUQlj1dcjU-6FFsF40wA?pwd=f77q",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-subjects-politics-001",
@@ -1680,7 +1952,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1UC3LvLaCbgTICrymia4mJw?pwd=5u7u",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-competition-foundation-001",
@@ -2640,7 +2920,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1IRt0W-270dgigFPfdF-z0g?pwd=y2pw",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-textbooks-japanese-001",
@@ -2712,7 +3000,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1m-cJS-CegZRRJfEDyCGfTg?pwd=wmfs",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-textbooks-chinese-001",
@@ -2724,7 +3020,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1pnFxXQsSmbhubiCWL7gLgw?pwd=35ew",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-textbooks-arts-001",
@@ -2760,7 +3064,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1IrJZvI7VIcXnjU54HHbmmg?pwd=qrvt",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-textbooks-physical-education-001",
@@ -2784,7 +3096,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1IJm2rMDnGl8Imsu-yRmjmQ?pwd=kypv",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-textbooks-biology-001",
@@ -2796,7 +3116,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1zUFhqktT7pz2A8ri6FhlYA?pwd=is28",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-textbooks-fine-arts-001",
@@ -2832,7 +3160,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1tAhoBaTzZ9_BJzIIwUmRjQ?pwd=pam8",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-textbooks-geography-001",
@@ -2844,7 +3180,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-13",
       "publishedAt": "2026-11-13T00:00:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1mGj5xNfWavnQr-26Pvmvfw?pwd=ciqt",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "hs-textbooks-mental-health-001",
@@ -3048,7 +3392,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-10",
       "publishedAt": "2026-11-10T00:22:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1QoA38HWGE71Ofhzcs9cmIg?pwd=35ee",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "skill-coding-python-001",
@@ -3060,7 +3412,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-10",
       "publishedAt": "2026-11-10T00:22:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1MjxX2QHocYaJT8W2BiqCzg?pwd=8pia",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "skill-coding-cpp-001",
@@ -3072,7 +3432,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-10",
       "publishedAt": "2026-11-10T00:22:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1KFvUw-5YbsCEYQfRAsrORg?pwd=j737",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "skill-coding-robotics-001",
@@ -3084,7 +3452,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-10",
       "publishedAt": "2026-11-10T00:22:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1eagTse0ko0dKU4sA3Z9cLw?pwd=a742",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "skill-coding-extension-001",
@@ -3096,7 +3472,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-10",
       "publishedAt": "2026-11-10T00:22:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1LjuR_rZzHxsdfIGepSPdEQ?pwd=gpaf",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "skill-ps-video-001",
@@ -3192,7 +3576,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-10",
       "publishedAt": "2026-11-10T00:22:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1f3nFpEIJfh7dtp7L4wefqA?pwd=saru",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "skill-social-xiaohongshu-001",
@@ -3216,7 +3608,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-10",
       "publishedAt": "2026-11-10T00:22:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1kgMC7feeZy9Pj7OzQ6nwuQ?pwd=jp39",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "skill-driving-subject-2-001",
@@ -3252,7 +3652,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-10",
       "publishedAt": "2026-11-10T00:22:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1ARTAbTXumUsRxR-l_TF2yA?pwd=nqv3",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "skill-driving-question-bank-001",
@@ -3276,7 +3684,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-10",
       "publishedAt": "2026-11-10T00:22:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1Zbu_FVcIddvzoMYbPTeksg?pwd=duxm",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "skill-calligraphy-rubbings-001",
@@ -3288,7 +3704,15 @@
       "accessStatus": "verified",
       "checkedOn": "2026-11-10",
       "publishedAt": "2026-11-10T00:22:00+08:00",
-      "fileType": "folder"
+      "fileType": "folder",
+      "deliveries": [
+        {
+          "provider": "baidu",
+          "shareUrl": "https://pan.baidu.com/s/1jAazY2ZN8bWAFTzGgmrbZQ?pwd=thpy",
+          "accessStatus": "verified",
+          "checkedOn": "2026-11-17"
+        }
+      ]
     },
     {
       "id": "skill-travel-ticketing-001",

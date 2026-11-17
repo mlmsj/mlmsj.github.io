@@ -28,6 +28,7 @@ export type Resource = {
   fileType?: string;
   sizeBytes?: number;
   delivery?: ResourceDelivery;
+  deliveries?: readonly ResourceDelivery[];
 };
 
 const RESOURCE_SIZE_UNITS = ["B", "KB", "MB", "GB", "TB"] as const;

@@ -1,9 +1,10 @@
 import { useState, type ReactNode } from "react";
 import { categories, type Category } from "./categories";
 import {
-  canOpenPublicShare,
-  getResourceAccessLabel,
-  getResourceAccessMessage,
+  ACCESS_STATUS_LABELS,
+  ACCESS_STATUS_MESSAGES,
+  canOpenPublicDelivery,
+  getResourceDeliveries,
   type PublicCatalogPhase,
 } from "./publicCatalog";
 import { isPublishedPublicResource } from "./categoryCounts";
@@ -16,9 +17,9 @@ const providerLabels = {
 
 export function PublicDeliveryPanel({ resource }: { resource: Resource }) {
   const [copyMessage, setCopyMessage] = useState("");
-  const delivery = resource.delivery;
+  const deliveries = getResourceDeliveries(resource);
 
-  if (!delivery) {
+  if (deliveries.length === 0) {
     return (
       <section className="resource-delivery" aria-label="资料访问信息">
         <p className="resource-delivery-status" role="status">
@@ -28,67 +29,77 @@ export function PublicDeliveryPanel({ resource }: { resource: Resource }) {
     );
   }
 
-  const accessLabel = getResourceAccessLabel(resource);
-  const accessMessage = delivery.shareUrl === null
-    ? "资料信息已公开，但当前分享入口未授权公开。"
-    : getResourceAccessMessage(resource);
-  const canOpen = canOpenPublicShare(resource);
-  const copyPasscode = async () => {
-    if (!delivery.passcode) return;
-    try {
-      const writeText = navigator.clipboard?.writeText;
-      if (typeof writeText !== "function") throw new Error("clipboard-unavailable");
-      await writeText.call(navigator.clipboard, delivery.passcode);
-      setCopyMessage("提取码已复制");
-    } catch {
-      setCopyMessage("复制失败，请手动记录提取码。");
-    }
-  };
-
   return (
-    <section className="resource-delivery" aria-label="资料访问信息">
-      <div className="resource-delivery-header">
-        <div>
-          <span className="resource-delivery-eyebrow">资料入口</span>
-          <strong>{providerLabels[delivery.provider]}</strong>
-        </div>
-        {accessLabel && (
-          <span className={`resource-access-status resource-access-status-${delivery.accessStatus}`}>
-            {accessLabel}
-          </span>
-        )}
-      </div>
-      {accessMessage && (
-        <p className="resource-delivery-status" role="status">{accessMessage}</p>
-      )}
-      {delivery.accessStatus === "verified" && delivery.checkedOn && (
-        <p className="resource-delivery-checked">最近人工核验：{delivery.checkedOn}</p>
-      )}
-      {canOpen && delivery.shareUrl ? (
-        <a
-          className="resource-delivery-link"
-          href={delivery.shareUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          打开{providerLabels[delivery.provider]}分享
-        </a>
-      ) : (
-        <span className="resource-delivery-disabled" aria-disabled="true">
-          当前暂不提供正常访问入口
-        </span>
-      )}
-      {canOpen && delivery.passcode && (
-        <div className="resource-passcode">
-          <span>提取码</span>
-          <code>{delivery.passcode}</code>
-          <button type="button" onClick={() => void copyPasscode()}>复制提取码</button>
-          <span className="resource-copy-status" role="status" aria-live="polite">
-            {copyMessage}
-          </span>
-        </div>
-      )}
-    </section>
+    <>
+      {deliveries.map((delivery, index) => {
+        const accessLabel = ACCESS_STATUS_LABELS[delivery.accessStatus];
+        const accessMessage = delivery.shareUrl === null
+          ? "资料信息已公开，但当前分享入口未授权公开。"
+          : ACCESS_STATUS_MESSAGES[delivery.accessStatus];
+        const canOpen = canOpenPublicDelivery(resource, delivery);
+        const copyPasscode = async () => {
+          if (!delivery.passcode) return;
+          try {
+            const writeText = navigator.clipboard?.writeText;
+            if (typeof writeText !== "function") throw new Error("clipboard-unavailable");
+            await writeText.call(navigator.clipboard, delivery.passcode);
+            setCopyMessage("提取码已复制");
+          } catch {
+            setCopyMessage("复制失败，请手动记录提取码。");
+          }
+        };
+
+        return (
+          <section
+            className="resource-delivery"
+            aria-label={index === 0 ? "资料访问信息" : `资料访问信息-${providerLabels[delivery.provider]}`}
+            key={`${delivery.provider}-${index}`}
+          >
+            <div className="resource-delivery-header">
+              <div>
+                <span className="resource-delivery-eyebrow">资料入口</span>
+                <strong>{providerLabels[delivery.provider]}</strong>
+              </div>
+              {accessLabel && (
+                <span className={`resource-access-status resource-access-status-${delivery.accessStatus}`}>
+                  {accessLabel}
+                </span>
+              )}
+            </div>
+            {accessMessage && (
+              <p className="resource-delivery-status" role="status">{accessMessage}</p>
+            )}
+            {delivery.accessStatus === "verified" && delivery.checkedOn && (
+              <p className="resource-delivery-checked">最近人工核验：{delivery.checkedOn}</p>
+            )}
+            {canOpen && delivery.shareUrl ? (
+              <a
+                className="resource-delivery-link"
+                href={delivery.shareUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                打开{providerLabels[delivery.provider]}分享
+              </a>
+            ) : (
+              <span className="resource-delivery-disabled" aria-disabled="true">
+                当前暂不提供正常访问入口
+              </span>
+            )}
+            {canOpen && delivery.passcode && (
+              <div className="resource-passcode">
+                <span>提取码</span>
+                <code>{delivery.passcode}</code>
+                <button type="button" onClick={() => void copyPasscode()}>复制提取码</button>
+                <span className="resource-copy-status" role="status" aria-live="polite">
+                  {copyMessage}
+                </span>
+              </div>
+            )}
+          </section>
+        );
+      })}
+    </>
   );
 }
 

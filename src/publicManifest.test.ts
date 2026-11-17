@@ -276,6 +276,34 @@ describe("public manifest contract", () => {
     }
   });
 
+  it("accepts an additional verified delivery channel", () => {
+    const result = validatePublicManifest({
+      ...validManifest(),
+      records: [
+        {
+          ...validRecord,
+          deliveries: [
+            {
+              provider: "baidu",
+              shareUrl: "https://pan.baidu.com/s/secondary-only?pwd=5678",
+              passcode: "5678",
+              accessStatus: "verified",
+              checkedOn: "2026-10-17",
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.records[0]?.deliveries?.[0]).toMatchObject({
+        provider: "baidu",
+        passcode: "5678",
+      });
+    }
+  });
+
   it("accepts an independent synthetic empty manifest through validation, parsing and loading", async () => {
     const emptyManifest: PublicManifest = {
       schemaVersion: 1,

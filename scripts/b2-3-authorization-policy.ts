@@ -491,6 +491,61 @@ export const SKILL_GROWTH_NON_AI_DELIVERY_IDS = new Map<string, string>([
   ["skill-clip-tutorial-26", "dlv-skill-clip-tutorial-26-quark-01"],
   ["skill-clip-tutorial-31", "dlv-skill-clip-tutorial-31-quark-01"],
 ]);
+export const BAIDU_SECONDARY_DELIVERY_IDS = new Map<string, string>([
+  ["certification-topic-upgrade-001", "dlv-certification-topic-upgrade-001-baidu-01"],
+  ["hs-one-series-free-gaokao-001", "dlv-hs-one-series-free-gaokao-001-baidu-01"],
+  ["hs-one-series-huang-furen-001", "dlv-hs-one-series-huang-furen-001-baidu-01"],
+  ["hs-one-series-last-ten-lessons-001", "dlv-hs-one-series-last-ten-lessons-001-baidu-01"],
+  ["hs-one-series-shiyou-yuwen-001", "dlv-hs-one-series-shiyou-yuwen-001-baidu-01"],
+  ["hs-one-series-yidi-001", "dlv-hs-one-series-yidi-001-baidu-01"],
+  ["hs-one-series-yihua-001", "dlv-hs-one-series-yihua-001-baidu-01"],
+  ["hs-one-series-yisheng-001", "dlv-hs-one-series-yisheng-001-baidu-01"],
+  ["hs-one-series-yishu-001", "dlv-hs-one-series-yishu-001-baidu-01"],
+  ["hs-one-series-yiwu-001", "dlv-hs-one-series-yiwu-001-baidu-01"],
+  ["hs-one-series-yiying-001", "dlv-hs-one-series-yiying-001-baidu-01"],
+  ["hs-subjects-biology-001", "dlv-hs-subjects-biology-001-baidu-01"],
+  ["hs-subjects-chemistry-001", "dlv-hs-subjects-chemistry-001-baidu-01"],
+  ["hs-subjects-chinese-001", "dlv-hs-subjects-chinese-001-baidu-01"],
+  ["hs-subjects-english-001", "dlv-hs-subjects-english-001-baidu-01"],
+  ["hs-subjects-geography-001", "dlv-hs-subjects-geography-001-baidu-01"],
+  ["hs-subjects-history-001", "dlv-hs-subjects-history-001-baidu-01"],
+  ["hs-subjects-math-001", "dlv-hs-subjects-math-001-baidu-01"],
+  ["hs-subjects-physics-001", "dlv-hs-subjects-physics-001-baidu-01"],
+  ["hs-subjects-politics-001", "dlv-hs-subjects-politics-001-baidu-01"],
+  ["hs-textbooks-after-school-answers-001", "dlv-hs-textbooks-after-school-answers-001-baidu-01"],
+  ["hs-textbooks-biology-001", "dlv-hs-textbooks-biology-001-baidu-01"],
+  ["hs-textbooks-chemistry-001", "dlv-hs-textbooks-chemistry-001-baidu-01"],
+  ["hs-textbooks-chinese-001", "dlv-hs-textbooks-chinese-001-baidu-01"],
+  ["hs-textbooks-english-001", "dlv-hs-textbooks-english-001-baidu-01"],
+  ["hs-textbooks-geography-001", "dlv-hs-textbooks-geography-001-baidu-01"],
+  ["hs-textbooks-math-001", "dlv-hs-textbooks-math-001-baidu-01"],
+  ["hs-textbooks-physics-001", "dlv-hs-textbooks-physics-001-baidu-01"],
+  ["hs-topic-competition-001", "dlv-hs-topic-competition-001-baidu-01"],
+  ["hs-topic-courses-001", "dlv-hs-topic-courses-001-baidu-01"],
+  ["hs-topic-mock-001", "dlv-hs-topic-mock-001-baidu-01"],
+  ["hs-topic-one-series-001", "dlv-hs-topic-one-series-001-baidu-01"],
+  ["hs-topic-policies-001", "dlv-hs-topic-policies-001-baidu-01"],
+  ["hs-topic-sprint-001", "dlv-hs-topic-sprint-001-baidu-01"],
+  ["hs-topic-subjects-001", "dlv-hs-topic-subjects-001-baidu-01"],
+  ["hs-topic-textbooks-001", "dlv-hs-topic-textbooks-001-baidu-01"],
+  ["hs-topic-volunteer-001", "dlv-hs-topic-volunteer-001-baidu-01"],
+  ["hs-topic-workbooks-001", "dlv-hs-topic-workbooks-001-baidu-01"],
+  ["skill-calligraphy-online-001", "dlv-skill-calligraphy-online-001-baidu-01"],
+  ["skill-calligraphy-rubbings-001", "dlv-skill-calligraphy-rubbings-001-baidu-01"],
+  ["skill-coding-cpp-001", "dlv-skill-coding-cpp-001-baidu-01"],
+  ["skill-coding-extension-001", "dlv-skill-coding-extension-001-baidu-01"],
+  ["skill-coding-python-001", "dlv-skill-coding-python-001-baidu-01"],
+  ["skill-coding-robotics-001", "dlv-skill-coding-robotics-001-baidu-01"],
+  ["skill-coding-scratch-001", "dlv-skill-coding-scratch-001-baidu-01"],
+  ["skill-driving-subject-1-001", "dlv-skill-driving-subject-1-001-baidu-01"],
+  ["skill-driving-subject-4-001", "dlv-skill-driving-subject-4-001-baidu-01"],
+  ["skill-social-wechat-001", "dlv-skill-social-wechat-001-baidu-01"],
+  ["university-topic-cet-001", "dlv-university-topic-cet-001-baidu-01"],
+  ["university-topic-computer-001", "dlv-university-topic-computer-001-baidu-01"],
+  ["university-topic-math-001", "dlv-university-topic-math-001-baidu-01"],
+  ["university-topic-proof-001", "dlv-university-topic-proof-001-baidu-01"],
+  ["university-topic-textbooks-001", "dlv-university-topic-textbooks-001-baidu-01"],
+]);
 
 export const B2_3_CONTEXT: AuthorizationContext = {
   audience: "public",
@@ -964,6 +1019,51 @@ export const B2_3_POLICIES = new Map<string, PublicProjectionPolicy>(
     }),
   ],
 );
+
+const baiduSecondaryEvidenceFor = (
+  resourceId: string,
+  deliveryId: string,
+): readonly AuthorizationEvidence[] => [
+  {
+    evidenceId: `auth-${resourceId}-baidu-secondary-resource-01`,
+    subjectType: "resource",
+    resourceId,
+    actionScope: ["display_metadata", "expose_share_link"],
+    audienceScope: ["public"],
+    platformScope: ["website"],
+    status: "approved",
+    evidenceRef: "docs/BAIDU-SECONDARY-CHANNEL-RELEASE-20261117.md#公开链接核验",
+    reviewedAt: "2026-11-17",
+  },
+  {
+    evidenceId: `auth-${resourceId}-baidu-secondary-delivery-01`,
+    subjectType: "delivery",
+    resourceId,
+    deliveryId,
+    actionScope: ["expose_share_link"],
+    audienceScope: ["public"],
+    platformScope: ["website"],
+    status: "approved",
+    evidenceRef: "docs/BAIDU-SECONDARY-CHANNEL-RELEASE-20261117.md#公开链接核验",
+    reviewedAt: "2026-11-17",
+  },
+];
+
+for (const [resourceId, deliveryId] of BAIDU_SECONDARY_DELIVERY_IDS) {
+  const policy = B2_3_POLICIES.get(resourceId);
+  if (!policy) throw new Error(`Missing Baidu secondary resource policy: ${resourceId}`);
+  B2_3_POLICIES.set(resourceId, {
+    ...policy,
+    additionalDeliveries: [
+      {
+        deliveryId,
+        provider: "baidu",
+        browseState: "observed",
+        evidence: baiduSecondaryEvidenceFor(resourceId, deliveryId),
+      },
+    ],
+  });
+}
 
 export const B2_3_HOLD_REASONS = new Map<string, string>([
   [

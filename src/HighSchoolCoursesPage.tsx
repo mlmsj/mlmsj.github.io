@@ -226,13 +226,9 @@ export function HighSchoolCoursesPage({
           {selectedTeachers.length > 0 ? (
             <div className="senior-teacher-grid">
               {selectedTeachers.map((teacher) => (
-                <a
+                <article
                   className="senior-teacher-card"
-                  href={teacher.shareUrl}
                   key={teacher.teacherKey}
-                  rel="noreferrer"
-                  target="_blank"
-                  aria-label={`${teacher.displayName}，${teacher.grade}${teacher.subject}，打开网盘资料`}
                 >
                   <span className="senior-teacher-avatar" aria-hidden="true">
                     {teacher.displayName.slice(0, 1)}
@@ -240,9 +236,25 @@ export function HighSchoolCoursesPage({
                   <span className="senior-teacher-copy">
                     <span className="senior-teacher-course">{teacher.grade} · {teacher.subject}</span>
                     <strong>{teacher.displayName}</strong>
-                    <span className="senior-teacher-action">打开网盘资料 ↗</span>
+                    <span className="senior-teacher-links">
+                      {teacher.deliveries.map((delivery) => {
+                        const providerLabel = delivery.provider === "quark" ? "夸克网盘" : "百度网盘";
+                        return (
+                          <a
+                            className={`senior-teacher-link senior-teacher-link-${delivery.provider}`}
+                            href={delivery.shareUrl}
+                            key={delivery.provider}
+                            rel="noreferrer"
+                            target="_blank"
+                            aria-label={`${teacher.displayName}，${teacher.grade}${teacher.subject}，打开${providerLabel}资料`}
+                          >
+                            {providerLabel} ↗
+                          </a>
+                        );
+                      })}
+                    </span>
                   </span>
-                </a>
+                </article>
               ))}
             </div>
           ) : (
@@ -256,7 +268,7 @@ export function HighSchoolCoursesPage({
             </div>
           )}
           <p className="senior-course-note">
-            教师名称按夸克网盘原始目录标签展示；同名标签按年级和学科分别保留，不代表教师身份核验。教师入口来自已创建的公开分享链接，未审核候选资源不会出现在公开列表中。
+            教师名称按网盘原始目录标签展示；同名标签按年级和学科分别保留，不代表教师身份核验。每张教师卡片按已发布资料显示夸克、百度或双渠道入口，未审核候选资源不会出现在公开列表中。
           </p>
         </section>
       </div>

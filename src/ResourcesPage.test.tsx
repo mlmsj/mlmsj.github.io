@@ -28,6 +28,20 @@ const visibleResource: Resource = {
   delivery: verifiedDelivery,
 };
 
+const dualChannelResource: Resource = {
+  ...visibleResource,
+  id: "dual-channel",
+  title: "双渠道测试资料",
+  deliveries: [
+    {
+      provider: "baidu",
+      shareUrl: "https://pan.baidu.com/s/resources-fixture",
+      accessStatus: "verified",
+      checkedOn: "2026-01-01",
+    },
+  ],
+};
+
 const hiddenResources: Resource[] = [
   { ...visibleResource, id: "pending", title: "待分类资料", classificationStatus: "pending" },
   { ...visibleResource, id: "draft", title: "草稿资料", publicationStatus: "draft" },
@@ -105,6 +119,14 @@ describe("resource discovery layout", () => {
     expect(window.location.search).toBe("?category=stage-junior");
     expect(screen.getByRole("heading", { name: "初中（3）" })).toBeVisible();
     expect(screen.getByText("合成初中一级资料")).toBeVisible();
+  });
+
+  it("marks resources with multiple delivery channels in the list", () => {
+    window.history.replaceState({}, "", "/resources?category=type-junior-math-notes");
+    render(<ResourcesPage detail={vi.fn()} resourceValues={[dualChannelResource]} />);
+
+    expect(screen.getByText("双渠道 · 夸克 + 百度")).toBeVisible();
+    expect(screen.getByLabelText("资料渠道：双渠道 · 夸克 + 百度")).toBeVisible();
   });
 });
 

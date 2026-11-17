@@ -10,6 +10,8 @@ import {
 } from "./catalogV2";
 import {
   PUBLIC_MANIFEST_SCHEMA_VERSION,
+  type PublicManifestDelivery,
+  type PublicManifestProvider,
   type PublicManifest,
   type PublicManifestRecord,
 } from "./publicManifest";
@@ -21,6 +23,14 @@ import {
 export type PublicProjectionPolicy = {
   deliveryId: string;
   browseState: BrowseState;
+  evidence: readonly AuthorizationEvidence[];
+  additionalDeliveries?: readonly PublicProjectionAdditionalDeliveryPolicy[];
+};
+
+export type PublicProjectionAdditionalDeliveryPolicy = {
+  deliveryId: string;
+  provider: PublicManifestProvider;
+  browseState?: BrowseState;
   evidence: readonly AuthorizationEvidence[];
 };
 
@@ -49,6 +59,26 @@ const policyFor = (
 const withoutShareEntry = (record: PublicManifestRecord): PublicManifestRecord => {
   const projected = { ...record, shareUrl: null };
   delete projected.passcode;
+  return projected;
+};
+
+const recordForDelivery = (
+  record: PublicManifestRecord,
+  delivery: PublicManifestDelivery,
+): PublicManifestRecord => {
+  const projected: PublicManifestRecord = {
+    ...record,
+    provider: delivery.provider,
+    shareUrl: delivery.shareUrl,
+    accessStatus: delivery.accessStatus,
+    checkedOn: delivery.checkedOn ?? null,
+  };
+  delete projected.deliveries;
+  if (delivery.passcode === undefined) {
+    delete projected.passcode;
+  } else {
+    projected.passcode = delivery.passcode;
+  }
   return projected;
 };
 
@@ -114,6 +144,42 @@ export const projectManifestToPublic = (
     const publicRecord = shareLinkGate.ok
       ? { ...record }
       : withoutShareEntry(record);
+    delete publicRecord.deliveries;
+
+    const additionalSourceDeliveries = record.deliveries ?? [];
+    const exposedAdditionalDeliveries: PublicManifestDelivery[] = [];
+    const usedAdditionalSourceIndexes = new Set<number>();
+    for (const additionalPolicy of policy.additionalDeliveries ?? []) {
+      const sourceIndex = additionalSourceDeliveries.findIndex(
+        (delivery, index) =>
+          !usedAdditionalSourceIndexes.has(index) &&
+          delivery.provider === additionalPolicy.provider,
+      );
+      if (sourceIndex < 0) continue;
+      usedAdditionalSourceIndexes.add(sourceIndex);
+
+      const sourceDelivery = additionalSourceDeliveries[sourceIndex];
+      const additionalProjection = projectLegacyManifestRecordToV2(
+        recordForDelivery(record, sourceDelivery),
+        {
+          deliveryId: additionalPolicy.deliveryId,
+          browseState: additionalPolicy.browseState ?? policy.browseState,
+        },
+      );
+      const additionalShareLinkGate = evaluateDeliveryShareLinkGate(
+        additionalProjection.resource,
+        additionalProjection.delivery,
+        categoryIsPublic,
+        context,
+        additionalPolicy.evidence,
+      );
+      if (additionalShareLinkGate.ok) {
+        exposedAdditionalDeliveries.push(sourceDelivery);
+      }
+    }
+    if (exposedAdditionalDeliveries.length > 0) {
+      publicRecord.deliveries = exposedAdditionalDeliveries;
+    }
     records.push(publicRecord);
     decisions.push({
       resourceId: record.id,

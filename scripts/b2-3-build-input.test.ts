@@ -53,6 +53,18 @@ describe("B2-3 controlled source input", () => {
       record.checkedOn === "2026-11-15" &&
       record.fileType === "folder",
     )).toBe(true);
+    const secondaryBaiduRecords = manifest.records.filter((record) =>
+      record.deliveries?.some((delivery) => delivery.provider === "baidu"),
+    );
+    expect(secondaryBaiduRecords).toHaveLength(53);
+    expect(secondaryBaiduRecords.every((record) =>
+      record.provider === "quark" &&
+      record.deliveries?.length === 1 &&
+      record.deliveries[0]?.provider === "baidu" &&
+      record.deliveries[0]?.accessStatus === "verified" &&
+      record.deliveries[0]?.checkedOn === "2026-11-17",
+    )).toBe(true);
+    expect(secondaryBaiduRecords.some((record) => record.id.startsWith("ai-baidu-"))).toBe(false);
     const firstRoundWorkbooks = manifest.records.filter((record) =>
       record.id.startsWith("hs-workbooks-first-round-2027-item-"),
     );

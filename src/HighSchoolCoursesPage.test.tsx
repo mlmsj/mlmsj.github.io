@@ -16,15 +16,20 @@ describe("高中网课课程索引页面", () => {
     expect(screen.getByRole("heading", { name: "高中网课" })).toBeVisible();
     expect(screen.getAllByRole("tab")).toHaveLength(3);
     expect(screen.getAllByRole("button", { name: /个教师资料入口|暂无已发布教师入口/ })).toHaveLength(9);
-    expect(screen.getAllByRole("link", { name: /打开网盘资料/ })).toHaveLength(7);
+    expect(screen.getAllByRole("link", { name: /打开夸克网盘资料/ })).toHaveLength(7);
+    expect(screen.getAllByRole("link", { name: /打开百度网盘资料/ })).toHaveLength(7);
 
     fireEvent.click(screen.getByRole("button", { name: /数学/ }));
 
     expect(window.location.pathname).toBe("/high-school/courses");
     expect(window.location.search).toBe("?grade=%E9%AB%98%E4%B8%80&subject=%E6%95%B0%E5%AD%A6");
-    expect(screen.getByRole("link", { name: /王子悦.*打开网盘资料/ })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: /王子悦.*打开夸克网盘资料/ })).toHaveAttribute(
       "href",
       "https://pan.quark.cn/s/f5a8677f9c22",
+    );
+    expect(screen.getByRole("link", { name: /王子悦.*打开百度网盘资料/ })).toHaveAttribute(
+      "href",
+      expect.stringMatching(/^https:\/\/pan\.baidu\.com\/s\/.+\?pwd=/),
     );
   });
 
@@ -57,7 +62,18 @@ describe("高中网课课程索引页面", () => {
     fireEvent.click(screen.getByRole("button", { name: "搜索" }));
 
     expect(window.location.search).toBe("?grade=%E9%AB%98%E4%BA%8C&subject=%E5%8C%96%E5%AD%A6&q=%E7%94%B5%E8%A7%A3%E6%B1%A0");
-    expect(screen.getByRole("link", { name: /李政.*打开网盘资料/ })).toBeVisible();
-    expect(screen.getAllByRole("link", { name: /打开网盘资料/ })).toHaveLength(1);
+    expect(screen.getByRole("link", { name: /李政.*打开夸克网盘资料/ })).toBeVisible();
+    expect(screen.getByRole("link", { name: /李政.*打开百度网盘资料/ })).toBeVisible();
+    expect(screen.getAllByRole("link", { name: /打开(?:夸克|百度)网盘资料/ })).toHaveLength(2);
+  });
+
+  it("为百度独有教师新增单独卡片并只显示百度入口", () => {
+    render(<HighSchoolCoursesPage onSearch={vi.fn()} />);
+
+    fireEvent.click(screen.getByRole("tab", { name: /高三/ }));
+    fireEvent.click(screen.getByRole("button", { name: /数学/ }));
+
+    expect(screen.getByRole("link", { name: /数心引力.*打开百度网盘资料/ })).toBeVisible();
+    expect(screen.queryByRole("link", { name: /数心引力.*打开夸克网盘资料/ })).not.toBeInTheDocument();
   });
 });

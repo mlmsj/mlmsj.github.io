@@ -5,6 +5,14 @@ import {
   type HighSchoolSubject,
   type SourcePathMapping,
 } from "./highSchoolCourseIndex";
+import { HIGH_SCHOOL_BAIDU_TEACHER_LINK_RECORDS } from "./highSchoolBaiduTeacherLinks";
+
+export type HighSchoolTeacherProvider = "quark" | "baidu";
+
+export type HighSchoolTeacherDelivery = {
+  provider: HighSchoolTeacherProvider;
+  shareUrl: string;
+};
 
 export type HighSchoolTeacher = {
   teacherKey: string;
@@ -19,6 +27,7 @@ export type HighSchoolTeacher = {
   sourcePathMapping: SourcePathMapping;
   courseSourcePathMapping: SourcePathMapping;
   shareUrl: string;
+  deliveries: readonly HighSchoolTeacherDelivery[];
   linkStatus: "published";
   identityStatus: "raw_directory_label";
 };
@@ -220,11 +229,33 @@ const courseFor = (grade: HighSchoolGrade, subject: HighSchoolSubject) => {
   return course;
 };
 
+const teacherIdentity = (
+  grade: HighSchoolGrade,
+  subject: HighSchoolSubject,
+  displayName: string,
+) => `${grade}|${subject}|${displayName}`;
+
+const baiduShareUrlByTeacher = new Map(
+  HIGH_SCHOOL_BAIDU_TEACHER_LINK_RECORDS.map(
+    ([grade, subject, displayName, shareUrl]) =>
+      [teacherIdentity(grade, subject, displayName), shareUrl] as const,
+  ),
+);
+
 const teacherRecords = HIGH_SCHOOL_TEACHER_LINK_RECORDS.map(
   ([grade, subject, rawDirectoryName, displayName, shareUrl], index) => {
     const course = courseFor(grade, subject);
     const sourcePath = `${course.sourcePath}/${rawDirectoryName}`;
     const teacherKey = `ht_${String(index + 1).padStart(3, "0")}_${course.registryKey}`;
+    const baiduShareUrl = baiduShareUrlByTeacher.get(
+      teacherIdentity(grade, subject, displayName),
+    );
+    const deliveries: HighSchoolTeacherDelivery[] = [
+      { provider: "quark", shareUrl },
+    ];
+    if (baiduShareUrl) {
+      deliveries.push({ provider: "baidu", shareUrl: baiduShareUrl });
+    }
     return {
       teacherKey,
       entityId: teacherKey,
@@ -242,20 +273,79 @@ const teacherRecords = HIGH_SCHOOL_TEACHER_LINK_RECORDS.map(
       },
       courseSourcePathMapping: course.sourcePathMapping,
       shareUrl,
+      deliveries,
       linkStatus: "published" as const,
       identityStatus: "raw_directory_label" as const,
     } satisfies HighSchoolTeacher;
   },
 );
 
-export const HIGH_SCHOOL_TEACHERS: readonly HighSchoolTeacher[] = teacherRecords;
+const BAIDU_ONLY_TEACHER_SOURCE_RECORDS = [
+  ["高三", "数学", "15.2027年高三数学数心引力", "数心引力"],
+  ["高三", "英语", "11.2027年高三英语KO大魔王", "KO大魔王"],
+  ["高三", "物理", "14.2027年高三物理不刷题的吴姥姥", "不刷题的吴姥姥"],
+  ["高三", "物理", "07.2027年高三物理莫荒年", "莫荒年"],
+  ["高三", "物理", "08.2027年高三物理许纪悦", "许纪悦"],
+] as const satisfies readonly [
+  HighSchoolGrade,
+  HighSchoolSubject,
+  string,
+  string,
+][];
+
+const baiduOnlyTeacherRecords: readonly HighSchoolTeacher[] =
+  BAIDU_ONLY_TEACHER_SOURCE_RECORDS.map(
+    ([grade, subject, rawDirectoryName, displayName], index) => {
+      const course = courseFor(grade, subject);
+      const sourcePath = `${course.sourcePath}/${rawDirectoryName}`;
+      const shareUrl = baiduShareUrlByTeacher.get(
+        teacherIdentity(grade, subject, displayName),
+      );
+      if (!shareUrl) {
+        throw new Error(`Missing Baidu share for ${grade} / ${subject} / ${displayName}`);
+      }
+      const teacherKey = `ht_baidu_${String(index + 1).padStart(2, "0")}_${course.registryKey}`;
+      return {
+        teacherKey,
+        entityId: teacherKey,
+        rawDirectoryName,
+        displayName,
+        grade,
+        subject,
+        courseId: course.courseId,
+        courseKey: `${course.packageYear}:${grade}:${subject}`,
+        sourcePath,
+        sourcePathMapping: {
+          mappingId: `teacher-baidu-spm_${String(index + 1).padStart(2, "0")}`,
+          currentSourcePath: sourcePath,
+          previousSourcePath: null,
+        },
+        courseSourcePathMapping: course.sourcePathMapping,
+        shareUrl,
+        deliveries: [{ provider: "baidu", shareUrl }],
+        linkStatus: "published" as const,
+        identityStatus: "raw_directory_label" as const,
+      } satisfies HighSchoolTeacher;
+    },
+  );
+
+export const HIGH_SCHOOL_TEACHERS: readonly HighSchoolTeacher[] = [
+  ...teacherRecords,
+  ...baiduOnlyTeacherRecords,
+];
 
 export const HIGH_SCHOOL_TEACHER_COUNT = HIGH_SCHOOL_TEACHERS.length;
 
 export const isPublicHighSchoolTeacher = (teacher: HighSchoolTeacher): boolean =>
   teacher.linkStatus === "published" &&
   teacher.courseId.length > 0 &&
-  /^https:\/\/pan\.quark\.cn\/s\/[A-Za-z0-9]+$/.test(teacher.shareUrl) &&
+  teacher.deliveries.length > 0 &&
+  teacher.deliveries.every(({ provider, shareUrl }) =>
+    provider === "quark"
+      ? /^https:\/\/pan\.quark\.cn\/s\/[A-Za-z0-9]+$/.test(shareUrl)
+      : /^https:\/\/pan\.baidu\.com\/s\/[A-Za-z0-9_-]+\?pwd=[A-Za-z0-9]+$/.test(shareUrl),
+  ) &&
+  teacher.deliveries.some((delivery) => delivery.shareUrl === teacher.shareUrl) &&
   HIGH_SCHOOL_COURSE_INDEX.courses.some(
     (course) =>
       course.courseId === teacher.courseId &&

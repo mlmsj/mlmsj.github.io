@@ -14,9 +14,10 @@ import {
   PUBLIC_PROVIDERS,
   type PublicAccessStatus,
   type PublicManifestProvider,
+  type PublicManifestDelivery,
   type PublicManifestRecord,
 } from "./publicManifest";
-import type { Resource } from "./resources";
+import type { Resource, ResourceDelivery } from "./resources";
 
 export type PublicCatalogPhase = "loading" | "ready" | "error";
 
@@ -49,6 +50,23 @@ export const mapManifestRecordToResource = (
     isAllowedPublicShareUrl(record.provider, record.shareUrl)
       ? record.shareUrl
       : null;
+  const mapDelivery = (delivery: PublicManifestDelivery): ResourceDelivery => {
+    const deliveryShareUrl =
+      isManifestProvider(delivery.provider) &&
+      isAllowedPublicShareUrl(delivery.provider, delivery.shareUrl)
+        ? delivery.shareUrl
+        : null;
+
+    return {
+      provider: delivery.provider,
+      shareUrl: deliveryShareUrl,
+      ...(delivery.shareUrl !== null && delivery.passcode !== undefined
+        ? { passcode: delivery.passcode }
+        : {}),
+      accessStatus: delivery.accessStatus,
+      checkedOn: delivery.checkedOn ?? null,
+    };
+  };
 
   return {
     id: record.id,
@@ -77,6 +95,9 @@ export const mapManifestRecordToResource = (
       accessStatus: record.accessStatus,
       checkedOn: record.checkedOn ?? null,
     },
+    ...(record.deliveries
+      ? { deliveries: record.deliveries.map(mapDelivery) }
+      : {}),
   };
 };
 
@@ -116,13 +137,25 @@ export const getResourceAccessMessage = (resource: Resource) => {
 
 export const canOpenPublicShare = (resource: Resource) => {
   if (!isPublishedPublicResource(resource)) return false;
-  const delivery = resource.delivery;
-  return Boolean(
-    delivery &&
-      delivery.accessStatus === "verified" &&
-      isAllowedPublicShareUrl(delivery.provider, delivery.shareUrl),
+  return getResourceDeliveries(resource).some((delivery) =>
+    canOpenPublicDelivery(resource, delivery),
   );
 };
+
+export const getResourceDeliveries = (
+  resource: Resource,
+): ResourceDelivery[] => [
+  ...(resource.delivery ? [resource.delivery] : []),
+  ...(resource.deliveries ?? []),
+];
+
+export const canOpenPublicDelivery = (
+  resource: Resource,
+  delivery: ResourceDelivery,
+) =>
+  isPublishedPublicResource(resource) &&
+  delivery.accessStatus === "verified" &&
+  isAllowedPublicShareUrl(delivery.provider, delivery.shareUrl);
 
 const buildCategoryCounts = (
   items: readonly Resource[],

@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 import {
   canOpenPublicShare,
+  getResourceDeliveries,
   mapManifestRecordToResource,
   usePublicCatalog,
 } from "./publicCatalog";
@@ -244,6 +245,29 @@ describe("static public manifest catalog", () => {
     expect(canOpenPublicShare(resource)).toBe(false);
     render(<PublicDeliveryPanel resource={resource} />);
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  });
+
+  it("maps and renders Quark and Baidu delivery channels together", () => {
+    const resource = mapManifestRecordToResource({
+      ...syntheticRecord,
+      deliveries: [
+        {
+          provider: "baidu",
+          shareUrl: "https://pan.baidu.com/s/secondary-only?pwd=5678",
+          passcode: "5678",
+          accessStatus: "verified",
+          checkedOn: "2026-10-17",
+        },
+      ],
+    });
+
+    expect(getResourceDeliveries(resource)).toHaveLength(2);
+    expect(canOpenPublicShare(resource)).toBe(true);
+    render(<PublicDeliveryPanel resource={resource} />);
+
+    expect(screen.getByRole("link", { name: /打开夸克网盘分享/ })).toBeVisible();
+    expect(screen.getByRole("link", { name: /打开百度网盘分享/ })).toBeVisible();
+    expect(screen.getAllByRole("button", { name: "复制提取码" })).toHaveLength(2);
   });
 
   it("keeps authorized metadata visible while withholding an unauthorized link and passcode", () => {

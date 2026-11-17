@@ -13,6 +13,7 @@ import {
 import {
   canOpenPublicShare,
   getResourceAccessLabel,
+  getResourceDeliveries,
   type PublicCatalogPhase,
 } from "./publicCatalog";
 import { categoryPathBrowseLocation, resourceFilterLocation } from "./categoryRouting";
@@ -45,6 +46,10 @@ const RESOURCE_GROUP_PARENT_IDS = new Set([
   "stage-university",
   "purpose-certification",
 ]);
+const RESOURCE_PROVIDER_LABELS = {
+  quark: "夸克",
+  baidu: "百度",
+} as const;
 
 type ResourceListEntry =
   | {
@@ -441,6 +446,19 @@ export function ResourcesPage({
     groupToggle?: ResourceGroupToggle,
   ) => {
     const accessLabel = getResourceAccessLabel(resource);
+    const deliveryProviders = Array.from(
+      new Set(
+        getResourceDeliveries(resource).map(
+          (delivery) => RESOURCE_PROVIDER_LABELS[delivery.provider],
+        ),
+      ),
+    );
+    const deliveryChannelLabel =
+      deliveryProviders.length > 1
+        ? `双渠道 · ${deliveryProviders.join(" + ")}`
+        : deliveryProviders[0] === "百度"
+          ? "渠道 · 百度"
+          : null;
     const metadataLabel = getResourceMetadataLabel(resource);
     const resourcePath = resource.categoryId
       ? getCategoryPath(resource.categoryId, categoryValues)
@@ -460,7 +478,21 @@ export function ResourcesPage({
       <span className="resource-item-copy">
         <span className="resource-item-labels">
           <small>{resource.tag}</small>
-          {accessLabel && <small className={`resource-access-status resource-access-status-${resource.delivery?.accessStatus}`}>{accessLabel}</small>}
+          {accessLabel && (
+            <small
+              className={`resource-access-status resource-access-status-${resource.delivery?.accessStatus}`}
+            >
+              {accessLabel}
+            </small>
+          )}
+          {deliveryChannelLabel && (
+            <small
+              className={`resource-delivery-channels${deliveryProviders.length > 1 ? " is-dual" : ""}`}
+              aria-label={`资料渠道：${deliveryChannelLabel}`}
+            >
+              {deliveryChannelLabel}
+            </small>
+          )}
         </span>
         <span className="resource-item-title-row">
           <strong>{resource.title}</strong>

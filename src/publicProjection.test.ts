@@ -157,4 +157,56 @@ describe("build-time public manifest projection", () => {
       "delivery-authorization-missing",
     );
   });
+
+  it("exposes an explicitly authorized secondary delivery and strips unapproved ones", () => {
+    const record = {
+      ...source.records[0]!,
+      deliveries: [
+        {
+          provider: "baidu" as const,
+          shareUrl: "https://pan.baidu.com/s/secondary-only?pwd=2468",
+          passcode: "2468",
+          accessStatus: "verified" as const,
+          checkedOn: "2026-11-01",
+        },
+      ],
+    };
+    const authorized = projectManifestToPublic(
+      { ...source, records: [record] },
+      new Map([
+        [
+          record.id,
+          {
+            ...policy("delivery-a", [
+              resourceEvidence(record.id),
+              linkEvidence(record.id, "delivery-a"),
+            ]),
+            additionalDeliveries: [
+              {
+                deliveryId: "delivery-b",
+                provider: "baidu" as const,
+                evidence: [
+                  resourceEvidence(record.id),
+                  linkEvidence(record.id, "delivery-b"),
+                ],
+              },
+            ],
+          },
+        ],
+      ]),
+      context,
+    );
+
+    expect(authorized.manifest.records[0]?.deliveries).toEqual(record.deliveries);
+
+    const withheld = projectManifestToPublic(
+      { ...source, records: [record] },
+      new Map([[record.id, policy("delivery-a", [
+        resourceEvidence(record.id),
+        linkEvidence(record.id, "delivery-a"),
+      ])]]),
+      context,
+    );
+    expect(withheld.manifest.records[0]?.deliveries).toBeUndefined();
+  });
 });

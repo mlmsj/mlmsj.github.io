@@ -16,6 +16,15 @@ export const PUBLIC_MANIFEST_RECORD_FIELDS = [
   "publishedAt",
   "fileType",
   "sizeBytes",
+  "deliveries",
+] as const;
+
+export const PUBLIC_MANIFEST_DELIVERY_FIELDS = [
+  "provider",
+  "shareUrl",
+  "passcode",
+  "accessStatus",
+  "checkedOn",
 ] as const;
 
 export const PUBLIC_PROVIDERS = ["quark", "baidu"] as const;
@@ -44,6 +53,16 @@ export type PublicManifestRecord = {
   checkedOn?: string | null;
   fileType?: string;
   sizeBytes?: number;
+  /** Additional delivery channels; the legacy top-level delivery remains primary. */
+  deliveries?: readonly PublicManifestDelivery[];
+};
+
+export type PublicManifestDelivery = {
+  provider: PublicManifestProvider;
+  shareUrl: string | null;
+  accessStatus: PublicAccessStatus;
+  passcode?: string;
+  checkedOn?: string | null;
 };
 
 export type PublicManifest = {
@@ -81,6 +100,8 @@ export type PublicManifestIssueCode =
   | "INVALID_GENERATED_AT"
   | "INVALID_RECORDS"
   | "INVALID_RECORD"
+  | "INVALID_DELIVERIES"
+  | "INVALID_DELIVERY"
   | "DUPLICATE_ID"
   | "INVALID_ID"
   | "INVALID_TITLE"
@@ -223,6 +244,67 @@ const issue = (
   code: PublicManifestIssueCode,
 ) => issues.push({ path, code });
 
+const validateDeliveryValues = (
+  rawDelivery: Record<string, unknown>,
+  path: string,
+  issues: PublicManifestValidationIssue[],
+) => {
+  const provider = rawDelivery.provider;
+  if (!isProvider(provider)) {
+    issue(issues, `${path}.provider`, "INVALID_PROVIDER");
+  }
+
+  if (
+    !isProvider(provider) ||
+    (rawDelivery.shareUrl !== null &&
+      !isAllowedPublicShareUrl(provider, rawDelivery.shareUrl))
+  ) {
+    issue(issues, `${path}.shareUrl`, "INVALID_SHARE_URL");
+  }
+
+  const accessStatus = rawDelivery.accessStatus;
+  if (!isAccessStatus(accessStatus)) {
+    issue(issues, `${path}.accessStatus`, "INVALID_ACCESS_STATUS");
+  }
+
+  const checkedOn = rawDelivery.checkedOn;
+  if (
+    hasOwn(rawDelivery, "checkedOn") &&
+    checkedOn !== null &&
+    !validIsoDate(checkedOn)
+  ) {
+    issue(issues, `${path}.checkedOn`, "INVALID_CHECKED_ON");
+  }
+  if (
+    accessStatus === "verified" &&
+    (typeof checkedOn !== "string" || !validIsoDate(checkedOn))
+  ) {
+    issue(issues, `${path}.checkedOn`, "STATUS_REQUIRES_CHECKED_ON");
+  }
+  if (
+    accessStatus === "unchecked" &&
+    checkedOn !== undefined &&
+    checkedOn !== null
+  ) {
+    issue(issues, `${path}.checkedOn`, "STATUS_FORBIDS_CHECKED_ON");
+  }
+
+  const passcode = rawDelivery.passcode;
+  if (
+    hasOwn(rawDelivery, "passcode") &&
+    (typeof passcode !== "string" ||
+      passcode.length === 0 ||
+      passcode.length > 64 ||
+      /\s/u.test(passcode) ||
+      hasControlCharacters(passcode))
+  ) {
+    issue(issues, `${path}.passcode`, "INVALID_PASSCODE");
+  }
+  if (hasOwn(rawDelivery, "passcode") && rawDelivery.shareUrl === null) {
+    issue(issues, `${path}.passcode`, "PASSCODE_WITHOUT_SHARE_URL");
+  }
+};
+
 export const validatePublicManifest = (
   input: unknown,
   categoryValues: readonly Category[] = categories,
@@ -254,6 +336,27 @@ export const validatePublicManifest = (
     }
 
     checkUnknownFields(rawRecord, PUBLIC_MANIFEST_RECORD_FIELDS, path, issues);
+
+    if (hasOwn(rawRecord, "deliveries")) {
+      if (!Array.isArray(rawRecord.deliveries)) {
+        issue(issues, `${path}.deliveries`, "INVALID_DELIVERIES");
+      } else {
+        rawRecord.deliveries.forEach((rawDelivery, deliveryIndex) => {
+          const deliveryPath = `${path}.deliveries[${deliveryIndex}]`;
+          if (!isObject(rawDelivery)) {
+            issue(issues, deliveryPath, "INVALID_DELIVERY");
+            return;
+          }
+          checkUnknownFields(
+            rawDelivery,
+            PUBLIC_MANIFEST_DELIVERY_FIELDS,
+            deliveryPath,
+            issues,
+          );
+          validateDeliveryValues(rawDelivery, deliveryPath, issues);
+        });
+      }
+    }
 
     const id = rawRecord.id;
     if (typeof id !== "string" || !STABLE_ID.test(id)) {
@@ -295,64 +398,12 @@ export const validatePublicManifest = (
       issue(issues, `${path}.categoryId`, "INVALID_CATEGORY");
     }
 
-    const provider = rawRecord.provider;
-    if (!isProvider(provider)) {
-      issue(issues, `${path}.provider`, "INVALID_PROVIDER");
-    }
-
-    if (
-      !isProvider(provider) ||
-      (rawRecord.shareUrl !== null &&
-        !isAllowedPublicShareUrl(provider, rawRecord.shareUrl))
-    ) {
-      issue(issues, `${path}.shareUrl`, "INVALID_SHARE_URL");
-    }
-
-    const accessStatus = rawRecord.accessStatus;
-    if (!isAccessStatus(accessStatus)) {
-      issue(issues, `${path}.accessStatus`, "INVALID_ACCESS_STATUS");
-    }
-
-    const checkedOn = rawRecord.checkedOn;
-    if (
-      hasOwn(rawRecord, "checkedOn") &&
-      checkedOn !== null &&
-      !validIsoDate(checkedOn)
-    ) {
-      issue(issues, `${path}.checkedOn`, "INVALID_CHECKED_ON");
-    }
-    if (
-      accessStatus === "verified" &&
-      (typeof checkedOn !== "string" || !validIsoDate(checkedOn))
-    ) {
-      issue(issues, `${path}.checkedOn`, "STATUS_REQUIRES_CHECKED_ON");
-    }
-    if (
-      accessStatus === "unchecked" &&
-      checkedOn !== undefined &&
-      checkedOn !== null
-    ) {
-      issue(issues, `${path}.checkedOn`, "STATUS_FORBIDS_CHECKED_ON");
-    }
+    validateDeliveryValues(rawRecord, path, issues);
 
     if (!validIsoDateTime(rawRecord.publishedAt)) {
       issue(issues, `${path}.publishedAt`, "INVALID_PUBLISHED_AT");
     }
 
-    const passcode = rawRecord.passcode;
-    if (
-      hasOwn(rawRecord, "passcode") &&
-      (typeof passcode !== "string" ||
-        passcode.length === 0 ||
-        passcode.length > 64 ||
-        /\s/u.test(passcode) ||
-        hasControlCharacters(passcode))
-    ) {
-      issue(issues, `${path}.passcode`, "INVALID_PASSCODE");
-    }
-    if (hasOwn(rawRecord, "passcode") && rawRecord.shareUrl === null) {
-      issue(issues, `${path}.passcode`, "PASSCODE_WITHOUT_SHARE_URL");
-    }
 
     const fileType = rawRecord.fileType;
     if (

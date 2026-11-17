@@ -6,17 +6,23 @@ import {
 } from "./highSchoolTeacherIndex";
 
 describe("高中网课教师入口索引", () => {
-  it("保留178个原始教师目录入口，并按课程键分组", () => {
-    expect(HIGH_SCHOOL_TEACHERS).toHaveLength(178);
-    expect(new Set(HIGH_SCHOOL_TEACHERS.map((teacher) => teacher.teacherKey)).size).toBe(178);
-    expect(new Set(HIGH_SCHOOL_TEACHERS.map((teacher) => teacher.shareUrl)).size).toBe(178);
+  it("合并夸克和百度教师入口，并保留百度独有教师", () => {
+    expect(HIGH_SCHOOL_TEACHERS).toHaveLength(183);
+    expect(new Set(HIGH_SCHOOL_TEACHERS.map((teacher) => teacher.teacherKey)).size).toBe(183);
+    expect(new Set(HIGH_SCHOOL_TEACHERS.map((teacher) => teacher.shareUrl)).size).toBe(183);
 
     for (const teacher of HIGH_SCHOOL_TEACHERS) {
       expect(isPublicHighSchoolTeacher(teacher)).toBe(true);
-      expect(teacher.shareUrl).toMatch(/^https:\/\/pan\.quark\.cn\/s\/[A-Za-z0-9]+$/);
+      expect(teacher.deliveries.length).toBeGreaterThan(0);
+      expect(teacher.shareUrl).toBe(teacher.deliveries[0]?.shareUrl);
       expect(teacher.sourcePath).toContain(teacher.rawDirectoryName);
       expect(teacher.courseSourcePathMapping.currentSourcePath).toContain(teacher.subject);
     }
+
+    expect(HIGH_SCHOOL_TEACHERS.filter((teacher) => teacher.deliveries.length === 2)).toHaveLength(169);
+    expect(HIGH_SCHOOL_TEACHERS.filter((teacher) => teacher.deliveries[0]?.provider === "baidu")).toHaveLength(5);
+    expect(HIGH_SCHOOL_TEACHERS.some((teacher) => teacher.displayName === "数心引力")).toBe(true);
+    expect(HIGH_SCHOOL_TEACHERS.some((teacher) => teacher.displayName === "KO大魔王")).toBe(true);
   });
 
   it("三个年级都覆盖九门学科，并保留原始同名标签", () => {
