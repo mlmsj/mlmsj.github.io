@@ -205,6 +205,7 @@ const SKILL_GROWTH_AI_IDS = [
   "ai-chatgpt-002",
   "ai-deepseek-001",
   "ai-deepseek-002",
+  "ai-quark-collection-001",
 ] as const;
 
 const SKILL_GROWTH_NON_AI_IDS = [
@@ -253,6 +254,7 @@ const BAIDU_AI_IDS = [
   "ai-baidu-aigc-001",
   "ai-baidu-self-media-001",
   "ai-baidu-intro-001",
+  "ai-baidu-learning-001",
   "ai-baidu-chatgpt-001",
 ] as const;
 
@@ -486,6 +488,27 @@ describe("public manifest contract", () => {
     }
   });
 
+  it("accepts bounded public search keywords and rejects malformed keyword lists", () => {
+    expect(
+      validatePublicManifest({
+        ...validManifest(),
+        records: [{ ...validRecord, keywords: ["大学英语", "CET-4"] }],
+      }).ok,
+    ).toBe(true);
+    expect(
+      codes({
+        ...validManifest(),
+        records: [{ ...validRecord, keywords: ["", "有效关键词"] }],
+      }),
+    ).toContain("INVALID_KEYWORDS");
+    expect(
+      codes({
+        ...validManifest(),
+        records: [{ ...validRecord, keywords: Array.from({ length: 33 }, (_, index) => `关键词${index}`) }],
+      }),
+    ).toContain("INVALID_KEYWORDS");
+  });
+
   it("validates production or isolated preview manifest without mixing their baselines", async () => {
     const file = resolve(
       process.cwd(),
@@ -523,7 +546,7 @@ describe("public manifest contract", () => {
       SENIOR_THEME_IDS.every((id) => ids.includes(id));
 
     const isSkillGrowthCandidate =
-      (ids.length === 74 || ids.length === 85 || ids.length === 109 || ids.length === 113 || ids.length === 175 || ids.length === 182 || ids.length === 243 || ids.length === 250 || ids.length === 284 || ids.length === 296) &&
+      (ids.length === 74 || ids.length === 85 || ids.length === 109 || ids.length === 113 || ids.length === 175 || ids.length === 182 || ids.length === 243 || ids.length === 250 || ids.length === 284 || ids.length === 296 || ids.length === 297 || ids.length === 298) &&
       SKILL_GROWTH_AI_IDS.every((id) => ids.includes(id)) &&
       SKILL_GROWTH_NON_AI_IDS.every((id) => ids.includes(id)) &&
       UNIVERSITY_AGGREGATE_IDS.every((id) => ids.includes(id)) &&
@@ -593,7 +616,7 @@ describe("public manifest contract", () => {
           record.shareUrl !== null,
         )).toBe(true);
       }
-      if (ids.length === 243 || ids.length === 250 || ids.length === 284 || ids.length === 296) {
+      if (ids.length === 243 || ids.length === 250 || ids.length === 284 || ids.length === 296 || ids.length === 297 || ids.length === 298) {
         const baiduAiRecords = parsed.records.filter((record) =>
           BAIDU_AI_IDS.includes(record.id as (typeof BAIDU_AI_IDS)[number]),
         );
@@ -605,6 +628,7 @@ describe("public manifest contract", () => {
           ["ai-baidu-aigc-001", "skill-ai-aigc"],
           ["ai-baidu-self-media-001", "skill-ai-self-media"],
           ["ai-baidu-intro-001", "skill-ai-learning-cognition"],
+          ["ai-baidu-learning-001", "skill-ai-learning-cognition"],
           ["ai-baidu-chatgpt-001", "skill-ai-chatgpt"],
         ]);
         expect(baiduAiRecords.every((record) =>
@@ -624,7 +648,7 @@ describe("public manifest contract", () => {
           record.shareUrl !== null &&
           /^\d+\./.test(record.title),
         )).toBe(true);
-        if (ids.length === 250 || ids.length === 284 || ids.length === 296) {
+        if (ids.length === 250 || ids.length === 284 || ids.length === 296 || ids.length === 297 || ids.length === 298) {
           const synchronousWorkbookRecords = parsed.records.filter((record) =>
             HIGH_SCHOOL_SYNCHRONOUS_WORKBOOK_IDS.includes(record.id),
           );
@@ -637,7 +661,7 @@ describe("public manifest contract", () => {
             /^\d+\./.test(record.title),
           )).toBe(true);
         }
-        if (ids.length === 284 || ids.length === 296) {
+        if (ids.length === 284 || ids.length === 296 || ids.length === 297 || ids.length === 298) {
           const certificationFirstLevelRecords = parsed.records.filter((record) =>
             record.id.startsWith("university-topic-cet-item-") ||
             record.id.startsWith("university-topic-ielts-item-") ||

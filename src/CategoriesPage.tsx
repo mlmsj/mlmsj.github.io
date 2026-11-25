@@ -11,6 +11,14 @@ import {
   type CategoryRouteState,
 } from "./categoryRouting";
 import { canOpenPublicShare } from "./publicCatalog";
+import {
+  getCompatibleResourceCategoryIds,
+} from "./categoryCounts";
+import {
+  getCategoryFolderEntries,
+  getCategoryContentItemCount,
+  type CategoryFolderEntry,
+} from "./categoryFolderPilot";
 import { getResourceMetadataLabel, type Resource } from "./resources";
 
 const routeIssueMessages = {
@@ -39,12 +47,14 @@ const categoryIcon = (id: string, size = 24) => {
 const CategoryCard = ({
   category,
   count = 0,
+  countLabel,
   onSelect,
   href,
   onNavigate,
 }: {
   category: Category;
   count?: number;
+  countLabel?: string;
   onSelect?: (category: Category) => void;
   href?: string;
   onNavigate?: (location: string) => void;
@@ -55,7 +65,7 @@ const CategoryCard = ({
       <span className="category-card-copy">
         <strong>{category.name}</strong>
         <span>{category.description}</span>
-        <small>{count > 0 ? `${count} 份资料` : "暂无资料"}</small>
+        <small>{countLabel ?? (count > 0 ? `${count} 份资料` : "暂无资料")}</small>
       </span>
       {(onSelect || href) && (
         <span className="category-card-arrow" aria-hidden="true">→</span>
@@ -176,11 +186,65 @@ function DirectResourceSection({
   );
 }
 
+function CategoryFolderSection({
+  category,
+  folders,
+}: {
+  category: Category;
+  folders: readonly CategoryFolderEntry[];
+}) {
+  if (folders.length === 0) return null;
+  const groupLabel = folders[0]?.groupLabel ?? "下级资料";
+  const groupDescription = folders[0]?.groupDescription ?? "按夸克网盘的文件夹层级整理";
+  return (
+    <section
+      className="category-folder-resources"
+      aria-labelledby={`${category.id}-folder-resources-title`}
+    >
+      <div className="category-folder-resources-head">
+        <div>
+          <p className="kicker">QUARK FOLDERS</p>
+          <h3 id={`${category.id}-folder-resources-title`}>
+            {groupLabel} <span>{folders.length}</span>
+          </h3>
+        </div>
+        <p>{groupDescription}</p>
+      </div>
+      <div className="category-folder-resource-grid">
+        {folders.map((folder) => (
+          <a
+            className="category-folder-resource"
+            href={folder.shareUrl}
+            key={folder.id}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span className="category-folder-resource-index" aria-hidden="true">
+              {folder.sequence}
+            </span>
+            <span className="category-folder-resource-copy">
+              <small>夸克网盘 · 文件夹</small>
+              <strong>{folder.title}</strong>
+              <em>{folder.description}</em>
+              <small>{folder.itemCount} 项内容</small>
+            </span>
+            <span className="category-folder-resource-arrow" aria-hidden="true">
+              ↗
+            </span>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function CategoriesPage({
   onHome,
   counts = {},
   onOpenResources,
+  onOpenJuniorHighCourses,
   onOpenHighSchoolCourses,
+  onOpenPostgraduateCourses,
   onProfile,
   onTools,
   resourceValues = [],
@@ -188,7 +252,9 @@ export function CategoriesPage({
   onHome: () => void;
   counts?: Record<string, number>;
   onOpenResources: (location: string) => void;
+  onOpenJuniorHighCourses?: (location: string) => void;
   onOpenHighSchoolCourses?: (location: string) => void;
+  onOpenPostgraduateCourses?: (location: string) => void;
   onProfile?: () => void;
   onTools?: () => void;
   resourceValues?: readonly Resource[];
@@ -260,20 +326,38 @@ export function CategoriesPage({
     navigate(categoryPathBrowseLocation(path.map((category) => category.id)));
   const selectRoot = (category: Category) => selectPath([category]);
   const openResourceLocation = (location: string, categoryId?: string) => {
+    if (categoryId === "domain-junior-courses" && onOpenJuniorHighCourses) {
+      onOpenJuniorHighCourses(location);
+      return;
+    }
     if (categoryId === "domain-senior-courses" && onOpenHighSchoolCourses) {
       onOpenHighSchoolCourses(location);
+      return;
+    }
+    if (categoryId === "domain-university-postgraduate-kaoyan" && onOpenPostgraduateCourses) {
+      onOpenPostgraduateCourses("/postgraduate/courses?subject=%E8%8B%B1%E8%AF%AD");
       return;
     }
     onOpenResources(location);
   };
   const selectDesktopChild = (category: Category) => {
     const children = getChildCategories(category.id);
+    const localFolders = getCategoryFolderEntries(category.id);
+    if (category.id === "domain-junior-courses") {
+      const location = resourceFilterLocation(category.id);
+      if (location) openResourceLocation(location, category.id);
+      return;
+    }
     if (category.id === "domain-senior-courses") {
       const location = resourceFilterLocation(category.id);
       if (location) openResourceLocation(location, category.id);
       return;
     }
-    if (children.length > 0) {
+    if (category.id === "domain-university-postgraduate-kaoyan") {
+      openResourceLocation("/postgraduate/courses?subject=%E8%8B%B1%E8%AF%AD", category.id);
+      return;
+    }
+    if (children.length > 0 || localFolders.length > 0) {
       selectPath([...desktopPath, category]);
     } else {
       const location = resourceFilterLocation(category.id);
@@ -282,12 +366,22 @@ export function CategoriesPage({
   };
   const selectMobileChild = (category: Category) => {
     const children = getChildCategories(category.id);
+    const localFolders = getCategoryFolderEntries(category.id);
+    if (category.id === "domain-junior-courses") {
+      const location = resourceFilterLocation(category.id);
+      if (location) openResourceLocation(location, category.id);
+      return;
+    }
     if (category.id === "domain-senior-courses") {
       const location = resourceFilterLocation(category.id);
       if (location) openResourceLocation(location, category.id);
       return;
     }
-    if (children.length > 0) {
+    if (category.id === "domain-university-postgraduate-kaoyan") {
+      openResourceLocation("/postgraduate/courses?subject=%E8%8B%B1%E8%AF%AD", category.id);
+      return;
+    }
+    if (children.length > 0 || localFolders.length > 0) {
       selectPath([...mobilePath, category]);
     } else {
       const location = resourceFilterLocation(category.id);
@@ -301,10 +395,22 @@ export function CategoriesPage({
   const activeResourceCategory = desktopCurrent;
   const directResourcesFor = (category: Category | null) =>
     category
-      ? resourceValues.filter((resource) => resource.categoryId === category.id)
+      ? resourceValues.filter(
+          (resource) =>
+            resource.categoryId !== null &&
+            getCompatibleResourceCategoryIds(category.id).includes(resource.categoryId),
+        )
       : [];
   const desktopDirectResources = directResourcesFor(desktopCurrent);
   const mobileDirectResources = directResourcesFor(mobileCurrent);
+  const desktopFolderEntries = getCategoryFolderEntries(desktopCurrent?.id);
+  const mobileFolderEntries = getCategoryFolderEntries(mobileCurrent?.id);
+  const localFolderCountLabel = (category: Category | null) => {
+    const itemCount = getCategoryContentItemCount(category?.id);
+    return itemCount === undefined ? undefined : `${itemCount} 项内容`;
+  };
+  const shouldShowDirectResources = (category: Category | null) =>
+    category?.id !== "purpose-certification";
   const activeResourceLocation = activeResourceCategory
     ? resourceFilterLocation(activeResourceCategory.id)
     : null;
@@ -326,7 +432,10 @@ export function CategoriesPage({
       }}
     >
       查看{activeResourceCategory.name}全部资料
-      <span>{counts[activeResourceCategory.id] ?? 0} 份资料</span>
+      <span>
+        {localFolderCountLabel(activeResourceCategory) ??
+          `${counts[activeResourceCategory.id] ?? 0} 份资料`}
+      </span>
     </a>
   ) : null;
   const activeResourceSummary = activeResourceCategory && activeResourceCategory.level === 1 && activeResourceLocation ? (
@@ -356,14 +465,16 @@ export function CategoriesPage({
 
   const renderDesktopCard = (category: Category) => {
     const children = getChildCategories(category.id);
+    const localFolders = getCategoryFolderEntries(category.id);
     return (
       <CategoryCard
         key={category.id}
         category={category}
         count={counts[category.id] ?? 0}
-        onSelect={children.length > 0 ? selectDesktopChild : undefined}
+        countLabel={localFolderCountLabel(category)}
+        onSelect={children.length > 0 || localFolders.length > 0 ? selectDesktopChild : undefined}
         href={
-          children.length === 0
+          children.length === 0 && localFolders.length === 0
             ? resourceFilterLocation(category.id) ?? undefined
             : undefined
         }
@@ -464,10 +575,18 @@ export function CategoriesPage({
             <div className="category-card-grid">
               {desktopItems.map(renderDesktopCard)}
             </div>
-          ) : (
+          ) : desktopFolderEntries.length === 0 ? (
             <EmptyCategoryState message={desktopEmpty} />
+          ) : null}
+          {desktopCurrent && desktopFolderEntries.length > 0 && (
+            <CategoryFolderSection
+              category={desktopCurrent}
+              folders={desktopFolderEntries}
+            />
           )}
-          {desktopCurrent && desktopDirectResources.length > 0 && (
+          {desktopCurrent &&
+            shouldShowDirectResources(desktopCurrent) &&
+            desktopDirectResources.length > 0 && (
             <DirectResourceSection
               category={desktopCurrent}
               resources={desktopDirectResources}
@@ -509,14 +628,16 @@ export function CategoriesPage({
           <div className="category-card-list" aria-label="下级分类">
             {mobileItems.map((category) => {
               const children = getChildCategories(category.id);
+              const localFolders = getCategoryFolderEntries(category.id);
               return (
                 <CategoryCard
                   key={category.id}
                   category={category}
                   count={counts[category.id] ?? 0}
-                  onSelect={children.length > 0 ? selectMobileChild : undefined}
+                  countLabel={localFolderCountLabel(category)}
+                  onSelect={children.length > 0 || localFolders.length > 0 ? selectMobileChild : undefined}
                   href={
-                    children.length === 0
+                    children.length === 0 && localFolders.length === 0
                       ? resourceFilterLocation(category.id) ?? undefined
                       : undefined
                   }
@@ -532,7 +653,15 @@ export function CategoriesPage({
               : "暂无下级分类"}
           />
         )}
-        {mobileCurrent && mobileDirectResources.length > 0 && (
+        {mobileCurrent && mobileFolderEntries.length > 0 && (
+          <CategoryFolderSection
+            category={mobileCurrent}
+            folders={mobileFolderEntries}
+          />
+        )}
+        {mobileCurrent &&
+          shouldShowDirectResources(mobileCurrent) &&
+          mobileDirectResources.length > 0 && (
           <DirectResourceSection
             category={mobileCurrent}
             resources={mobileDirectResources}

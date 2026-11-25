@@ -72,6 +72,9 @@ export const mapManifestRecordToResource = (
     id: record.id,
     title: record.title,
     description: record.description ?? "",
+    ...(record.keywords && record.keywords.length > 0
+      ? { keywords: record.keywords }
+      : {}),
     categoryId: record.categoryId,
     meta: record.publishedAt.slice(0, 10),
     tag: categoryPath.map((category) => category.name).join(" / "),

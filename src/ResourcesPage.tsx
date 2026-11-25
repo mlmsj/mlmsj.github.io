@@ -11,6 +11,10 @@ import {
   isPublishedPublicResource,
 } from "./categoryCounts";
 import {
+  isCategoryFolderSearchResource,
+  mergeAccessibleResourceEntries,
+} from "./categoryFolderPilot";
+import {
   canOpenPublicShare,
   getResourceAccessLabel,
   getResourceDeliveries,
@@ -206,18 +210,24 @@ export function ResourcesPage({
   detail,
   categoryValues = categories,
   resourceValues = [],
+  folderResourceValues = [],
   catalogPhase = "ready",
   catalogStatus = "",
   favoriteIds = [],
   onToggleFavorite,
+  onOpenJuniorHighSearch,
+  onOpenPostgraduateSearch,
 }: {
   detail: (resource: Resource) => void;
   categoryValues?: readonly Category[];
   resourceValues?: readonly Resource[];
+  folderResourceValues?: readonly Resource[];
   catalogPhase?: PublicCatalogPhase;
   catalogStatus?: string;
   favoriteIds?: string[];
   onToggleFavorite?: (id: string) => void;
+  onOpenJuniorHighSearch?: (query: string) => boolean;
+  onOpenPostgraduateSearch?: (query: string) => boolean;
 }) {
   const [query, setQuery] = useState(
     () => new URLSearchParams(window.location.search).get("q") ?? "",
@@ -261,6 +271,8 @@ export function ResourcesPage({
   const submitSearch = () => {
     const params = new URLSearchParams(window.location.search);
     const value = query.trim();
+    if (value && onOpenJuniorHighSearch?.(value)) return;
+    if (value && onOpenPostgraduateSearch?.(value)) return;
     if (value) params.set("q", value);
     else params.delete("q");
     const suffix = params.toString() ? `?${params.toString()}` : "";
@@ -275,6 +287,14 @@ export function ResourcesPage({
         ),
       ),
     [categoryValues, resourceValues],
+  );
+
+  const accessibleValues = useMemo(
+    () =>
+      mergeAccessibleResourceEntries(publicValues, folderResourceValues).filter((resource) =>
+        isPublishedPublicResource(resource, categoryValues),
+      ),
+    [categoryValues, folderResourceValues, publicValues],
   );
 
   const stageCategories = useMemo(
@@ -293,31 +313,31 @@ export function ResourcesPage({
     [categoryValues],
   );
 
-  const categoryValuesForSearch = useMemo(
+  const scopedAccessibleValues = useMemo(
     () =>
       filterState.category
         ? getPublishedResourcesForCategory(
             filterState.category.id,
             categoryValues,
-            publicValues,
+            accessibleValues,
           )
         : filterState.hasCategoryParameter
           ? []
-          : publicValues,
+          : accessibleValues,
     [
+      accessibleValues,
       categoryValues,
       filterState.category,
       filterState.hasCategoryParameter,
-      publicValues,
     ],
   );
 
   const filteredResources = useMemo(
     () =>
-      categoryValuesForSearch.filter((resource) =>
+      scopedAccessibleValues.filter((resource) =>
         matchesResourceQuery(resource, searchTerm),
       ),
-    [categoryValuesForSearch, searchTerm],
+    [scopedAccessibleValues, searchTerm],
   );
 
   const categoryPath = filterState.category
@@ -473,6 +493,13 @@ export function ResourcesPage({
       resource.delivery?.shareUrl
         ? resource.delivery.shareUrl
         : null;
+    const folderShareUrl =
+      !groupToggle &&
+      isCategoryFolderSearchResource(resource) &&
+      canOpenPublicShare(resource) &&
+      resource.delivery?.shareUrl
+        ? resource.delivery.shareUrl
+        : null;
 
     const resourceCopy = (
       <span className="resource-item-copy">
@@ -529,6 +556,18 @@ export function ResourcesPage({
         {resourceCopy}
         {resourceTime}
       </div>
+    ) : folderShareUrl ? (
+      <a
+        className="resource-item"
+        href={folderShareUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`打开资料：${resource.title}`}
+      >
+        <b>{displayIndex}</b>
+        {resourceCopy}
+        {resourceTime}
+      </a>
     ) : (
       <button className="resource-item" onClick={() => detail(resource)}>
         <b>{displayIndex}</b>
@@ -685,7 +724,7 @@ export function ResourcesPage({
                 const count = getPublishedResourceCount(
                   category.id,
                   categoryValues,
-                  publicValues,
+                  accessibleValues,
                 );
                 return (
                   <a
@@ -721,7 +760,7 @@ export function ResourcesPage({
                 const count = getPublishedResourceCount(
                   category.id,
                   categoryValues,
-                  publicValues,
+                  accessibleValues,
                 );
                 return (
                   <a
@@ -756,7 +795,7 @@ export function ResourcesPage({
               ? !filterState.category && !searchTerm.trim() && catalogPhase === "ready"
                 ? `共 ${total} 条`
                 : ""
-              : `${publicValues.length} 条公开资料`}
+              : `${accessibleValues.length} 条公开资料`}
           </span>
         </div>
 

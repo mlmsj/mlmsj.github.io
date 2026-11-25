@@ -7,6 +7,7 @@ export const PUBLIC_MANIFEST_RECORD_FIELDS = [
   "id",
   "title",
   "description",
+  "keywords",
   "categoryId",
   "provider",
   "shareUrl",
@@ -49,6 +50,8 @@ export type PublicManifestRecord = {
   accessStatus: PublicAccessStatus;
   publishedAt: string;
   description?: string;
+  /** Search aliases and subject-specific terms maintained with the resource record. */
+  keywords?: readonly string[];
   passcode?: string;
   checkedOn?: string | null;
   fileType?: string;
@@ -106,6 +109,7 @@ export type PublicManifestIssueCode =
   | "INVALID_ID"
   | "INVALID_TITLE"
   | "INVALID_DESCRIPTION"
+  | "INVALID_KEYWORDS"
   | "INVALID_CATEGORY"
   | "INVALID_PROVIDER"
   | "INVALID_SHARE_URL"
@@ -387,6 +391,20 @@ export const validatePublicManifest = (
           ? "PUBLIC_FIELD_LEAK"
           : "INVALID_DESCRIPTION",
       );
+    }
+
+    const keywords = rawRecord.keywords;
+    if (
+      hasOwn(rawRecord, "keywords") &&
+      (!Array.isArray(keywords) ||
+        keywords.length > 32 ||
+        keywords.some(
+          (keyword) =>
+            !validText(keyword, 80) ||
+            (typeof keyword === "string" && containsPublicFieldLeak(keyword)),
+        ))
+    ) {
+      issue(issues, `${path}.keywords`, "INVALID_KEYWORDS");
     }
 
     const categoryId = rawRecord.categoryId;

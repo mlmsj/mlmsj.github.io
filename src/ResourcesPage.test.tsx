@@ -7,6 +7,12 @@ import {
   type Resource,
 } from "./resources";
 import { categories, type Category } from "./categories";
+import { getPublishedResourceCount, isPublishedPublicResource } from "./categoryCounts";
+import {
+  CATEGORY_FOLDER_PILOT,
+  CATEGORY_FOLDER_SEARCH_RESOURCES,
+  mergeAccessibleResourceEntries,
+} from "./categoryFolderPilot";
 
 const verifiedDelivery: NonNullable<Resource["delivery"]> = {
   provider: "quark",
@@ -111,14 +117,75 @@ describe("resource discovery layout", () => {
   });
 
   it("shows real stage counts and opens the corresponding result scope", () => {
-    render(<ResourcesPage detail={vi.fn()} resourceValues={mixedResources} />);
-    const junior = screen.getByRole("link", { name: /初中.*3 份公开资料/ });
+    const expectedJuniorCount = getPublishedResourceCount(
+      "stage-junior",
+      categories,
+      mergeAccessibleResourceEntries(mixedResources),
+    );
+    render(
+      <ResourcesPage
+        detail={vi.fn()}
+        resourceValues={mixedResources}
+        folderResourceValues={CATEGORY_FOLDER_SEARCH_RESOURCES}
+      />,
+    );
+    const junior = screen.getByRole("link", {
+      name: new RegExp(`初中.*${expectedJuniorCount} 份公开资料`),
+    });
 
     fireEvent.click(junior);
 
     expect(window.location.search).toBe("?category=stage-junior");
-    expect(screen.getByRole("heading", { name: "初中（3）" })).toBeVisible();
+    expect(
+      screen.getByRole("heading", { name: `初中（${expectedJuniorCount}）` }),
+    ).toBeVisible();
     expect(screen.getByText("合成初中一级资料")).toBeVisible();
+  });
+
+  it("counts each accessible child folder once instead of summing its internal items", () => {
+    const categoryId = "domain-university-major-textbooks";
+    const folderEntries = CATEGORY_FOLDER_SEARCH_RESOURCES.filter(
+      (resource) => resource.categoryId === categoryId,
+    );
+    const internalItemTotal = CATEGORY_FOLDER_PILOT.filter(
+      (entry) => entry.categoryId === categoryId,
+    ).reduce((total, entry) => total + entry.itemCount, 0);
+    expect(folderEntries).toHaveLength(6);
+    expect(internalItemTotal).toBe(1969);
+
+    window.history.replaceState(
+      {},
+      "",
+      `/resources?category=${categoryId}`,
+    );
+    render(
+      <ResourcesPage
+        detail={vi.fn()}
+        folderResourceValues={CATEGORY_FOLDER_SEARCH_RESOURCES}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "大学教材（6）" })).toBeVisible();
+    expect(
+      screen.queryByRole("heading", { name: `大学教材（${internalItemTotal}）` }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("uses all unique accessible entries for the library total", () => {
+    const expectedTotal = mergeAccessibleResourceEntries(mixedResources).filter(
+      (resource) => isPublishedPublicResource(resource, categories),
+    ).length;
+    render(
+      <ResourcesPage
+        detail={vi.fn()}
+        resourceValues={mixedResources}
+        folderResourceValues={CATEGORY_FOLDER_SEARCH_RESOURCES}
+      />,
+    );
+
+    expect(screen.getByText(`${expectedTotal} 条公开资料`)).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: /查看全部公开资料/ }));
+    expect(screen.getByText(`共 ${expectedTotal} 条`)).toBeVisible();
   });
 
   it("marks resources with multiple delivery channels in the list", () => {
@@ -609,19 +676,43 @@ describe("resource result state and metadata", () => {
     window.history.replaceState({}, "", "/resources");
   });
 
+  it("searches audited Quark child folders from the global library search", () => {
+    window.history.replaceState({}, "", "/resources?q=%E4%BD%9C%E6%96%87%E7%B4%A0%E6%9D%90");
+
+    render(
+      <ResourcesPage
+        detail={vi.fn()}
+        folderResourceValues={CATEGORY_FOLDER_SEARCH_RESOURCES}
+      />,
+    );
+
+    expect(screen.getByRole("heading", { name: "搜索结果：作文素材（1）" })).toBeVisible();
+    expect(screen.getByText("【作文素材】")).toBeVisible();
+    expect(screen.getByRole("link", { name: "打开资料：【作文素材】" })).toHaveAttribute(
+      "href",
+      "https://pan.quark.cn/s/282e888ce607",
+    );
+  });
+
   it("shows the committed search term and result count for matches and misses", () => {
     const resource = {
       ...visibleResource,
       title: "高考真题公开资料",
       description: "高考真题与答案整理",
     };
-    render(<ResourcesPage detail={vi.fn()} resourceValues={[resource]} />);
+    render(
+      <ResourcesPage
+        detail={vi.fn()}
+        resourceValues={[resource]}
+        folderResourceValues={CATEGORY_FOLDER_SEARCH_RESOURCES}
+      />,
+    );
 
     fireEvent.change(screen.getByRole("textbox", { name: "关键词" }), {
       target: { value: "高考真题" },
     });
     fireEvent.click(screen.getByRole("button", { name: "搜索" }));
-    expect(screen.getByRole("heading", { name: "搜索结果：高考真题（1）" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "搜索结果：高考真题（6）" })).toBeVisible();
 
     fireEvent.change(screen.getByRole("textbox", { name: "关键词" }), {
       target: { value: "不存在的关键词" },

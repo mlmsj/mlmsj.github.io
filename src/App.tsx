@@ -1,20 +1,28 @@
-import { useEffect, useState, type Dispatch, type SetStateAction } from "react";
+import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import "./index.css";
-import heroWatercolor from "./assets/zhaowenguan-hero-watercolor.png";
-import categoryStrip from "./assets/zhaowenguan-category-strip.png";
+import "./Home.css";
+import { BookOpen, Files, Grid2X2, Image, ScanText, Search } from "lucide-react";
 import { InfoPage, type InfoPageKey } from "./InfoPages";
 import { Toolbox, ToolDetail, type ToolKey } from "./Toolbox";
 import { appPathFromLocation, locationPathForAppPath } from "./routing";
 import { sortResourcesByUpdatedAt, type Resource } from "./resources";
 import { usePublicCatalog } from "./publicCatalog";
-import { isPublishedPublicResource } from "./categoryCounts";
+import { categories } from "./categories";
+import { getPublishedResourceCount, isPublishedPublicResource } from "./categoryCounts";
+import {
+  CATEGORY_FOLDER_SEARCH_RESOURCES,
+  mergeAccessibleResourceEntries,
+} from "./categoryFolderPilot";
 import { PublicDeliveryPanel, PublicDetail } from "./PublicDetail";
-import { getChildCategories, SKILL_GROWTH_ROOT_IDS } from "./categories";
 import { CategoriesPage } from "./CategoriesPage";
-import { categoryBrowseLocation, categoryPathBrowseLocation } from "./categoryRouting";
+import { categoryPathBrowseLocation } from "./categoryRouting";
 import { ResourcesPage } from "./ResourcesPage";
 import { HighSchoolCoursesPage } from "./HighSchoolCoursesPage";
+import { JuniorHighCoursesPage } from "./JuniorHighCoursesPage";
+import { PostgraduateCoursesPage } from "./PostgraduateCoursesPage";
 import { getHighSchoolSearchTarget } from "./highSchoolSearch";
+import { getJuniorHighSearchTarget } from "./juniorHighCourseIndex";
+import { getPostgraduateSearchTarget } from "./postgraduateCourseIndex";
 import { SkillGrowthPage } from "./SkillGrowthPage";
 import { MyPage } from "./MyPage";
 import { mySections, type MySection } from "./mySections";
@@ -25,7 +33,9 @@ type Page =
   | "resources"
   | "detail"
   | "categories"
+  | "juniorCourses"
   | "seniorCourses"
+  | "postgraduateCourses"
   | "skill-growth"
   | "tools"
   | "profile"
@@ -39,15 +49,14 @@ const nav = [
   { key: "tools", label: "学习工具", art: "scroll" },
   { key: "profile", label: "我的", art: "cat" },
 ] as const;
-const topLevelCategories = getChildCategories(null).filter(
-  (category) => !SKILL_GROWTH_ROOT_IDS.includes(category.id as (typeof SKILL_GROWTH_ROOT_IDS)[number]),
-);
 const paths: Record<Page, string> = {
   home: "/",
   resources: "/resources",
   detail: "/detail",
   categories: "/categories",
+  juniorCourses: "/junior-high/courses",
   seniorCourses: "/high-school/courses",
+  postgraduateCourses: "/postgraduate/courses",
   "skill-growth": "/skill-growth",
   tools: "/tools",
   profile: "/profile",
@@ -106,6 +115,24 @@ function App() {
   const [page, setPage] = useState<Page>(pageFromPath);
   const catalog = usePublicCatalog();
   const resources = catalog.items;
+  const accessibleResources = useMemo(
+    () => mergeAccessibleResourceEntries(resources),
+    [resources],
+  );
+  const accessibleCounts = useMemo(
+    () =>
+      Object.fromEntries(
+        categories.map((category) => [
+          category.id,
+          getPublishedResourceCount(
+            category.id,
+            categories,
+            accessibleResources,
+          ),
+        ]),
+      ),
+    [accessibleResources],
+  );
   const publicResources = sortResourcesByUpdatedAt(
     resources.filter((resource) => isPublishedPublicResource(resource)),
   );
@@ -142,6 +169,41 @@ function App() {
       window.history.pushState({}, "", nextLocation);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+  const openPostgraduateSearch = (value: string) => {
+    const query = value.trim();
+    if (!query) return false;
+
+    const target = getPostgraduateSearchTarget(query);
+    if (!target) return false;
+
+    const searchParams = new URLSearchParams({
+      subject: target.subject,
+      q: query,
+    });
+    openLocation(
+      "postgraduateCourses",
+      locationPathForAppPath(`/postgraduate/courses?${searchParams.toString()}`),
+    );
+    return true;
+  };
+  const openJuniorHighSearch = (value: string) => {
+    const query = value.trim();
+    if (!query) return false;
+
+    const target = getJuniorHighSearchTarget(query);
+    if (!target) return false;
+
+    const searchParams = new URLSearchParams({
+      grade: target.grade,
+      subject: target.subject,
+      q: query,
+    });
+    openLocation(
+      "juniorCourses",
+      locationPathForAppPath(`/junior-high/courses?${searchParams.toString()}`),
+    );
+    return true;
+  };
   const search = (value: string) => {
     const query = value.trim();
     if (!query) return;
@@ -158,6 +220,8 @@ function App() {
       );
       return;
     }
+    if (openJuniorHighSearch(query)) return;
+    if (openPostgraduateSearch(query)) return;
     openLocation("resources", locationPathForAppPath(`/resources?q=${encodeURIComponent(query)}`));
   };
   const detail = (resource: Resource) => {
@@ -188,34 +252,35 @@ function App() {
             resources={publicResources}
             detail={detail}
             onSearch={search}
-            openCategory={(categoryId) =>
-              openLocation("categories", categoryBrowseLocation(categoryId))
-            }
             openCategoryPath={(categoryIds) =>
               openLocation("categories", categoryPathBrowseLocation(categoryIds))
             }
           />
         )}
-        {page === "resources" && <ResourcesPage resourceValues={resources} catalogPhase={catalog.phase} catalogStatus={catalog.status} detail={detail} favoriteIds={myData.favorites.map(item => item.id)} onToggleFavorite={toggleFavorite} />}
+        {page === "resources" && <ResourcesPage resourceValues={resources} folderResourceValues={CATEGORY_FOLDER_SEARCH_RESOURCES} catalogPhase={catalog.phase} catalogStatus={catalog.status} detail={detail} favoriteIds={myData.favorites.map(item => item.id)} onToggleFavorite={toggleFavorite} onOpenJuniorHighSearch={openJuniorHighSearch} onOpenPostgraduateSearch={openPostgraduateSearch} />}
+        {page === "juniorCourses" && <JuniorHighCoursesPage />}
         {page === "seniorCourses" && (
           <HighSchoolCoursesPage
             onSearch={search}
           />
         )}
+        {page === "postgraduateCourses" && <PostgraduateCoursesPage />}
         {page === "categories" && (
           <CategoriesPage
-            counts={catalog.counts}
+            counts={accessibleCounts}
             resourceValues={resources}
             onHome={() => go("home")}
             onOpenResources={(location) => openLocation("resources", location)}
+            onOpenJuniorHighCourses={(location) => openLocation("juniorCourses", location)}
             onOpenHighSchoolCourses={(location) => openLocation("seniorCourses", location)}
+            onOpenPostgraduateCourses={(location) => openLocation("postgraduateCourses", locationPathForAppPath(location))}
             onProfile={() => go("profile")}
             onTools={() => go("tools")}
           />
         )}
         {page === "skill-growth" && (
           <SkillGrowthPage
-            counts={catalog.counts}
+            counts={accessibleCounts}
             resourceValues={resources}
             onHome={() => go("home")}
             onOpenCategories={(location) => openLocation("categories", location)}
@@ -235,7 +300,9 @@ function App() {
           !isToolDetail &&
           page !== "home" &&
           page !== "resources" &&
+          page !== "juniorCourses" &&
           page !== "seniorCourses" &&
+          page !== "postgraduateCourses" &&
           page !== "categories" &&
           page !== "skill-growth" &&
           page !== "detail" &&
@@ -262,7 +329,7 @@ function Header({
   theme: "light" | "dark";
   toggleTheme: () => void;
 }) {
-  const activePage = page === "detail" || page === "seniorCourses"
+  const activePage = page === "detail" || page === "juniorCourses" || page === "seniorCourses"
     ? "resources"
     : toolKeys.includes(page as ToolKey)
     ? "tools"
@@ -327,123 +394,96 @@ function Home({
   go,
   detail,
   onSearch,
-  openCategory,
   openCategoryPath,
   resources,
 }: {
   go: (p: Page) => void;
   detail: (r: Resource) => void;
   onSearch: (query: string) => void;
-  openCategory: (categoryId: string) => void;
   openCategoryPath: (categoryIds: readonly string[]) => void;
   resources: readonly Resource[];
 }) {
   const [query, setQuery] = useState("");
-  const hotSearches: readonly {
-    label: string;
-    categoryPath?: readonly string[];
-    featured?: boolean;
-  }[] = [
-    { label: "初中", categoryPath: ["stage-junior"] },
-    { label: "高中", categoryPath: ["stage-senior"] },
-    { label: "大学", categoryPath: ["stage-university"] },
-    { label: "四级", categoryPath: ["purpose-certification", "purpose-certification-cet"] },
-    { label: "考研", categoryPath: ["stage-university", "domain-university-postgraduate", "domain-university-postgraduate-kaoyan"] },
-    { label: "AI", featured: true },
-  ];
+  const shortcuts = [
+    { key: "ocr", title: "OCR 文字识别", description: "从图片和扫描件提取文字", Icon: ScanText },
+    { key: "merge", title: "PDF 合并", description: "把零散资料整理成一份", Icon: Files },
+    { key: "image-resize", title: "图片尺寸调整", description: "批量修改宽度和高度", Icon: Image },
+  ] as const;
   const submitSearch = (q = query) => onSearch(q);
   return (
-    <>
-      <section
-        className="home-hero"
-        style={
-          { "--hero-image": `url(${heroWatercolor})` } as React.CSSProperties
-        }
-      >
-        <div className="hero-content">
-          <h1>昭文馆</h1>
-          <p className="motto">钻石不过是一块坚持到底的煤炭</p>
-          <div className="search-wrap">
-            <span>⌕</span>
-            <input aria-label="搜索学习资料" placeholder="搜索你需要的学习资料..." value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key === "Enter") submitSearch();}} />
+    <div className="home-page">
+      <section className="home-intro" aria-labelledby="home-title">
+        <p className="home-eyebrow">LEARNING STARTS HERE</p>
+        <h1 id="home-title">让学习，从这里开始</h1>
+        <div className="home-search">
+            <Search size={22} aria-hidden="true" />
+            <input aria-label="搜索学习资料" placeholder="搜索课程、学科或资料" value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key === "Enter") submitSearch();}} />
             <button onClick={()=>submitSearch()}>搜索</button>
           </div>
-          <div className="hot-search">
-            <b>热门搜索：</b>
-            {hotSearches.map((entry) => (
-              <button
-                className={entry.featured ? "hot-search-entry hot-search-entry-featured" : "hot-search-entry"}
-                key={entry.label}
-                type="button"
-                onClick={() => {
-                  if (entry.featured) go("skill-growth");
-                  else if (entry.categoryPath) openCategoryPath(entry.categoryPath);
-                }}
-              >
-                {entry.label}
-              </button>
-            ))}
-          </div>
+        <div className="home-hot-search" aria-label="热门搜索">
+          <span>热门搜索</span>
+          <button type="button" onClick={() => go("seniorCourses")}>高中课程</button>
+          <button type="button" onClick={() => openCategoryPath(["stage-university"])}>大学教材</button>
+          <button type="button" onClick={() => openCategoryPath(["purpose-certification"])}>考试资料</button>
         </div>
       </section>
-      <section className="content-section">
-        <div className="entrance-grid">
-          {topLevelCategories.map((category, index) => (
-            <button
-              className="entrance"
-              key={category.id}
-              onClick={() => openCategory(category.id)}
-            >
-              <span
-                className={`category-art category-art-${index}`}
-                style={
-                  {
-                    "--category-image": `url(${categoryStrip})`,
-                  } as React.CSSProperties
-                }
-                aria-hidden="true"
-              />
-              <strong>{category.name}</strong>
-              <i>›</i>
-            </button>
-          ))}
-        </div>
-        <section className="home-skill-growth-entry" aria-labelledby="home-skill-growth-title">
-          <div className="home-skill-growth-copy">
-            <span className="home-skill-growth-icon" aria-hidden="true">✦</span>
-            <div>
-              <p className="kicker">SKILL GROWTH</p>
-              <h2 id="home-skill-growth-title">技能成长</h2>
-              <p>从 AI、数字创作到生活兴趣，按自己的目标继续学习。</p>
-            </div>
+
+      <section className="home-primary" aria-label="首页主要入口">
+        <button className="home-primary-card" type="button" onClick={() => go("resources")}>
+          <span className="home-icon"><BookOpen size={30} aria-hidden="true" /></span>
+          <div className="home-primary-copy">
+            <h2>找学习资料</h2>
+            <p>课程、教材与学习材料</p>
+            <div className="home-tags"><span>初中</span><span>高中</span><span>大学</span></div>
+            <span className="home-cta">去找资料 <span aria-hidden="true">→</span></span>
           </div>
-          <button type="button" onClick={() => go("skill-growth")}>浏览技能成长 <span aria-hidden="true">→</span></button>
-        </section>
-        <section className="updates-panel">
-          <div className="panel-title">
-            <h2>
-              <span className="leaf-mark" />
-              最近更新
-            </h2>
-            <button onClick={() => go("resources")}>查看全部更新　→</button>
+        </button>
+        <button className="home-primary-card" type="button" onClick={() => go("tools")}>
+          <span className="home-icon"><Grid2X2 size={30} aria-hidden="true" /></span>
+          <div className="home-primary-copy">
+            <h2>使用学习工具</h2>
+            <p>识别文字、整理文件、打印分享</p>
+            <div className="home-tags"><span>文字识别</span><span>PDF 处理</span><span>图片工具</span></div>
+            <span className="home-cta">打开工具箱 <span aria-hidden="true">→</span></span>
           </div>
-          <div className="updates-grid">
+        </button>
+      </section>
+
+        <section className="home-updates" aria-labelledby="home-updates-title">
+          <div className="home-section-heading">
+            <h2 id="home-updates-title">最近更新</h2>
+            <button type="button" onClick={() => go("resources")}>查看全部 <span aria-hidden="true">→</span></button>
+          </div>
+          <div className="home-update-list">
             {resources.slice(0, 5).map((resource,index) => (
               <button
-                className="update-row"
+                className="home-update-row"
                 key={resource.id}
                 onClick={() => detail(resource)}
               >
-                <b>{String(index+1).padStart(2,"0")}</b>
-                <span>{resource.title}</span>
-                <time>{resource.meta}</time>
-                <i>→</i>
+                <span className="home-update-number" aria-hidden="true">{String(index+1).padStart(2,"0")}</span>
+                <span className="home-update-title">{resource.title}</span>
+                <time dateTime={resource.meta}>{resource.meta}</time>
+                <span className="home-update-arrow" aria-hidden="true">→</span>
               </button>
             ))}
           </div>
         </section>
-      </section>
-    </>
+        <section className="home-tools" aria-labelledby="home-tools-title">
+          <div className="home-section-heading">
+            <h2 id="home-tools-title">顺手的学习工具</h2>
+            <button type="button" onClick={() => go("tools")}>查看全部工具 <span aria-hidden="true">→</span></button>
+          </div>
+          <div className="home-tool-grid">
+            {shortcuts.map(({ key, title, description, Icon }) => (
+              <button className="home-tool-card" type="button" key={key} onClick={() => go(key)}>
+                <span className="home-icon"><Icon size={25} aria-hidden="true" /></span>
+                <span><strong>{title}</strong><small>{description}</small></span>
+              </button>
+            ))}
+          </div>
+        </section>
+    </div>
   );
 }
 function Detail({
@@ -505,7 +545,7 @@ function Footer({ go }: { go: (p: Page) => void }) {
   );
 }
 function MobileBottomNav({ page, go }: { page: Page; go: (p: Page) => void }) {
-  const activePage = page === "detail" || page === "seniorCourses"
+  const activePage = page === "detail" || page === "juniorCourses" || page === "seniorCourses"
     ? "resources"
     : toolKeys.includes(page as ToolKey)
     ? "tools"

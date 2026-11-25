@@ -6,6 +6,7 @@ import {
 } from "./categories";
 import { locationPathForAppPath } from "./routing";
 import { HIGH_SCHOOL_INDEX_META } from "./highSchoolCourseIndex";
+import { JUNIOR_HIGH_INDEX_META } from "./juniorHighCourseIndex";
 
 export const CATEGORY_PARAM = "category";
 export const SUBJECT_PARAM = "subject";
@@ -153,6 +154,9 @@ export const resourceFilterLocation = (
   }
   if (categoryId === HIGH_SCHOOL_INDEX_META.formalCategoryId) {
     return locationPathForAppPath(HIGH_SCHOOL_INDEX_META.canonicalRoute);
+  }
+  if (categoryId === JUNIOR_HIGH_INDEX_META.formalCategoryId) {
+    return locationPathForAppPath(JUNIOR_HIGH_INDEX_META.canonicalRoute);
   }
   const params = new URLSearchParams({
     [CATEGORY_PARAM]: categoryId,

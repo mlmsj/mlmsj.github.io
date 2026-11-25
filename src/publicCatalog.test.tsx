@@ -11,6 +11,7 @@ import { PublicDeliveryPanel, PublicDetail } from "./PublicDetail";
 import { ResourcesPage } from "./ResourcesPage";
 import { MY_DATA_KEY, validateMyData } from "./myData";
 import type { PublicManifest, PublicManifestRecord } from "./publicManifest";
+import { CATEGORY_FOLDER_SEARCH_RESOURCES } from "./categoryFolderPilot";
 import { categories } from "./categories";
 
 const syntheticRecord: PublicManifestRecord = {
@@ -177,14 +178,18 @@ describe("static public manifest catalog", () => {
     render(
       <ResourcesPage
         resourceValues={[]}
+        folderResourceValues={CATEGORY_FOLDER_SEARCH_RESOURCES}
         catalogPhase="ready"
         catalogStatus=""
         detail={vi.fn()}
       />,
     );
 
-    expect(screen.getByText("暂无正式发布资料")).toBeVisible();
-    expect(screen.getByText(/不代表网盘内没有资料/)).toBeVisible();
+    expect(
+      screen.getByText(`共 ${CATEGORY_FOLDER_SEARCH_RESOURCES.length} 条`),
+    ).toBeVisible();
+    expect(screen.getByRole("link", { name: "打开资料：专业课教材" })).toBeVisible();
+    expect(screen.queryByText("暂无正式发布资料")).not.toBeInTheDocument();
     expect(screen.queryByText("正在加载公开资料清单…")).not.toBeInTheDocument();
   });
 

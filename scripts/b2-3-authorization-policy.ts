@@ -394,6 +394,14 @@ export const SKILL_GROWTH_AI_DELIVERY_IDS = new Map<string, string>([
   ["ai-deepseek-002", "dlv-ai-deepseek-002-quark-01"],
 ]);
 
+export const QUARK_AI_COLLECTION_APPROVED_RESOURCE_IDS = [
+  "ai-quark-collection-001",
+] as const;
+
+export const QUARK_AI_COLLECTION_DELIVERY_IDS = new Map<string, string>([
+  ["ai-quark-collection-001", "dlv-ai-quark-collection-001-quark-01"],
+]);
+
 export const BAIDU_AI_APPROVED_RESOURCE_IDS = [
   "ai-baidu-office-001",
   "ai-baidu-photography-001",
@@ -401,6 +409,7 @@ export const BAIDU_AI_APPROVED_RESOURCE_IDS = [
   "ai-baidu-aigc-001",
   "ai-baidu-self-media-001",
   "ai-baidu-intro-001",
+  "ai-baidu-learning-001",
   "ai-baidu-chatgpt-001",
 ] as const;
 
@@ -411,6 +420,7 @@ export const BAIDU_AI_DELIVERY_IDS = new Map<string, string>([
   ["ai-baidu-aigc-001", "dlv-ai-baidu-aigc-001-baidu-01"],
   ["ai-baidu-self-media-001", "dlv-ai-baidu-self-media-001-baidu-01"],
   ["ai-baidu-intro-001", "dlv-ai-baidu-intro-001-baidu-01"],
+  ["ai-baidu-learning-001", "dlv-ai-baidu-learning-001-baidu-01"],
   ["ai-baidu-chatgpt-001", "dlv-ai-baidu-chatgpt-001-baidu-01"],
 ]);
 
@@ -945,6 +955,42 @@ export const B2_3_POLICIES = new Map<string, PublicProjectionPolicy>(
         },
       ] as const;
     }),
+    ...QUARK_AI_COLLECTION_APPROVED_RESOURCE_IDS.map((resourceId) => {
+      const deliveryId = QUARK_AI_COLLECTION_DELIVERY_IDS.get(resourceId);
+      if (!deliveryId) throw new Error(`Missing Quark AI collection Delivery ID: ${resourceId}`);
+      return [
+        resourceId,
+        {
+          deliveryId,
+          browseState: "observed",
+          evidence: [
+            {
+              evidenceId: `auth-${resourceId}-resource-01`,
+              subjectType: "resource",
+              resourceId,
+              actionScope: ["display_metadata", "expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: "docs/QUARK-AI-RESOURCE-RELEASE-20261125.md#站长授权与公开接入确认",
+              reviewedAt: "2026-11-25T00:00:00+08:00",
+            },
+            {
+              evidenceId: `auth-${resourceId}-delivery-01`,
+              subjectType: "delivery",
+              resourceId,
+              deliveryId,
+              actionScope: ["expose_share_link"],
+              audienceScope: ["public"],
+              platformScope: ["website"],
+              status: "approved",
+              evidenceRef: "docs/QUARK-AI-RESOURCE-RELEASE-20261125.md#站长授权与公开接入确认",
+              reviewedAt: "2026-11-25T00:00:00+08:00",
+            },
+          ],
+        },
+      ] as const;
+    }),
     ...BAIDU_AI_APPROVED_RESOURCE_IDS.map((resourceId) => {
       const deliveryId = BAIDU_AI_DELIVERY_IDS.get(resourceId);
       if (!deliveryId) throw new Error(`Missing Baidu AI Delivery ID: ${resourceId}`);
@@ -963,7 +1009,7 @@ export const B2_3_POLICIES = new Map<string, PublicProjectionPolicy>(
               platformScope: ["website"],
               status: "approved",
               evidenceRef: "docs/BAIDU-AI-RESOURCE-CANDIDATE.md#公开链接核验",
-              reviewedAt: "2026-11-15T00:00:00+08:00",
+              reviewedAt: "2026-11-24T00:00:00+08:00",
             },
             {
               evidenceId: `auth-${resourceId}-delivery-01`,
@@ -975,7 +1021,7 @@ export const B2_3_POLICIES = new Map<string, PublicProjectionPolicy>(
               platformScope: ["website"],
               status: "approved",
               evidenceRef: "docs/BAIDU-AI-RESOURCE-CANDIDATE.md#公开链接核验",
-              reviewedAt: "2026-11-15T00:00:00+08:00",
+              reviewedAt: "2026-11-24T00:00:00+08:00",
             },
           ],
         },

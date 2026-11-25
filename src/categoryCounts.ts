@@ -21,6 +21,20 @@ const PURPOSE_CERTIFICATION_COMPATIBLE_RESOURCE_CATEGORIES: Readonly<
   "purpose-certification-university": ["domain-university-certification"],
 };
 
+/**
+ * Return the stable resource IDs that should be displayed for a current
+ * category route. Legacy university certification records remain stored under
+ * their original IDs, while the current UI exposes them under 考证.
+ */
+export const getCompatibleResourceCategoryIds = (
+  categoryId: string,
+): readonly string[] => [
+  categoryId,
+  ...(PURPOSE_CERTIFICATION_COMPATIBLE_RESOURCE_CATEGORIES[categoryId] ?? []).filter(
+    (compatibleId) => compatibleId !== categoryId,
+  ),
+];
+
 const resourceBelongsToCategory = (
   resourceCategoryId: string,
   categoryId: string,
@@ -34,9 +48,7 @@ const resourceBelongsToCategory = (
     return true;
   }
 
-  return (
-    PURPOSE_CERTIFICATION_COMPATIBLE_RESOURCE_CATEGORIES[categoryId] ?? []
-  ).includes(resourceCategoryId);
+  return getCompatibleResourceCategoryIds(categoryId).includes(resourceCategoryId);
 };
 
 export const isPublishedPublicResource = (

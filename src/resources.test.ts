@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resources, sortResourcesByUpdatedAt } from "./resources";
+import { matchesResourceQuery, resources, sortResourcesByUpdatedAt } from "./resources";
 
 describe("resource migration contract", () => {
   it("preserves all ten resource IDs and leaves them explicitly unclassified", () => {
@@ -60,5 +60,19 @@ describe("resource migration contract", () => {
       "same-b",
       "older",
     ]);
+  });
+
+  it("matches maintained aliases and combines multiple keyword terms", () => {
+    const resource = {
+      ...resources[1],
+      title: "四六级资料",
+      description: "大学英语考试资料",
+      tag: "大学 / 大学考证 / 四六级",
+      keywords: ["刘晓燕", "冲刺班", "四级", "CET-4"],
+    };
+
+    expect(matchesResourceQuery(resource, "晓燕")).toBe(true);
+    expect(matchesResourceQuery(resource, "四级 / 冲刺班")).toBe(true);
+    expect(matchesResourceQuery(resource, "阅读 冲刺班")).toBe(false);
   });
 });

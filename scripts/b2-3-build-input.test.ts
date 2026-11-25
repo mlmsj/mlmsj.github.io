@@ -14,9 +14,9 @@ describe("B2-3 controlled source input", () => {
       resolve(root, B2_DEFAULT_SOURCE_MANIFEST),
     );
     const { manifest } = readB2SourceManifest(root);
-    expect(manifest.records).toHaveLength(310);
+    expect(manifest.records).toHaveLength(312);
     expect(manifest.records.filter((record) => record.shareUrl === null)).toHaveLength(5);
-    expect(manifest.records.filter((record) => record.shareUrl !== null)).toHaveLength(305);
+    expect(manifest.records.filter((record) => record.shareUrl !== null)).toHaveLength(307);
     expect(manifest.records.some((record) => record.title.includes("高考真题"))).toBe(false);
     expect(manifest.records.filter((record) => record.categoryId.startsWith("domain-junior-")).length).toBe(6);
     expect(manifest.records.filter((record) => record.categoryId.startsWith("type-junior-textbooks-")).length).toBe(11);
@@ -28,12 +28,21 @@ describe("B2-3 controlled source input", () => {
     expect(manifest.records.filter((record) => record.categoryId.startsWith("domain-senior-")).length).toBe(10);
     expect(manifest.records.filter((record) => record.categoryId.startsWith("type-senior-")).length).toBe(130);
     expect(manifest.records.filter((record) => record.categoryId.startsWith("purpose-certification-")).length).toBe(16);
-    expect(manifest.records.filter((record) => record.categoryId.startsWith("skill-")).length).toBe(48);
+    expect(manifest.records.filter((record) => record.categoryId.startsWith("skill-")).length).toBe(50);
+
+    expect(manifest.records.find((record) => record.id === "ai-quark-collection-001")).toMatchObject({
+      title: "AI 资料总目录",
+      categoryId: "skill-ai-knowledge",
+      provider: "quark",
+      accessStatus: "verified",
+      checkedOn: "2026-11-25",
+      fileType: "folder",
+    });
 
     const baiduAiCandidates = manifest.records.filter((record) =>
       record.id.startsWith("ai-baidu-"),
     );
-    expect(baiduAiCandidates).toHaveLength(7);
+    expect(baiduAiCandidates).toHaveLength(8);
     const baiduAiCategories = new Map([
       ["ai-baidu-office-001", "skill-ai-office"],
       ["ai-baidu-photography-001", "skill-ai-photography"],
@@ -41,6 +50,7 @@ describe("B2-3 controlled source input", () => {
       ["ai-baidu-aigc-001", "skill-ai-aigc"],
       ["ai-baidu-self-media-001", "skill-ai-self-media"],
       ["ai-baidu-intro-001", "skill-ai-learning-cognition"],
+      ["ai-baidu-learning-001", "skill-ai-learning-cognition"],
       ["ai-baidu-chatgpt-001", "skill-ai-chatgpt"],
     ]);
     expect(baiduAiCandidates.every((record) =>
@@ -50,7 +60,7 @@ describe("B2-3 controlled source input", () => {
       record.shareUrl.includes("?pwd=") &&
       record.passcode === undefined &&
       record.accessStatus === "verified" &&
-      record.checkedOn === "2026-11-15" &&
+      record.checkedOn === "2026-11-24" &&
       record.fileType === "folder",
     )).toBe(true);
     const secondaryBaiduRecords = manifest.records.filter((record) =>
@@ -62,7 +72,8 @@ describe("B2-3 controlled source input", () => {
       record.deliveries?.length === 1 &&
       record.deliveries[0]?.provider === "baidu" &&
       record.deliveries[0]?.accessStatus === "verified" &&
-      record.deliveries[0]?.checkedOn === "2026-11-17",
+      (record.deliveries[0]?.checkedOn === "2026-11-17" ||
+        (record.id === "university-topic-cet-001" && record.deliveries[0]?.checkedOn === "2026-11-24")),
     )).toBe(true);
     expect(secondaryBaiduRecords.some((record) => record.id.startsWith("ai-baidu-"))).toBe(false);
     const firstRoundWorkbooks = manifest.records.filter((record) =>

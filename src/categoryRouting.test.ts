@@ -95,6 +95,9 @@ describe("category URL state", () => {
     expect(resourceFilterLocation("domain-senior-courses")).toBe(
       "/high-school/courses",
     );
+    expect(resourceFilterLocation("domain-junior-courses")).toBe(
+      "/junior-high/courses",
+    );
     for (const id of ["stage-university", "subject-junior-math", "type-junior-math-notes"]) {
       const location = resourceFilterLocation(id);
       expect(location).not.toBeNull();

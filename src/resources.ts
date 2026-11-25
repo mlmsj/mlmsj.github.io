@@ -20,6 +20,7 @@ export type Resource = {
   meta: string;
   tag: string;
   description: string;
+  keywords?: readonly string[];
   categoryId: string | null;
   classificationStatus: ResourceClassificationStatus;
   publicationStatus?: ResourcePublicationStatus;
@@ -114,12 +115,22 @@ export function sortResourcesByUpdatedAt(values: readonly Resource[]): Resource[
 }
 
 export function matchesResourceQuery(resource: Resource, query: string): boolean {
-  const normalized = query.trim().toLocaleLowerCase("zh-CN");
-  if (!normalized) return true;
-  return [resource.title, resource.description, resource.tag]
-    .join(" ")
+  const normalized = query
+    .trim()
     .toLocaleLowerCase("zh-CN")
-    .includes(normalized);
+    .replace(/[，、；;|/]+/gu, " ")
+    .replace(/\s+/gu, " ");
+  if (!normalized) return true;
+
+  const searchable = [
+    resource.title,
+    resource.description,
+    resource.tag,
+    ...(resource.keywords ?? []),
+  ]
+    .join(" ")
+    .toLocaleLowerCase("zh-CN");
+  return normalized.split(" ").every((term) => searchable.includes(term));
 }
 
 export const resources: readonly Resource[] = [
