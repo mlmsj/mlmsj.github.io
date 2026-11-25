@@ -59,7 +59,7 @@ describe('public entry isolation: actual App rendering', () => {
     window.history.replaceState({}, '', path); render(<App />);
     expect(screen.queryByRole('heading', { name: '资料导入' })).not.toBeInTheDocument();
     expect(screen.queryByText('运营者工作区 · 开发预览')).not.toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: '昭文馆', level: 1 })).toBeVisible();
+    expect(screen.getByRole('heading', { name: '让学习，从这里开始', level: 1 })).toBeVisible();
   });
   it.each(['/', '/profile', '/categories', '/resources'])('adds no operator navigation at %s', path => {
     window.history.replaceState({}, '', path); render(<App />);
