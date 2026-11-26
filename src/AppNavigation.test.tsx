@@ -186,4 +186,27 @@ describe("home category navigation", () => {
     expect(window.location.search).toContain("q=%E5%BC%A0%E7%AC%91");
     expect(screen.getByRole("link", { name: /张笑/ })).toBeVisible();
   });
+
+  it("removes dark theme toggle, highlights postgraduate nav, focuses header search, and updates document title", () => {
+    render(<App />);
+    expect(document.title).toBe("昭文馆 — 学习资料目录与本地学习工具");
+    expect(document.documentElement.hasAttribute("data-theme")).toBe(false);
+    expect(screen.queryByRole("button", { name: /切换为.*主题/ })).not.toBeInTheDocument();
+
+    fireEvent.click(within(screen.getByRole("banner")).getByRole("button", { name: "搜索" }));
+    expect(window.location.pathname).toBe("/resources");
+    expect(document.title).toBe("找资料 — 昭文馆");
+    expect(screen.getByRole("textbox", { name: "关键词" })).toHaveFocus();
+
+    cleanup();
+    window.history.replaceState({}, "", "/postgraduate/courses?subject=%E8%8B%B1%E8%AF%AD");
+    render(<App />);
+    expect(document.title).toBe("考研网课 — 昭文馆");
+    expect(
+      within(screen.getByRole("navigation", { name: "主导航" })).getByRole("button", { name: "找资料" }),
+    ).toHaveAttribute("aria-current", "page");
+    expect(
+      within(screen.getByRole("navigation", { name: "移动底部导航" })).getByRole("button", { name: "找资料" }),
+    ).toHaveAttribute("aria-current", "page");
+  });
 });

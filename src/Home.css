@@ -119,10 +119,6 @@
 .home-primary-card, .home-tool-card, .home-update-row, .home-hot-search button { transition: background-color .15s ease; }
 .home-primary-card:hover, .home-tool-card:hover, .home-update-row:hover, .home-hot-search button:hover { background: var(--mist); }
 .home-page button:focus-visible { outline: 2px solid var(--forest); outline-offset: 4px; }
-[data-theme="dark"] .home-page .home-intro { background: linear-gradient(115deg, var(--paper), var(--cream)); border-color: var(--line); }
-[data-theme="dark"] .home-page .home-icon { background: var(--mist); color: var(--sage); }
-[data-theme="dark"] .home-page :is(.home-primary-copy p, .home-tool-card small, .home-update-row time, .home-tags span, .home-eyebrow, .home-hot-search) { color: var(--sage); }
-[data-theme="dark"] .home-search { border-color: var(--line); }
 
 @media (max-width: 1000px) {
   .home-primary-card { gap: 16px; padding: 17px 20px; }

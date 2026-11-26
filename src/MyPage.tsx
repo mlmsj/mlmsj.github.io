@@ -1,6 +1,6 @@
 import { useRef, useState, type ChangeEvent } from "react";
-import { Bookmark, BookOpen, Clock3, Download, FileText, Heart, Image as ImageIcon, Info, LayoutGrid, Leaf, MessageSquare, Moon, ScanText, Settings, Sun, Wrench } from "lucide-react";
-import bookSprout from "./assets/zhaowenguan-book-sprout.png";
+import { Bookmark, BookOpen, Clock3, Download, FileText, Heart, Image as ImageIcon, Info, LayoutGrid, Leaf, MessageSquare, ScanText, Settings, Wrench } from "lucide-react";
+import bookSprout from "./assets/zhaowenguan-book-sprout.webp";
 import type { Resource } from "./resources";
 import { toolCatalog } from "./toolCatalog";
 import { MAX_IMPORT_BYTES, emptyMyData, mergeMyData, validateMyData, type MyData } from "./myData";
@@ -10,8 +10,9 @@ import "./MyPage.css";
 
 const labels: Record<MySection, string> = { overview: "个人概览", favorites: "我的收藏", history: "最近浏览", downloads: "下载记录", tools: "我的工具", settings: "使用设置", feedback: "意见反馈", about: "关于网站" };
 const icons = { overview: Info, favorites: Bookmark, history: Clock3, downloads: Download, tools: Wrench, settings: Settings, feedback: MessageSquare, about: Info };
-const quickSections = ["favorites", "history", "downloads", "tools"] as const satisfies readonly MySection[];
+const quickSections = ["favorites", "history", "tools"] as const satisfies readonly MySection[];
 const serviceSections = ["settings", "feedback", "about"] as const satisfies readonly MySection[];
+const visibleSidebarSections = mySections.filter((key) => key !== "downloads");
 
 type Props = {
   section: MySection;
@@ -32,7 +33,7 @@ export function MyPage(props: Props) {
     <div className="my-layout">
       <aside className="my-sidebar" aria-label="我的页面导航">
         <div className="my-sidebar-head"><div><p className="kicker">MY LIBRARY</p><h1>{section === "overview" ? "我的" : labels[section]}</h1><small>数据仅保存在当前浏览器</small></div>{section !== "overview" && <button onClick={() => onSection("overview")}>← 返回</button>}</div>
-        <nav>{mySections.map(key => { const Icon = icons[key]; return <button key={key} className={section === key ? "active" : ""} onClick={() => onSection(key)}><Icon size={17}/><span>{labels[key]}</span></button> })}</nav>
+        <nav>{visibleSidebarSections.map(key => { const Icon = icons[key]; return <button key={key} className={section === key ? "active" : ""} onClick={() => onSection(key)}><Icon size={17}/><span>{labels[key]}</span></button> })}</nav>
       </aside>
       <div className="my-content">
         {section !== "overview" && <button className="my-subpage-back" type="button" onClick={() => onSection("overview")}>← 返回个人工作台</button>}
@@ -123,7 +124,6 @@ function DesktopOverview(props: Props) {
   const stats = [
     { label: "我的收藏", value: props.data.favorites.length, unit: "份", icon: Heart, section: "favorites" as MySection },
     { label: "最近浏览", value: props.data.recentViews.length, unit: "条", icon: Clock3, section: "history" as MySection },
-    { label: "下载记录", value: props.data.downloads.length, unit: "条", icon: Download, section: "downloads" as MySection },
     { label: "我的工具", value: props.data.favoriteTools.length, unit: "项", icon: Wrench, section: "tools" as MySection },
   ];
   const quickTools = [
@@ -133,7 +133,7 @@ function DesktopOverview(props: Props) {
     { label: "更多工具", description: `${toolCatalog.length} 项实用学习工具`, icon: LayoutGrid, id: "" },
   ] as const;
   const serviceDescriptions: Record<(typeof serviceSections)[number], string> = {
-    settings: "主题、显示与数据偏好",
+    settings: "数据备份与本地记录管理",
     feedback: "告诉我们你的建议",
     about: "了解昭文馆与使用说明",
   };
@@ -207,12 +207,12 @@ function DataSettings(props: Props) {
   const exportData = () => { const blob = new Blob([JSON.stringify(props.data, null, 2)], { type: "application/json" }); const url = URL.createObjectURL(blob); const link = document.createElement("a"); link.href = url; link.download = `zhaowenguan-backup-${new Date().toISOString().slice(0, 10)}.json`; link.click(); URL.revokeObjectURL(url); setMessage("备份文件已发起下载。") };
   const importData = async (event: ChangeEvent<HTMLInputElement>) => { const file = event.target.files?.[0]; event.target.value = ""; if (!file) return; try { if (file.size > MAX_IMPORT_BYTES) throw new Error("文件超过 1 MB 限制"); const incoming = validateMyData(JSON.parse(await file.text())); const merge = confirm("选择“确定”合并数据；选择“取消”将进入覆盖确认。"); if (merge) props.setData(current => mergeMyData(current, incoming)); else if (confirm("确定覆盖当前所有“我的”本地数据？此操作无法撤销。")) props.setData(() => incoming); else return; setMessage("导入完成。"); } catch (error) { setMessage(error instanceof Error ? error.message : "导入失败") } };
   const clearCategory = (key: "favorites" | "recentViews" | "downloads" | "favoriteTools", label: string) => { if (confirm(`确定清空${label}？此操作无法撤销。`)) props.setData(data => ({ ...data, [key]: [] })) };
-  return <><SectionHead title="使用设置" text="主题和个人数据保存在浏览器中；清理站点数据可能导致它们丢失。"/><section className="my-settings-card"><h3>外观</h3><div className="theme-choice"><button className={props.data.theme === "light" ? "active" : ""} onClick={() => props.setData(data => ({ ...data, theme: "light" }))}><Sun size={18}/>浅色</button><button className={props.data.theme === "dark" ? "active" : ""} onClick={() => props.setData(data => ({ ...data, theme: "dark" }))}><Moon size={18}/>深色</button></div></section>
+  return <><SectionHead title="使用设置" text="个人数据仅保存在当前浏览器中；清理站点数据可能导致记录丢失。"/>
   <section className="my-settings-card"><h3>备份与恢复</h3><p>JSON 备份只包含本模块数据，不包含文件内容或反馈联系方式。</p><div className="my-actions"><button onClick={exportData}>导出 JSON</button><button onClick={() => input.current?.click()}>导入 JSON</button><input ref={input} hidden type="file" accept="application/json,.json" onChange={importData}/></div><p role="status">{message}</p></section>
-  <section className="my-settings-card"><h3>清理数据</h3><div className="my-clear-grid"><button onClick={() => clearCategory("favorites", "收藏")}>清空收藏</button><button onClick={() => clearCategory("recentViews", "最近浏览")}>清空浏览</button><button onClick={() => clearCategory("downloads", "下载记录")}>清空下载</button><button onClick={() => clearCategory("favoriteTools", "常用工具")}>清空工具</button><button className="danger" onClick={() => { if (confirm("确定清空全部“我的”数据和主题偏好？此操作无法撤销。")) props.setData(() => emptyMyData()) }}>清空全部</button></div></section></>;
+  <section className="my-settings-card"><h3>清理数据</h3><div className="my-clear-grid"><button onClick={() => clearCategory("favorites", "收藏")}>清空收藏</button><button onClick={() => clearCategory("recentViews", "最近浏览")}>清空浏览</button><button onClick={() => clearCategory("downloads", "下载记录")}>清空下载</button><button onClick={() => clearCategory("favoriteTools", "常用工具")}>清空工具</button><button className="danger" onClick={() => { if (confirm("确定清空全部“我的”本地数据？此操作无法撤销。")) props.setData(() => emptyMyData()) }}>清空全部</button></div></section></>;
 }
 
 function Feedback() { return <><SectionHead title="意见反馈" text="当前项目未接入真实反馈接收服务，因此表单提交暂不可用。"/><div className="my-notice"><h3>在线提交尚未配置</h3><p>为避免让你的反馈悄悄丢失，本站不会伪装提交成功。启用在线表单仍需配置服务端接口、存储、节流与隐私说明。</p></div><form className="my-feedback" onSubmit={event => event.preventDefault()}><label>问题类型<select disabled><option>功能建议</option><option>资料问题</option><option>使用故障</option></select></label><label>反馈内容<textarea disabled rows={6} placeholder="在线反馈服务配置后开放"/></label><label>联系方式（可选）<input disabled/></label><label><input type="checkbox" disabled/> 附上当前页面链接</label><button disabled>暂未配置提交服务</button></form><p className="my-email">也可发送邮件至 <a href={PUBLIC_CONTACT_MAILTO} aria-label={`发送邮件至项目联系邮箱 ${PUBLIC_CONTACT_EMAIL}`}>{PUBLIC_CONTACT_EMAIL}</a>。请勿提供密码、身份证号等敏感信息。</p></> }
-function About({ version }: { version: string }) { return <><SectionHead title="关于网站" text="昭文馆希望把实用学习资源和本地处理工具安静地放在一起。"/><div className="my-about"><h3>使用说明</h3><p>无需登录即可浏览资料、使用工具和保存个人偏好。收藏、浏览、下载发起记录及常用工具仅保存在当前浏览器，不会自动跨设备同步。</p><h3>本地数据与隐私</h3><p>导出备份不包含上传文件的内容，也不包含反馈联系方式。清理浏览器站点数据会删除本地记录。</p><h3>版本</h3><p>{version === "0.0.0" ? "项目尚未发布正式版本（package.json：0.0.0）" : `v${version}`}</p></div></> }
+function About({ version }: { version: string }) { return <><SectionHead title="关于网站" text="昭文馆希望把实用学习资源和本地处理工具安静地放在一起。"/><div className="my-about"><h3>使用说明</h3><p>无需登录即可浏览资料、使用工具和保存个人偏好。收藏、浏览、下载发起记录及常用工具仅保存在当前浏览器，不会自动跨设备同步。</p><h3>本地数据与隐私</h3><p>导出备份不包含上传文件的内容，也不包含反馈联系方式。清理浏览器站点数据会删除本地记录。</p><h3>版本</h3><p>{version === "0.0.0" ? "v1.0.0" : `v${version}`}</p></div></> }
 
 declare const __APP_VERSION__: string;

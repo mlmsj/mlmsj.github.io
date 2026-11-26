@@ -38,6 +38,11 @@ describe("junior-high teacher index", () => {
       grade: "初三",
       subject: "语文",
     });
+    expect(searchJuniorHighTeachers("初一数学").length).toBeGreaterThan(0);
+    expect(getJuniorHighSearchTarget("初一数学")).toMatchObject({
+      grade: "初一",
+      subject: "数学",
+    });
     expect(getJuniorHighSearchTarget("不存在的老师")).toBeNull();
   });
 });

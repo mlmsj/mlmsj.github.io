@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, type MouseEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import {
   categories,
   getCategoryPath,
@@ -217,6 +217,7 @@ export function ResourcesPage({
   onToggleFavorite,
   onOpenJuniorHighSearch,
   onOpenPostgraduateSearch,
+  focusSearchToken = 0,
 }: {
   detail: (resource: Resource) => void;
   categoryValues?: readonly Category[];
@@ -228,10 +229,17 @@ export function ResourcesPage({
   onToggleFavorite?: (id: string) => void;
   onOpenJuniorHighSearch?: (query: string) => boolean;
   onOpenPostgraduateSearch?: (query: string) => boolean;
+  focusSearchToken?: number;
 }) {
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState(
     () => new URLSearchParams(window.location.search).get("q") ?? "",
   );
+  useEffect(() => {
+    if (focusSearchToken > 0) {
+      searchInputRef.current?.focus();
+    }
+  }, [focusSearchToken]);
   const [searchTerm, setSearchTerm] = useState(query);
   const [page, setPage] = useState(1);
   const [resourceGroupExpansion, setResourceGroupExpansion] = useState<{
@@ -677,6 +685,7 @@ export function ResourcesPage({
       <div className="resource-search" aria-label="关键词搜索">
         <span aria-hidden="true">⌕</span>
         <input
+          ref={searchInputRef}
           placeholder="搜索你需要的学习资料..."
           aria-label="关键词"
           value={query}
@@ -736,7 +745,7 @@ export function ResourcesPage({
                     <span className="resource-card-index">{String(index + 1).padStart(2, "0")}</span>
                     <span className="resource-card-copy">
                       <strong>{category.name}</strong>
-                      <small>{count} 份公开资料</small>
+                      <small>{catalogPhase === "loading" ? "资料统计中…" : `${count} 份公开资料`}</small>
                     </span>
                     <span className="resource-card-arrow" aria-hidden="true">→</span>
                   </a>

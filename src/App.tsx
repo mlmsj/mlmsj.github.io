@@ -1,9 +1,17 @@
-import { useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import "./index.css";
 import "./Home.css";
 import { BookOpen, Files, Grid2X2, Image, ScanText, Search } from "lucide-react";
 import { InfoPage, type InfoPageKey } from "./InfoPages";
-import { Toolbox, ToolDetail, type ToolKey } from "./Toolbox";
+import type { ToolKey } from "./Toolbox";
+import { toolCatalog } from "./toolCatalog";
+
+const Toolbox = lazy(() =>
+  import("./Toolbox").then((module) => ({ default: module.Toolbox })),
+);
+const ToolDetail = lazy(() =>
+  import("./Toolbox").then((module) => ({ default: module.ToolDetail })),
+);
 import { appPathFromLocation, locationPathForAppPath } from "./routing";
 import { sortResourcesByUpdatedAt, type Resource } from "./resources";
 import { usePublicCatalog } from "./publicCatalog";
@@ -110,6 +118,33 @@ const profileSectionFromPath = (): MySection => {
 };
 const resourceFromLocation = () => new URLSearchParams(window.location.search).get("id");
 const infoPages: InfoPageKey[] = ["about", "guide", "disclaimer", "contact"];
+const SITE_NAME = "昭文馆";
+const HOME_TITLE = "昭文馆 — 学习资料目录与本地学习工具";
+const PAGE_TITLES: Partial<Record<Page, string>> = {
+  home: HOME_TITLE,
+  resources: "找资料",
+  detail: "资料详情",
+  categories: "分类浏览",
+  juniorCourses: "初中网课",
+  seniorCourses: "高中网课",
+  postgraduateCourses: "考研网课",
+  "skill-growth": "技能成长",
+  tools: "学习工具",
+  profile: "我的",
+  about: "关于本站",
+  guide: "使用说明",
+  disclaimer: "免责声明",
+  contact: "联系我们",
+};
+const getActiveNavPage = (page: Page): Page =>
+  page === "detail" ||
+  page === "juniorCourses" ||
+  page === "seniorCourses" ||
+  page === "postgraduateCourses"
+    ? "resources"
+    : toolKeys.includes(page as ToolKey)
+      ? "tools"
+      : page;
 
 function App() {
   const [page, setPage] = useState<Page>(pageFromPath);
@@ -137,6 +172,7 @@ function App() {
     resources.filter((resource) => isPublishedPublicResource(resource)),
   );
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchFocusToken, setSearchFocusToken] = useState(0);
   const [selected, setSelected] = useState(resourceFromLocation);
   const [myData, setMyData] = useState<MyData>(loadMyData);
   const [profileSection, setProfileSection] = useState<MySection>(profileSectionFromPath);
@@ -152,8 +188,26 @@ function App() {
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
   useEffect(() => {
-    document.documentElement.dataset.theme = myData.theme;
-  }, [myData]);
+    document.documentElement.removeAttribute("data-theme");
+  }, []);
+  useEffect(() => {
+    if (page === "home") {
+      document.title = HOME_TITLE;
+      return;
+    }
+    if (page === "detail" && selected) {
+      const resource = resources.find((item) => item.id === selected);
+      document.title = resource ? `${resource.title} — ${SITE_NAME}` : `资料详情 — ${SITE_NAME}`;
+      return;
+    }
+    if (toolKeys.includes(page as ToolKey)) {
+      const tool = toolCatalog.find((item) => item.id === page);
+      document.title = tool ? `${tool.name} — ${SITE_NAME}` : `学习工具 — ${SITE_NAME}`;
+      return;
+    }
+    const label = PAGE_TITLES[page];
+    document.title = label ? `${label} — ${SITE_NAME}` : HOME_TITLE;
+  }, [page, resources, selected]);
   useEffect(() => {
     const sync = (event: StorageEvent) => { if (event.key === "zhaowenguan.my.v1") setMyData(loadMyData()) };
     window.addEventListener("storage", sync); return () => window.removeEventListener("storage", sync);
@@ -241,11 +295,13 @@ function App() {
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
         go={go}
-        theme={myData.theme}
-        toggleTheme={() => updateMyData(data => ({ ...data, theme: data.theme === "light" ? "dark" : "light" }))}
+        onSearchClick={() => {
+          setSearchFocusToken((count) => count + 1);
+          go("resources");
+        }}
       />
       <main id="main-content">
-        {catalog.status && ["home","categories","skill-growth","profile"].includes(page) && <p className="catalog-status-global" role="status">{catalog.status}</p>}
+        {catalog.phase === "error" && catalog.status && ["home","categories","skill-growth","profile"].includes(page) && <p className="catalog-status-global" role="status">{catalog.status}</p>}
         {page === "home" && (
           <Home
             go={go}
@@ -257,7 +313,7 @@ function App() {
             }
           />
         )}
-        {page === "resources" && <ResourcesPage resourceValues={resources} folderResourceValues={CATEGORY_FOLDER_SEARCH_RESOURCES} catalogPhase={catalog.phase} catalogStatus={catalog.status} detail={detail} favoriteIds={myData.favorites.map(item => item.id)} onToggleFavorite={toggleFavorite} onOpenJuniorHighSearch={openJuniorHighSearch} onOpenPostgraduateSearch={openPostgraduateSearch} />}
+        {page === "resources" && <ResourcesPage resourceValues={resources} folderResourceValues={CATEGORY_FOLDER_SEARCH_RESOURCES} catalogPhase={catalog.phase} catalogStatus={catalog.status} detail={detail} favoriteIds={myData.favorites.map(item => item.id)} onToggleFavorite={toggleFavorite} onOpenJuniorHighSearch={openJuniorHighSearch} onOpenPostgraduateSearch={openPostgraduateSearch} focusSearchToken={searchFocusToken} />}
         {page === "juniorCourses" && <JuniorHighCoursesPage />}
         {page === "seniorCourses" && (
           <HighSchoolCoursesPage
@@ -268,13 +324,14 @@ function App() {
         {page === "categories" && (
           <CategoriesPage
             counts={accessibleCounts}
+            catalogPhase={catalog.phase}
             resourceValues={resources}
             onHome={() => go("home")}
             onOpenResources={(location) => openLocation("resources", location)}
             onOpenJuniorHighCourses={(location) => openLocation("juniorCourses", location)}
             onOpenHighSchoolCourses={(location) => openLocation("seniorCourses", location)}
             onOpenPostgraduateCourses={(location) => openLocation("postgraduateCourses", locationPathForAppPath(location))}
-            onProfile={() => go("profile")}
+            onProfile={() => openProfile("favorites")}
             onTools={() => go("tools")}
           />
         )}
@@ -289,10 +346,14 @@ function App() {
         )}
         {page === "detail" && <PublicDetail id={selected} resourceValues={resources} catalogPhase={catalog.phase} catalogStatus={catalog.status} onBack={() => go("resources")} render={resource => <Detail resource={resource} go={go} favorite={myData.favorites.some(item => item.id === resource.id)} onToggleFavorite={() => toggleFavorite(resource.id)} />} />}
         {page === "tools" && (
-          <Toolbox openTool={(tool) => go(tool ?? "tools")} favoriteToolIds={myData.favoriteTools.map(item => item.id)} onToggleFavorite={toggleTool} />
+          <Suspense fallback={<section className="page-section"><p className="page-lead">正在加载学习工具…</p></section>}>
+            <Toolbox openTool={(tool) => go(tool ?? "tools")} favoriteToolIds={myData.favoriteTools.map(item => item.id)} onToggleFavorite={toggleTool} />
+          </Suspense>
         )}
         {isToolDetail && (
-          <ToolDetail tool={page as ToolKey} back={() => go("tools")} />
+          <Suspense fallback={<section className="page-section"><p className="page-lead">正在加载学习工具…</p></section>}>
+            <ToolDetail tool={page as ToolKey} back={() => go("tools")} />
+          </Suspense>
         )}
         {isInfoPage && <InfoPage page={page as InfoPageKey} go={go} />}
         {page === "profile" && <><MyPage section={profileSection} data={myData} setData={updateMyData} resources={resources} onSection={openProfile} onResource={detail} onTool={(id) => id ? go(id as ToolKey) : go("tools")} onHome={() => go("resources")}/>{storageError && <p className="storage-warning" role="alert">浏览器存储不可用或空间不足，本次更改可能无法在刷新后保留。</p>}</>}
@@ -309,7 +370,7 @@ function App() {
           page !== "tools" &&
           page !== "profile" && <Placeholder page={page} />}
       </main>
-      {(page === "home" || isInfoPage) && <Footer go={go} />}
+      <Footer go={go} />
       <MobileBottomNav page={page} go={go} />
     </div>
   );
@@ -319,21 +380,15 @@ function Header({
   mobileOpen,
   setMobileOpen,
   go,
-  theme,
-  toggleTheme,
+  onSearchClick,
 }: {
   page: Page;
   mobileOpen: boolean;
   setMobileOpen: Dispatch<SetStateAction<boolean>>;
   go: (p: Page) => void;
-  theme: "light" | "dark";
-  toggleTheme: () => void;
+  onSearchClick: () => void;
 }) {
-  const activePage = page === "detail" || page === "juniorCourses" || page === "seniorCourses"
-    ? "resources"
-    : toolKeys.includes(page as ToolKey)
-    ? "tools"
-    : page;
+  const activePage = getActiveNavPage(page);
   return (
     <header className="site-header">
       <div className="header-inner">
@@ -354,10 +409,7 @@ function Header({
           ))}
         </nav>
         <div className="header-actions">
-          <button className="round-button" aria-label="搜索" onClick={()=>go("resources")}>
-            <span />
-          </button>
-          <button className="theme-button" aria-label={`切换为${theme === "light" ? "深色" : "浅色"}主题`} aria-pressed={theme === "dark"} onClick={toggleTheme}>
+          <button className="round-button" aria-label="搜索" onClick={onSearchClick}>
             <span />
           </button>
           <button
@@ -417,7 +469,7 @@ function Home({
         <h1 id="home-title">让学习，从这里开始</h1>
         <div className="home-search">
             <Search size={22} aria-hidden="true" />
-            <input aria-label="搜索学习资料" placeholder="搜索课程、学科或资料" value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key === "Enter") submitSearch();}} />
+            <input aria-label="搜索学习资料" placeholder="搜索课程或资料" value={query} onChange={event=>setQuery(event.target.value)} onKeyDown={event=>{if(event.key === "Enter") submitSearch();}} />
             <button onClick={()=>submitSearch()}>搜索</button>
           </div>
         <div className="home-hot-search" aria-label="热门搜索">
@@ -462,7 +514,7 @@ function Home({
                 onClick={() => detail(resource)}
               >
                 <span className="home-update-number" aria-hidden="true">{String(index+1).padStart(2,"0")}</span>
-                <span className="home-update-title">{resource.title}</span>
+                <span className="home-update-title">{resource.title.replace(/^\d+[.、\s]+(?=\S)/, "")}</span>
                 <time dateTime={resource.meta}>{resource.meta}</time>
                 <span className="home-update-arrow" aria-hidden="true">→</span>
               </button>
@@ -545,11 +597,7 @@ function Footer({ go }: { go: (p: Page) => void }) {
   );
 }
 function MobileBottomNav({ page, go }: { page: Page; go: (p: Page) => void }) {
-  const activePage = page === "detail" || page === "juniorCourses" || page === "seniorCourses"
-    ? "resources"
-    : toolKeys.includes(page as ToolKey)
-    ? "tools"
-    : page;
+  const activePage = getActiveNavPage(page);
   return (
     <nav className="mobile-bottom-nav" aria-label="移动底部导航">
       {nav.filter((item) => item.key !== "skill-growth").map((item) => (

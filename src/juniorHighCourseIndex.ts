@@ -352,14 +352,36 @@ export const getJuniorHighTeachers = (
   (entry) => entry.grade === grade && entry.subject === subject,
 );
 
-export const searchJuniorHighTeachers = (query: string) => {
+export const matchesJuniorHighTeacher = (
+  entry: JuniorHighTeacherEntry,
+  query: string,
+) => {
   const normalizedQuery = query.trim().toLowerCase();
+  if (!normalizedQuery) return true;
+  const spacedHaystack = [
+    entry.teacher,
+    entry.courseTitle,
+    entry.grade,
+    entry.subject,
+    `${entry.grade}${entry.subject}`,
+    "初中网课",
+  ]
+    .join(" ")
+    .toLowerCase();
+  const compactHaystack = spacedHaystack.replace(/\s+/g, "");
+  const compactQuery = normalizedQuery.replace(/\s+/g, "");
+  if (spacedHaystack.includes(normalizedQuery) || compactHaystack.includes(compactQuery)) {
+    return true;
+  }
+  const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
+  return tokens.length > 1 && tokens.every((token) => spacedHaystack.includes(token));
+};
+
+export const searchJuniorHighTeachers = (query: string) => {
+  const normalizedQuery = query.trim();
   if (!normalizedQuery) return [...JUNIOR_HIGH_TEACHERS];
   return JUNIOR_HIGH_TEACHERS.filter((entry) =>
-    [entry.teacher, entry.courseTitle, entry.grade, entry.subject, "初中网课"]
-      .join(" ")
-      .toLowerCase()
-      .includes(normalizedQuery),
+    matchesJuniorHighTeacher(entry, normalizedQuery),
   );
 };
 

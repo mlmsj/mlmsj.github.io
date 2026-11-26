@@ -5,6 +5,7 @@ import {
   getJuniorHighTeachers,
   JUNIOR_HIGH_GRADES,
   JUNIOR_HIGH_INDEX_META,
+  matchesJuniorHighTeacher,
   searchJuniorHighTeachers,
   type JuniorHighGrade,
   type JuniorHighSubject,
@@ -56,13 +57,10 @@ export function JuniorHighCoursesPage() {
     [grade, subject],
   );
   const visibleTeachers = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
+    const normalizedQuery = query.trim();
     if (!normalizedQuery) return allTeachers;
     return allTeachers.filter((entry) =>
-      [entry.teacher, entry.courseTitle, entry.grade, entry.subject]
-        .join(" ")
-        .toLowerCase()
-        .includes(normalizedQuery),
+      matchesJuniorHighTeacher(entry, normalizedQuery),
     );
   }, [allTeachers, query]);
 
@@ -90,7 +88,16 @@ export function JuniorHighCoursesPage() {
   const submitSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const normalizedQuery = query.trim();
-    if (!normalizedQuery) return;
+    if (!normalizedQuery) {
+      const params = new URLSearchParams({ grade, subject });
+      window.history.pushState(
+        {},
+        "",
+        locationPathForAppPath(`${JUNIOR_HIGH_INDEX_META.canonicalRoute}?${params.toString()}`),
+      );
+      setQuery("");
+      return;
+    }
     const match = searchJuniorHighTeachers(normalizedQuery)[0];
     if (match) {
       navigateSelection(match.grade, match.subject, true);
@@ -127,7 +134,7 @@ export function JuniorHighCoursesPage() {
             aria-label="搜索初中网课老师"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="搜索老师、年级或学科..."
+            placeholder="搜索老师、年级或学科"
           />
           <button type="submit">搜索</button>
         </form>

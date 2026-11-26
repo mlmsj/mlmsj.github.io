@@ -50,5 +50,14 @@ describe("junior-high course index", () => {
     );
     expect(screen.getByRole("link", { name: /张笑/ })).toBeVisible();
     expect(screen.getByText("1 个匹配入口")).toBeVisible();
+
+    fireEvent.change(screen.getByRole("textbox", { name: "搜索初中网课老师" }), {
+      target: { value: "" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "搜索" }));
+
+    expect(window.location.search).toBe(
+      `?grade=${encodeURIComponent("初三")}&subject=${encodeURIComponent("语文")}`,
+    );
   });
 });

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { locationPathForAppPath } from "./routing";
 import {
+  getPostgraduateSearchTarget,
   POSTGRADUATE_COURSES_BY_SUBJECT,
   POSTGRADUATE_INDEX_META,
   POSTGRADUATE_SUBJECT_META,
@@ -40,23 +41,39 @@ export function PostgraduateCoursesPage() {
     () => searchPostgraduateCourses(POSTGRADUATE_COURSES_BY_SUBJECT[subject], query),
     [query, subject],
   );
+  const crossSubjectMatch = useMemo(() => {
+    const normalized = query.trim();
+    if (!normalized || visibleCourses.length > 0) return null;
+    const target = getPostgraduateSearchTarget(normalized);
+    return target && target.subject !== subject ? target : null;
+  }, [query, subject, visibleCourses.length]);
 
-  const selectSubject = (next: PostgraduateSubject) => {
+  const selectSubject = (next: PostgraduateSubject, nextQuery = "") => {
     const params = new URLSearchParams({ subject: next });
+    if (nextQuery) params.set("q", nextQuery);
     const nextLocation = locationPathForAppPath(`${POSTGRADUATE_INDEX_META.canonicalRoute}?${params.toString()}`);
     window.history.pushState({}, "", nextLocation);
     setSubject(next);
-    setQuery("");
+    setQuery(nextQuery);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const submitSearch = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextQuery = query.trim();
-    const params = new URLSearchParams({ subject });
+    let targetSubject = subject;
+    if (
+      nextQuery &&
+      searchPostgraduateCourses(POSTGRADUATE_COURSES_BY_SUBJECT[subject], nextQuery).length === 0
+    ) {
+      const otherTarget = getPostgraduateSearchTarget(nextQuery);
+      if (otherTarget) targetSubject = otherTarget.subject;
+    }
+    const params = new URLSearchParams({ subject: targetSubject });
     if (nextQuery) params.set("q", nextQuery);
     const nextLocation = locationPathForAppPath(`${POSTGRADUATE_INDEX_META.canonicalRoute}?${params.toString()}`);
     window.history.pushState({}, "", nextLocation);
+    setSubject(targetSubject);
     setQuery(nextQuery);
   };
 
@@ -81,7 +98,7 @@ export function PostgraduateCoursesPage() {
             aria-label="搜索考研网课老师或机构"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="搜索老师、机构或课程关键词..."
+            placeholder="搜索老师、机构或课程"
           />
           <button type="submit">搜索</button>
         </form>
@@ -129,7 +146,7 @@ export function PostgraduateCoursesPage() {
             <>
               <div className="postgraduate-course-note" role="status">
                 <strong>{subject}目录已整理</strong>
-                <span>空目录不创建入口；其余目录按网盘顺序保留，搜索可直接定位老师或机构。</span>
+                <span>已按老师与机构整理好直达目录，可直接浏览或搜索定位。</span>
               </div>
               {visibleCourses.length > 0 ? (
                 <div className="postgraduate-resource-grid">
@@ -160,13 +177,31 @@ export function PostgraduateCoursesPage() {
                 <div className="postgraduate-resource-empty" role="status">
                   <strong>没有找到匹配的老师或机构</strong>
                   <p>可以试试输入姓名、平台或课程关键词。</p>
+                  {crossSubjectMatch && (
+                    <button
+                      type="button"
+                      className="back-button"
+                      onClick={() => selectSubject(crossSubjectMatch.subject, query.trim())}
+                    >
+                      在考研{crossSubjectMatch.subject}中找到 {crossSubjectMatch.matches.length} 个入口 →
+                    </button>
+                  )}
                 </div>
               )}
             </>
           ) : (
             <div className="postgraduate-resource-empty" role="status">
               <strong>{subject}目录正在整理中</strong>
-              <p>网盘中已盘点 {subjectMeta.directoryCount} 个下级目录，完成审核后会沿用英语的同一层级展示方式。</p>
+              <p>该科目共有 {subjectMeta.directoryCount} 个课程目录正在陆续整理中，敬请期待。</p>
+              {crossSubjectMatch && (
+                <button
+                  type="button"
+                  className="back-button"
+                  onClick={() => selectSubject(crossSubjectMatch.subject, query.trim())}
+                >
+                  在考研{crossSubjectMatch.subject}中找到 {crossSubjectMatch.matches.length} 个入口 →
+                </button>
+              )}
             </div>
           )}
         </section>

@@ -55,7 +55,7 @@ export function validateMyData(value: unknown): MyData {
   const { favorites, recentViews, downloads, favoriteTools, theme } = value;
   if (!Array.isArray(favorites) || !Array.isArray(recentViews) || !Array.isArray(downloads) || !Array.isArray(favoriteTools)) throw new Error("备份结构不完整");
   if (![...favorites, ...recentViews, ...favoriteTools].every(isTimedId)) throw new Error("备份包含无效记录");
-  if (theme !== "light" && theme !== "dark") throw new Error("主题设置无效");
+  if (theme !== undefined && theme !== "light" && theme !== "dark") throw new Error("主题设置无效");
   if (!downloads.every(isDownload)) throw new Error("下载记录无效");
   return {
     version: MY_DATA_VERSION,
@@ -63,7 +63,7 @@ export function validateMyData(value: unknown): MyData {
     recentViews: uniqueLatest(recentViews as TimedId[], MAX_RECENT_VIEWS),
     downloads: (downloads as DownloadRecord[]).slice(0, 200),
     favoriteTools: uniqueLatest(favoriteTools as TimedId[]),
-    theme,
+    theme: "light",
   };
 }
 
@@ -97,6 +97,6 @@ export function mergeMyData(current: MyData, incoming: MyData): MyData {
     recentViews: uniqueLatest([...current.recentViews, ...incoming.recentViews], MAX_RECENT_VIEWS),
     downloads: [...incoming.downloads, ...current.downloads].filter((item, index, all) => all.findIndex(other => other.recordId === item.recordId) === index).slice(0, 200),
     favoriteTools: uniqueLatest([...current.favoriteTools, ...incoming.favoriteTools]),
-    theme: incoming.theme,
+    theme: "light",
   };
 }

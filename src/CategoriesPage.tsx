@@ -241,6 +241,7 @@ function CategoryFolderSection({
 export function CategoriesPage({
   onHome,
   counts = {},
+  catalogPhase = "ready",
   onOpenResources,
   onOpenJuniorHighCourses,
   onOpenHighSchoolCourses,
@@ -251,6 +252,7 @@ export function CategoriesPage({
 }: {
   onHome: () => void;
   counts?: Record<string, number>;
+  catalogPhase?: "loading" | "ready" | "error";
   onOpenResources: (location: string) => void;
   onOpenJuniorHighCourses?: (location: string) => void;
   onOpenHighSchoolCourses?: (location: string) => void;
@@ -534,7 +536,7 @@ export function CategoriesPage({
               <span className="category-sidebar-icon" aria-hidden="true">{categoryIcon(category.id, 22)}</span>
               <span>
                 <strong>{category.name}</strong>
-                <small>{counts[category.id] ?? 0} 份资料</small>
+                <small>{catalogPhase === "loading" ? "统计中…" : `${counts[category.id] ?? 0} 份资料`}</small>
               </span>
               <i aria-hidden="true">›</i>
             </button>
@@ -575,7 +577,8 @@ export function CategoriesPage({
             <div className="category-card-grid">
               {desktopItems.map(renderDesktopCard)}
             </div>
-          ) : desktopFolderEntries.length === 0 ? (
+          ) : desktopFolderEntries.length === 0 &&
+            !(desktopCurrent && shouldShowDirectResources(desktopCurrent) && desktopDirectResources.length > 0) ? (
             <EmptyCategoryState message={desktopEmpty} />
           ) : null}
           {desktopCurrent && desktopFolderEntries.length > 0 && (
@@ -620,6 +623,7 @@ export function CategoriesPage({
                 key={category.id}
                 category={category}
                 count={counts[category.id] ?? 0}
+                countLabel={catalogPhase === "loading" ? "统计中…" : undefined}
                 onSelect={selectRoot}
               />
             ))}
@@ -646,13 +650,14 @@ export function CategoriesPage({
               );
             })}
           </div>
-        ) : (
+        ) : mobileFolderEntries.length === 0 &&
+          !(mobileCurrent && shouldShowDirectResources(mobileCurrent) && mobileDirectResources.length > 0) ? (
           <EmptyCategoryState
             message={mobileCurrent && mobileCurrent.level >= 2
               ? "暂无资料类型"
               : "暂无下级分类"}
           />
-        )}
+        ) : null}
         {mobileCurrent && mobileFolderEntries.length > 0 && (
           <CategoryFolderSection
             category={mobileCurrent}

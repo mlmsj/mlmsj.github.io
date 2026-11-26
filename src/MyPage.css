@@ -170,7 +170,7 @@
 
 .my-quick-links {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: stretch;
   padding: 9px 6px;
   border: 1px solid var(--line);
@@ -802,7 +802,7 @@
 
   .my-desktop-stat-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 20px;
   }
 
@@ -867,6 +867,7 @@
   .my-desktop-stat-copy span {
     color: #627a67;
     font-size: 14px;
+    white-space: nowrap;
   }
 
   .my-desktop-stat-copy em {
@@ -1072,11 +1073,11 @@
   .my-desktop-tool {
     min-width: 0;
     min-height: 94px;
-    padding: 13px 14px;
+    padding: 13px 12px;
     display: grid;
-    grid-template-columns: 50px minmax(0, 1fr) 16px;
+    grid-template-columns: 44px minmax(0, 1fr) 14px;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     border: 1px solid var(--line);
     border-radius: 16px;
     background: #fffef9;
@@ -1086,9 +1087,9 @@
   }
 
   .my-desktop-tool-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 15px;
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
     background: #edf4e7;
   }
 
@@ -1106,7 +1107,12 @@
     line-height: 1.35;
   }
 
-  .my-desktop-tool small,
+  .my-desktop-tool small {
+    color: #748878;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
   .my-desktop-service small {
     overflow: hidden;
     color: #748878;

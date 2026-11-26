@@ -67,4 +67,20 @@ describe("postgraduate course pilot", () => {
     expect(screen.getAllByRole("link")).toHaveLength(1);
     expect(screen.getByRole("link", { name: /徐涛研途全程班/ })).toBeVisible();
   });
+
+  it("switches to the matching subject when searching a teacher from another subject", () => {
+    window.history.replaceState({}, "", "/postgraduate/courses?subject=%E6%94%BF%E6%B2%BB");
+    render(<PostgraduateCoursesPage />);
+
+    fireEvent.change(screen.getByRole("textbox", { name: "搜索考研网课老师或机构" }), {
+      target: { value: "田静" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "搜索" }));
+
+    expect(window.location.search).toBe(
+      `?subject=${encodeURIComponent("英语")}&q=${encodeURIComponent("田静")}`,
+    );
+    expect(screen.getByRole("tab", { name: /英语/ })).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByRole("link", { name: /田静启航全程班/ })).toBeVisible();
+  });
 });

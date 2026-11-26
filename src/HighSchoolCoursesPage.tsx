@@ -145,7 +145,7 @@ export function HighSchoolCoursesPage({
             aria-label="搜索高中课程或资料"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="搜索课程、学科或教师..."
+            placeholder="搜索课程、学科或教师"
           />
           <button type="submit">搜索</button>
         </form>
